@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{E1FF7BDB-D631-4D4D-B5A1-988778AD15B6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>engenious</RootNamespace>
+    <AssemblyName>engenious</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="Execute" command="../../octoawesome/OctoAwesome/bin/Debug/OctoClient.exe" workingdir="../../octoawesome/OctoAwesome/bin/Debug/" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="OpenTK">
+      <HintPath>..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Graphics\GraphicsDevice.cs" />
+    <Compile Include="Game.cs" />
+    <Compile Include="Graphics\Viewport.cs" />
+    <Compile Include="Graphics\IndexBuffer.cs" />
+    <Compile Include="Graphics\VertexBuffer.cs" />
+    <Compile Include="Graphics\GraphicsResource.cs" />
+    <Compile Include="Graphics\VertexDeclaration.cs" />
+    <Compile Include="Graphics\VertexElement.cs" />
+    <Compile Include="Graphics\VertexElementUsage.cs" />
+    <Compile Include="Graphics\VertexElementFormat.cs" />
+    <Compile Include="Graphics\IVertexType.cs" />
+    <Compile Include="Graphics\Vertices\VertexPositionColor.cs" />
+    <Compile Include="Graphics\Vertices\VertexPositionTexture.cs" />
+    <Compile Include="Graphics\Vertices\VertexPositionNormalTexture.cs" />
+    <Compile Include="Graphics\Internal\VertexAttributes.cs" />
+    <Compile Include="Graphics\Effect\Effect.cs" />
+    <Compile Include="Graphics\Effect\EffectParameter.cs" />
+    <Compile Include="Graphics\Effect\EffectParameterCollection.cs" />
+    <Compile Include="Graphics\Effect\EffectTechniqueCollection.cs" />
+    <Compile Include="Graphics\Effect\EffectTechnique.cs" />
+    <Compile Include="Graphics\Effect\EffectPass.cs" />
+    <Compile Include="Graphics\Effect\EffectPassCollection.cs" />
+    <Compile Include="Graphics\Effect\Shader\Shader.cs" />
+    <Compile Include="Graphics\Effect\BasicEffect.cs" />
+    <Compile Include="Graphics\Effect\IEffectMatrices.cs" />
+    <Compile Include="Graphics\Effect\IEffectLights.cs" />
+    <Compile Include="Graphics\DirectionalLight.cs" />
+    <Compile Include="Graphics\Effect\IEffectFog.cs" />
+    <Compile Include="Graphics\SpriteBatch.cs" />
+    <Compile Include="Graphics\RenderStates\BlendState.cs" />
+    <Compile Include="Graphics\RenderStates\DepthStencilState.cs" />
+    <Compile Include="Graphics\RenderStates\RasterizerState.cs" />
+    <Compile Include="Graphics\RenderStates\SamplerState.cs" />
+    <Compile Include="Graphics\SpriteBatcher.cs" />
+    <Compile Include="Graphics\DynamicVertexBuffer.cs" />
+    <Compile Include="Graphics\Texture.cs" />
+    <Compile Include="Graphics\Texture2D.cs" />
+    <Compile Include="Graphics\Vertices\VertexPositionColorTexture.cs" />
+    <Compile Include="Graphics\DynamicIndexBuffer.cs" />
+    <Compile Include="Content\Serialization\ContentReader.cs" />
+    <Compile Include="Content\Serialization\ContentTypeReader.cs" />
+    <Compile Include="Content\Serialization\ContentTypeReaderAttribute.cs" />
+    <Compile Include="Content\Serialization\IContentTypeReader.cs" />
+    <Compile Include="Content\ContentManager.cs" />
+    <Compile Include="Content\ContentFile.cs" />
+    <Compile Include="Content\Serialization\Readers\TextureTypeReader.cs" />
+    <Compile Include="Graphics\TextureCollection.cs" />
+    <Compile Include="Graphics\Effect\EffectPassParameter.cs" />
+    <Compile Include="Graphics\Effect\EffectPassParameterCollection.cs" />
+    <Compile Include="Graphics\Font\SpriteFont.cs" />
+    <Compile Include="Graphics\Font\FontCharacter.cs" />
+    <Compile Include="Content\Serialization\Readers\SpriteFontTypeReader.cs" />
+    <Compile Include="Base\Rectangle.cs" />
+    <Compile Include="Base\Point.cs" />
+    <Compile Include="Base\Size.cs" />
+    <Compile Include="Base\Color.cs" />
+    <Compile Include="Base\RectangleF.cs" />
+    <Compile Include="Base\GameTime.cs" />
+    <Compile Include="Components\IGameComponent.cs" />
+    <Compile Include="Components\IUpdateable.cs" />
+    <Compile Include="Components\GameComponent.cs" />
+    <Compile Include="Components\IDrawable.cs" />
+    <Compile Include="Components\DrawableGameComponent.cs" />
+    <Compile Include="Components\GameComponentCollection.cs" />
+    <Compile Include="Graphics\RenderStates\SamplerStateCollection.cs" />
+    <Compile Include="Base\BoundingBox.cs" />
+    <Compile Include="Base\Ray.cs" />
+    <Compile Include="Graphics\RenderTarget2D.cs" />
+    <Compile Include="Base\BoundingFrustum.cs" />
+    <Compile Include="Base\Plane.cs" />
+    <Compile Include="Audio\AudioDevice.cs" />
+    <Compile Include="Audio\AudioListener.cs" />
+    <Compile Include="Audio\AudioResource.cs" />
+    <Compile Include="Audio\SoundEffectInstance.cs" />
+    <Compile Include="Audio\SoundState.cs" />
+    <Compile Include="Audio\AudioEmitter.cs" />
+    <Compile Include="Content\Serialization\Readers\RenderStateReaders.cs" />
+    <Compile Include="Content\Serialization\Readers\EffectTypeReader.cs" />
+    <Compile Include="Base\ColorByte.cs" />
+    <Compile Include="Input\Key.cs" />
+    <Compile Include="Input\ButtonState.cs" />
+    <Compile Include="Input\Buttons.cs" />
+    <Compile Include="Input\KeyboardState.cs" />
+    <Compile Include="Input\MouseState.cs" />
+    <Compile Include="Input\MouseButton.cs" />
+    <Compile Include="Input\MouseScroll.cs" />
+    <Compile Include="Input\Mouse.cs" />
+    <Compile Include="Helper\WrappingHelper.cs" />
+    <Compile Include="Math\Vector2.cs" />
+    <Compile Include="Math\Matrix.cs" />
+    <Compile Include="Math\Vector4.cs" />
+    <Compile Include="Math\Vector3.cs" />
+    <Compile Include="Math\Quaternion.cs" />
+    <Compile Include="Graphics\Enums\PixelFormat.cs" />
+    <Compile Include="Input\Keyboard.cs" />
+    <Compile Include="Input\MouseDevice.cs" />
+    <Compile Include="Graphics\RenderStates\BlendEnums.cs" />
+    <Compile Include="Graphics\RenderStates\StencilEnums.cs" />
+    <Compile Include="Graphics\RenderStates\RasterizerEnums.cs" />
+    <Compile Include="Graphics\RenderStates\SamplerEnums.cs" />
+    <Compile Include="Graphics\Enums\BufferUsageHint.cs" />
+    <Compile Include="Helper\MathHelper.cs" />
+    <Compile Include="Graphics\Enums\PrimitiveType.cs" />
+    <Compile Include="Graphics\Enums\DrawElementsType.cs" />
+    <Compile Include="Input\GamePad\GamePad.cs" />
+    <Compile Include="Input\GamePad\GamePadButtons.cs" />
+    <Compile Include="Input\GamePad\GamePadDPad.cs" />
+    <Compile Include="Input\GamePad\GamePadState.cs" />
+    <Compile Include="Input\GamePad\GamePadThumbSticks.cs" />
+    <Compile Include="Input\GamePad\GamePadTriggers.cs" />
+    <Compile Include="Input\GamePad\GamePadAxes.cs" />
+    <Compile Include="Helper\ThreadingHelper.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Graphics\" />
+    <Folder Include="Content\" />
+    <Folder Include="Graphics\Vertices\" />
+    <Folder Include="Graphics\Internal\" />
+    <Folder Include="Graphics\Effect\" />
+    <Folder Include="Graphics\Effect\Shader\" />
+    <Folder Include="Graphics\RenderStates\" />
+    <Folder Include="Content\Serialization\Readers\" />
+    <Folder Include="Graphics\Font\" />
+    <Folder Include="Base\" />
+    <Folder Include="Components\" />
+    <Folder Include="Input\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Audio\" />
+    <Folder Include="Helper\" />
+    <Folder Include="Math\" />
+    <Folder Include="Graphics\Enums\" />
+    <Folder Include="Input\GamePad\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>
