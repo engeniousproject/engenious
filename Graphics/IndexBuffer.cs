@@ -30,6 +30,7 @@ namespace engenious.Graphics
                     GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo);
                     GL.BufferData(BufferTarget.ElementArrayBuffer, new IntPtr(indexCount * sz), IntPtr.Zero, (OpenTK.Graphics.OpenGL4.BufferUsageHint)BufferUsage);
                 });
+            GraphicsDevice.CheckError();
             //buffer = new byte[indexCount * (int)IndexElementSize / 8];
         }
 
@@ -46,6 +47,7 @@ namespace engenious.Graphics
                     int sz = (indexElementSize == DrawElementsType.UnsignedByte ? 1 : (indexElementSize == DrawElementsType.UnsignedShort ? 2 : 4));
                     GL.BufferData(BufferTarget.ElementArrayBuffer, new IntPtr(indexCount * sz), IntPtr.Zero, (OpenTK.Graphics.OpenGL4.BufferUsageHint)BufferUsage);
                 });
+            GraphicsDevice.CheckError();
             //buffer = new byte[indexCount * (int)IndexElementSize / 8];
         }
 
@@ -72,6 +74,7 @@ namespace engenious.Graphics
                     GL.BufferSubData(BufferTarget.ElementArrayBuffer, new IntPtr(offsetInBytes), new IntPtr(elementCount * elSize), buffer.AddrOfPinnedObject() + startIndex * elSize);//TODO:
                 });
             buffer.Free();
+            GraphicsDevice.CheckError();
             //Buffer.BlockCopy (data, startIndex, buffer, offsetInBytes, elementCount);
         }
 
@@ -91,6 +94,7 @@ namespace engenious.Graphics
                     GL.BufferSubData(BufferTarget.ElementArrayBuffer, IntPtr.Zero, new IntPtr(elementCount * elSize), buffer.AddrOfPinnedObject() + startIndex * elSize);//TODO:
                 });
             buffer.Free();
+            GraphicsDevice.CheckError();
             //GL.BufferData<T> (BufferTarget.ElementArrayBuffer, new IntPtr (elementCount * Marshal.SizeOf(T)), data[startIndex], BufferUsageHint.StaticDraw);//TODO:
             //Buffer.BlockCopy (data, startIndex, buffer, 0, elementCount);
         }
@@ -107,13 +111,14 @@ namespace engenious.Graphics
                     Bind();
                     GL.BufferSubData<T>(BufferTarget.ElementArrayBuffer, IntPtr.Zero, new IntPtr(IndexCount * Marshal.SizeOf(default(T))), data);//TODO:
                 });
-
+            GraphicsDevice.CheckError();
             //Buffer.BlockCopy (data, 0, buffer, 0, data.Length);
         }
 
         internal void Bind()
         {
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo);
+            GraphicsDevice.CheckError();
         }
 
         public override void Dispose()

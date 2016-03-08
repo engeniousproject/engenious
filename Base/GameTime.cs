@@ -13,6 +13,8 @@ namespace engenious
 
         public GameTime(TimeSpan totalGameTime, TimeSpan elapsedGameTime)
         {
+            ElapsedGameTime = elapsedGameTime;
+            TotalGameTime = totalGameTime;
         }
 
         internal void Update(double time)

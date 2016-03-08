@@ -328,107 +328,6 @@ namespace engenious
             
         }
 
-        /// <summary>
-        /// Calculate the inverse of the given matrix
-        /// </summary>
-        /// <param name="mat">The matrix to invert</param>
-        /// <param name="result">The inverse of the given matrix if it has one, or the input if it is singular</param>
-        /// <exception cref="InvalidOperationException">Thrown if the Matrix4 is singular.</exception>
-        public static void Invert(ref Matrix mat, out Matrix inverse)
-        {
-            int[] colIdx = { 0, 0, 0, 0 };
-            int[] rowIdx = { 0, 0, 0, 0 };
-            int[] pivotIdx = { -1, -1, -1, -1 };
-
-            // convert the matrix to an array for easy looping
-            inverse = mat;
-            int icol = 0;
-            int irow = 0;
-            for (int i = 0; i < 4; i++)
-            {
-                // Find the largest pivot value
-                float maxPivot = 0.0f;
-                for (int j = 0; j < 4; j++)
-                {
-                    if (pivotIdx[j] != 0)
-                    {
-                        for (int k = 0; k < 4; ++k)
-                        {
-                            if (pivotIdx[k] == -1)
-                            {
-                                float absVal = System.Math.Abs(inverse[j, k]);
-                                if (absVal > maxPivot)
-                                {
-                                    maxPivot = absVal;
-                                    irow = j;
-                                    icol = k;
-                                }
-                            }
-                            else if (pivotIdx[k] > 0)
-                            {
-                                inverse = mat;
-                                return;
-                            }
-                        }
-                    }
-                }
-
-                ++(pivotIdx[icol]);
-
-                // Swap rows over so pivot is on diagonal
-                if (irow != icol)
-                {
-                    for (int k = 0; k < 4; ++k)
-                    {
-                        float f = inverse[irow, k];
-                        inverse[irow, k] = inverse[icol, k];
-                        inverse[icol, k] = f;
-                    }
-                }
-
-                rowIdx[i] = irow;
-                colIdx[i] = icol;
-
-                float pivot = inverse[icol, icol];
-                // check for singular matrix
-                if (pivot == 0.0f)
-                {
-                    throw new InvalidOperationException("Matrix is singular and cannot be inverted.");
-                }
-
-                // Scale row so it has a unit diagonal
-                float oneOverPivot = 1.0f / pivot;
-                inverse[icol, icol] = 1.0f;
-                for (int k = 0; k < 4; ++k)
-                    inverse[icol, k] *= oneOverPivot;
-
-                // Do elimination of non-diagonal elements
-                for (int j = 0; j < 4; ++j)
-                {
-                    // check this isn't on the diagonal
-                    if (icol != j)
-                    {
-                        float f = inverse[j, icol];
-                        inverse[j, icol] = 0.0f;
-                        for (int k = 0; k < 4; ++k)
-                            inverse[j, k] -= inverse[icol, k] * f;
-                    }
-                }
-            }
-
-            for (int j = 3; j >= 0; --j)
-            {
-                int ir = rowIdx[j];
-                int ic = colIdx[j];
-                for (int k = 0; k < 4; ++k)
-                {
-                    float f = inverse[k, ir];
-                    inverse[k, ir] = inverse[k, ic];
-                    inverse[k, ic] = f;
-                }
-            }
-
-        }
 
         public static void CreatePerspectiveFieldOfView(float fovY, float aspect, float near, float far, out Matrix result)
         {
@@ -477,13 +376,6 @@ namespace engenious
             result = m;
         }
 
-        public static Matrix Invert(Matrix mat)
-        {
-            Matrix result;
-            Invert(ref mat, out result);
-            return result;
-        }
-
         public static Matrix CreateOrthographic(float width, float height, float near, float far)
         {
             return CreateOrthographicOffCenter(0, width, height, 0, near, far);
@@ -508,31 +400,7 @@ namespace engenious
 
         public unsafe static Matrix CreateLookAt(Vector3 eyePos, Vector3 lookAt, Vector3 up)
         {
-            /*Vector3 forward = (lookAt - eyePos).Normalized();
-            up = up.Normalized();
-            Vector3 side = forward.Cross(up);
 
-
-            Vector3 newUp = side.Normalized().Cross(forward).Normalized();
-
-            Matrix m = new Matrix();
-            m.items[0] = side.X;
-            m.items[4] = side.Y;
-            m.items[8] = side.Z;
-            //------------------
-            m.items[1] = newUp.X;
-            m.items[5] = newUp.Y;
-            m.items[9] = newUp.Z;
-            //------------------
-            m.items[2] = -forward.X;
-            m.items[6] = -forward.Y;
-            m.items[10] = -forward.Z;
-
-            //------------------
-            m.items[12] = -eyePos.X;
-            m.items[13] = -eyePos.Y;
-            m.items[14] = -eyePos.Z;
-            m.items[15] = 1.0f;*/
 
             Vector3 forward = (lookAt - eyePos).Normalized();
             up = up.Normalized();
@@ -545,17 +413,17 @@ namespace engenious
             m.items[0] = side.X;
             m.items[4] = side.Y;
             m.items[8] = side.Z;
-            //------------------
+
             m.items[1] = newUp.X;
             m.items[5] = newUp.Y;
             m.items[9] = newUp.Z;
-            //------------------
+
             m.items[2] = -forward.X;
             m.items[6] = -forward.Y;
             m.items[10] = -forward.Z;
 
             m.items[3] = m.items[7] = m.items[11] = 0.0f;
-            //------------------
+
             m.items[12] = -side.Dot(eyePos);
             m.items[13] = -newUp.Dot(eyePos);
             m.items[14] = forward.Dot(eyePos);
@@ -576,9 +444,9 @@ namespace engenious
         public unsafe static Matrix CreateTranslation(float x, float y, float z)
         {
             Matrix res = Matrix.Identity;
-            res.items[12] = x;
-            res.items[13] = y;
-            res.items[14] = z;
+            res.M41 = x;
+            res.M42 = y;
+            res.M43 = z;
             //res = res.Transposed();
             return res;
         
@@ -609,6 +477,117 @@ namespace engenious
             ret.M12 = (float)Math.Sin(rot);
             ret.M21 = -ret.M12;//TODO: transpose?
             return ret;
+        }
+
+        public static Matrix Invert(Matrix m)
+        {
+            float det;
+            Matrix inv = new Matrix();
+            inv[0] = m[5] * m[10] * m[15] -
+            m[5] * m[11] * m[14] -
+            m[9] * m[6] * m[15] +
+            m[9] * m[7] * m[14] +
+            m[13] * m[6] * m[11] -
+            m[13] * m[7] * m[10];
+            inv[4] = -m[4] * m[10] * m[15] +
+            m[4] * m[11] * m[14] +
+            m[8] * m[6] * m[15] -
+            m[8] * m[7] * m[14] -
+            m[12] * m[6] * m[11] +
+            m[12] * m[7] * m[10];
+            inv[8] = m[4] * m[9] * m[15] -
+            m[4] * m[11] * m[13] -
+            m[8] * m[5] * m[15] +
+            m[8] * m[7] * m[13] +
+            m[12] * m[5] * m[11] -
+            m[12] * m[7] * m[9];
+            inv[12] = -m[4] * m[9] * m[14] +
+            m[4] * m[10] * m[13] +
+            m[8] * m[5] * m[14] -
+            m[8] * m[6] * m[13] -
+            m[12] * m[5] * m[10] +
+            m[12] * m[6] * m[9];
+            inv[1] = -m[1] * m[10] * m[15] +
+            m[1] * m[11] * m[14] +
+            m[9] * m[2] * m[15] -
+            m[9] * m[3] * m[14] -
+            m[13] * m[2] * m[11] +
+            m[13] * m[3] * m[10];
+            inv[5] = m[0] * m[10] * m[15] -
+            m[0] * m[11] * m[14] -
+            m[8] * m[2] * m[15] +
+            m[8] * m[3] * m[14] +
+            m[12] * m[2] * m[11] -
+            m[12] * m[3] * m[10];
+            inv[9] = -m[0] * m[9] * m[15] +
+            m[0] * m[11] * m[13] +
+            m[8] * m[1] * m[15] -
+            m[8] * m[3] * m[13] -
+            m[12] * m[1] * m[11] +
+            m[12] * m[3] * m[9];
+            inv[13] = m[0] * m[9] * m[14] -
+            m[0] * m[10] * m[13] -
+            m[8] * m[1] * m[14] +
+            m[8] * m[2] * m[13] +
+            m[12] * m[1] * m[10] -
+            m[12] * m[2] * m[9];
+            inv[2] = m[1] * m[6] * m[15] -
+            m[1] * m[7] * m[14] -
+            m[5] * m[2] * m[15] +
+            m[5] * m[3] * m[14] +
+            m[13] * m[2] * m[7] -
+            m[13] * m[3] * m[6];
+            inv[6] = -m[0] * m[6] * m[15] +
+            m[0] * m[7] * m[14] +
+            m[4] * m[2] * m[15] -
+            m[4] * m[3] * m[14] -
+            m[12] * m[2] * m[7] +
+            m[12] * m[3] * m[6];
+            inv[10] = m[0] * m[5] * m[15] -
+            m[0] * m[7] * m[13] -
+            m[4] * m[1] * m[15] +
+            m[4] * m[3] * m[13] +
+            m[12] * m[1] * m[7] -
+            m[12] * m[3] * m[5];
+            inv[14] = -m[0] * m[5] * m[14] +
+            m[0] * m[6] * m[13] +
+            m[4] * m[1] * m[14] -
+            m[4] * m[2] * m[13] -
+            m[12] * m[1] * m[6] +
+            m[12] * m[2] * m[5];
+            inv[3] = -m[1] * m[6] * m[11] +
+            m[1] * m[7] * m[10] +
+            m[5] * m[2] * m[11] -
+            m[5] * m[3] * m[10] -
+            m[9] * m[2] * m[7] +
+            m[9] * m[3] * m[6];
+            inv[7] = m[0] * m[6] * m[11] -
+            m[0] * m[7] * m[10] -
+            m[4] * m[2] * m[11] +
+            m[4] * m[3] * m[10] +
+            m[8] * m[2] * m[7] -
+            m[8] * m[3] * m[6];
+            inv[11] = -m[0] * m[5] * m[11] +
+            m[0] * m[7] * m[9] +
+            m[4] * m[1] * m[11] -
+            m[4] * m[3] * m[9] -
+            m[8] * m[1] * m[7] +
+            m[8] * m[3] * m[5];
+            inv[15] = m[0] * m[5] * m[10] -
+            m[0] * m[6] * m[9] -
+            m[4] * m[1] * m[10] +
+            m[4] * m[2] * m[9] +
+            m[8] * m[1] * m[6] -
+            m[8] * m[2] * m[5];
+            det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
+            if (det == 0)
+                throw new Exception("Not invertable");
+
+            det = 1.0f / det;
+
+            for (int i = 0; i < 16; i++)
+                inv[i] = inv[i] * det;
+            return inv;
         }
 
         public static readonly Matrix Identity = new Matrix(Vector4.UnitX, Vector4.UnitY, Vector4.UnitZ, Vector4.UnitW);

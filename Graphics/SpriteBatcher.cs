@@ -145,7 +145,7 @@ namespace engenious.Graphics
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-                graphicsDevice.DrawIndexedPrimitives(PrimitiveType.Triangles, 0, 0, 0, 0, batchCount * 2);
+                graphicsDevice.DrawIndexedPrimitives(PrimitiveType.Triangles, 0, 0, batchCount * 4, 0, batchCount * 2);
             }
 
             graphicsDevice.IndexBuffer = null;

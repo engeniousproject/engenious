@@ -63,6 +63,11 @@ namespace engenious
             return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();
         }
 
+        public override string ToString()
+        {
+            return string.Format("[{0}, {1}, {2}]", X.ToString(System.Globalization.NumberFormatInfo.InvariantInfo), Y.ToString(System.Globalization.NumberFormatInfo.InvariantInfo), Z.ToString(System.Globalization.NumberFormatInfo.InvariantInfo));
+        }
+
         #region IEquatable implementation
 
         public override bool Equals(object obj)
@@ -112,6 +117,7 @@ namespace engenious
             value.Z = -value.Z;
             return value;
         }
+
 
         public static Vector3 operator *(Vector3 value, float scalar)
         {
@@ -209,10 +215,12 @@ namespace engenious
 
         public static Vector3 Transform(Vector3 position, Matrix matrix)
         {
-
-            return new Vector3(position.X * matrix.M11 + position.Y * matrix.M12 + position.Z * matrix.M13 + matrix.M14,
+            /*return new Vector3(position.X * matrix.M11 + position.Y * matrix.M12 + position.Z * matrix.M13 + matrix.M14,
                 position.X * matrix.M21 + position.Y * matrix.M22 + position.Z * matrix.M23 + matrix.M24,
-                position.X * matrix.M31 + position.Y * matrix.M32 + position.Z * matrix.M33 + matrix.M34);
+                position.X * matrix.M31 + position.Y * matrix.M32 + position.Z * matrix.M33 + matrix.M34);*/
+            return new Vector3(position.X * matrix.M11 + position.Y * matrix.M21 + position.Z * matrix.M31 + matrix.M41,
+                position.X * matrix.M12 + position.Y * matrix.M22 + position.Z * matrix.M32 + matrix.M42,
+                position.X * matrix.M13 + position.Y * matrix.M23 + position.Z * matrix.M33 + matrix.M43);
         }
 
         public static readonly Vector3 One = new Vector3(1, 1, 1);

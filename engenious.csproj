@@ -12,7 +12,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>..\..\octoawesome\OctoAwesome\bin\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -20,14 +20,14 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CustomCommands>
       <CustomCommands>
-        <Command type="Execute" command="../../octoawesome/OctoAwesome/bin/Debug/OctoClient.exe" workingdir="../../octoawesome/OctoAwesome/bin/Debug/" externalConsole="True" />
+        <Command type="Execute" command="../../octoawesome/OctoAwesome/bin/Debug/OctoClient.exe" workingdir="../../octoawesome/OctoAwesome/bin/Debug/" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>..\..\octoawesome\OctoAwesome\bin\Debug</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -39,6 +39,7 @@
       <HintPath>..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="mscorlib" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="Input\GamePad\GamePadTriggers.cs" />
     <Compile Include="Input\GamePad\GamePadAxes.cs" />
     <Compile Include="Helper\ThreadingHelper.cs" />
+    <Compile Include="Helper\GLSynchronizationContext.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -12,10 +12,6 @@ namespace engenious.Graphics
         static BlendState()
         {
             AlphaBlend = new BlendState();
-            /*AlphaBlend.ColorSourceBlend = BlendingFactorSrc.One;
-            AlphaBlend.AlphaSourceBlend = BlendingFactorSrc.One;
-            AlphaBlend.ColorDestinationBlend = BlendingFactorDest.SrcColor;
-            AlphaBlend.AlphaDestinationBlend = BlendingFactorDest.OneMinusSrcAlpha;*/
 
             Additive = new BlendState();
             Additive.ColorSourceBlend = BlendingFactorSrc.One;

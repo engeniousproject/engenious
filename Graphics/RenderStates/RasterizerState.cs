@@ -11,16 +11,16 @@ namespace engenious.Graphics
         static RasterizerState()
         {
             CullNone = new RasterizerState();
-            CullNone.CullMode = CullFaceMode.FrontAndBack;
+            CullNone.CullMode = CullFaceMode.Back;
             CullNone.FillMode = PolygonMode.Fill;
 
             CullClockwise = new RasterizerState();
             CullClockwise.CullMode = CullFaceMode.Back;
             CullClockwise.FillMode = PolygonMode.Fill;
 
-            CullClockwise = new RasterizerState();
-            CullClockwise.CullMode = CullFaceMode.Front;
-            CullClockwise.FillMode = PolygonMode.Fill;
+            CullCounterClockwise = new RasterizerState();
+            CullCounterClockwise.CullMode = CullFaceMode.Front;
+            CullCounterClockwise.FillMode = PolygonMode.Fill;
 
 
         }

@@ -38,7 +38,13 @@ namespace engenious.Graphics
         {
             batcher = new SpriteBatcher(graphicsDevice);
 
-            effect = new BasicEffect(graphicsDevice);
+            var effect = new BasicEffect(graphicsDevice);
+            effect.TextureEnabled = true;
+            effect.VertexColorEnabled = true;
+            effect.Parameters["View"].SetValue(Matrix.Identity);
+            effect.Parameters["Proj"].SetValue(Matrix.Identity);
+
+            this.effect = effect;
         }
 
 
@@ -57,7 +63,7 @@ namespace engenious.Graphics
                 this.matrix = transformMatrix.Value;
             else
                 this.matrix = Matrix.Identity;
-            worldViewProj = this.effect.Parameters["WorldViewProj"];
+            worldViewProj = this.effect.Parameters["World"];
             batcher.Begin(sortMode);
         }
 
@@ -169,7 +175,6 @@ namespace engenious.Graphics
 
         public void End()
         {
-
             GraphicsDevice.BlendState = blendState;
             GraphicsDevice.RasterizerState = rasterizerState;
             GraphicsDevice.DepthStencilState = depthStencilState;
@@ -179,6 +184,8 @@ namespace engenious.Graphics
 
             worldViewProj.SetValue(projection * matrix);
             batcher.End(effect);
+
+
         }
 
         public override void Dispose()

@@ -17,10 +17,57 @@ namespace engenious
         public event EventHandler Exiting;
 
         private GameTime gameTime;
+        internal int major, minor;
+        internal OpenTK.Graphics.GraphicsContextFlags contextFlags;
+        private OpenTK.Graphics.IGraphicsContext Context;
+
+        private void ConstructContext()
+        {
+            OpenTK.Graphics.GraphicsMode mode = OpenTK.Graphics.GraphicsMode.Default;
+            OpenTK.Platform.IWindowInfo windowInfo = Window.WindowInfo;
+            OpenTK.Graphics.GraphicsContextFlags flags = OpenTK.Graphics.GraphicsContextFlags.Default;
+            int major = 1;
+            int minor = 0;
+            if (this.Context == null || this.Context.IsDisposed)
+            {
+                OpenTK.Graphics.ColorFormat colorFormat = new OpenTK.Graphics.ColorFormat(8, 8, 8, 8);
+                int depth = 24;//TODO: wth?
+                int stencil = 0;
+                int samples = 0;
+
+                mode = new OpenTK.Graphics.GraphicsMode(colorFormat, depth, stencil, samples);
+                try
+                {
+                    this.Context = new OpenTK.Graphics.GraphicsContext(mode, windowInfo, major, minor, flags);
+                }
+                catch (Exception ex)
+                {
+                    major = 1;
+                    minor = 0;
+                    flags = OpenTK.Graphics.GraphicsContextFlags.Default;
+                    this.Context = new OpenTK.Graphics.GraphicsContext(mode, windowInfo, major, minor, flags);
+                }
+            }
+            this.Context.MakeCurrent(windowInfo);
+            (this.Context as OpenTK.Graphics.IGraphicsContextInternal).LoadAll();
+            ThreadingHelper.Initialize(windowInfo, major, minor, contextFlags);
+            this.Context.MakeCurrent(windowInfo);
+
+        }
 
         public Game()
         {
+
+            OpenTK.Graphics.GraphicsContext.ShareContexts = true;
             Window = new GameWindow(1280, 720);
+
+            ConstructContext();
+
+            GraphicsDevice = new GraphicsDevice(Context);
+            GraphicsDevice.Viewport = new Viewport(Window.ClientRectangle);
+            Window.Context.MakeCurrent(Window.WindowInfo);
+            Window.Context.LoadAll();
+            GL.Viewport(Window.ClientRectangle);
             //Window.Location = new System.Drawing.Point();
             Mouse = new MouseDevice(Window.Mouse);
             engenious.Input.Mouse.UpdateWindow(Window);
@@ -31,6 +78,7 @@ namespace engenious
             };
             
             gameTime = new GameTime(new TimeSpan(), new TimeSpan());
+
             Window.UpdateFrame += delegate(object sender, FrameEventArgs e)
             {
                 Components.Sort();
@@ -41,12 +89,11 @@ namespace engenious
             };
             Window.RenderFrame += delegate(object sender, FrameEventArgs e)
             {
-
+                ThreadingHelper.RunUIThread();
                 GraphicsDevice.Clear(Color.CornflowerBlue);
                 Draw(gameTime);
 
                 GraphicsDevice.Present();
-                //TODO:Draw();
             };
             Window.Resize += delegate(object sender, EventArgs e)
             {
@@ -68,12 +115,11 @@ namespace engenious
             {
                 KeyPress?.Invoke(this, e.KeyChar);
             };
-            
+            //Window.Context.MakeCurrent(Window.WindowInfo);
 
-            GraphicsDevice = new GraphicsDevice(Window.Context);
             Content = new engenious.Content.ContentManager(GraphicsDevice);
             Components = new GameComponentCollection();
-            ThreadingHelper.Initialize(Window.WindowInfo);
+            
 
 
         }
@@ -88,6 +134,13 @@ namespace engenious
 
         protected virtual void Initialize()
         {
+            Window.Visible = true;
+            GL.Enable(EnableCap.Blend);
+            GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            GraphicsDevice.DepthStencilState = new DepthStencilState();
+            GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            GraphicsDevice.SamplerStates = new SamplerStateCollection(GraphicsDevice);
+
             foreach (var component in Components)
             {
                 component.Initialize();
@@ -139,6 +192,11 @@ namespace engenious
         public void Run()
         {
             Window.Run();
+        }
+
+        public void Run(double updatesPerSec, double framesPerSec)
+        {
+            Window.Run(updatesPerSec, framesPerSec);
         }
 
         public GameComponentCollection Components{ get; private set; }

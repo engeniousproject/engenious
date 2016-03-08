@@ -20,10 +20,18 @@ namespace engenious.Input
         {
             Mouse.window = window;
         }
-
-        public static unsafe MouseState GetState(int index = 0)
+        public static unsafe MouseState GetState(int index)
         {
             OpenTK.Input.MouseState state = OpenTK.Input.Mouse.GetState(index);
+            MouseState actual = *(MouseState*)(&state);
+            actual.X = window.Mouse.X;
+            actual.Y = window.Mouse.Y;
+            return actual;
+
+        }
+        public static unsafe MouseState GetState()
+        {
+            OpenTK.Input.MouseState state = OpenTK.Input.Mouse.GetState();
             MouseState actual = *(MouseState*)(&state);
             actual.X = window.Mouse.X;
             actual.Y = window.Mouse.Y;

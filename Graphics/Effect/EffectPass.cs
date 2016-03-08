@@ -11,33 +11,42 @@ namespace engenious.Graphics
         internal EffectPass(string name)//TODO: content loading
         {
             this.Name = name;
-            program = GL.CreateProgram();
+            ThreadingHelper.BlockOnUIThread(() =>
+                {
+                    program = GL.CreateProgram();
 
-            BindAttribute(VertexElementUsage.Color, "color");//TODO: custom naming
-            BindAttribute(VertexElementUsage.Position, "position");
-            BindAttribute(VertexElementUsage.Normal, "normal");
-            BindAttribute(VertexElementUsage.TextureCoordinate, "textureCoordinate");
+                    /*BindAttribute(VertexElementUsage.Color, "color");//TODO: custom naming
+                    BindAttribute(VertexElementUsage.Position, "position");
+                    BindAttribute(VertexElementUsage.Normal, "normal");
+                    BindAttribute(VertexElementUsage.TextureCoordinate, "textureCoordinate");*/
+                });
 
         }
 
         internal void BindAttribute(VertexElementUsage usage, string name)
         {
-            GL.BindAttribLocation(program, (int)usage, name);
+            ThreadingHelper.BlockOnUIThread(() =>
+                {
+                    GL.BindAttribLocation(program, (int)usage, name);
+                });
         }
 
         internal void CacheParameters()
         {
             int total = -1;
-            GL.GetProgram(program, GetProgramParameterName.ActiveUniforms, out total); 
-            for (int i = 0; i < total; ++i)
-            {
-                int size;
-                ActiveUniformType type;
-                string name = GL.GetActiveUniform(program, i, out size, out type);
-                int location = GetUniformLocation(name);
+            ThreadingHelper.BlockOnUIThread(() =>
+                {
+                    GL.GetProgram(program, GetProgramParameterName.ActiveUniforms, out total); 
+                    for (int i = 0; i < total; ++i)
+                    {
+                        int size;
+                        ActiveUniformType type;
+                        string name = GL.GetActiveUniform(program, i, out size, out type);
+                        int location = GetUniformLocation(name);
 
-                Parameters.Add(new EffectPassParameter(this, name, location));
-            }
+                        Parameters.Add(new EffectPassParameter(this, name, location));
+                    }
+                });
         }
 
         internal int GetUniformLocation(string name)
@@ -49,36 +58,48 @@ namespace engenious.Graphics
 
         internal void AttachShaders(IEnumerable<Shader> shaders)
         {
-            foreach (Shader shader in shaders)
-            {
-                AttachShader(shader);
-            }
+            ThreadingHelper.BlockOnUIThread(() =>
+                {
+                    foreach (Shader shader in shaders)
+                    {
+                        AttachShader(shader);
+                    }
+                });
         }
 
         internal void AttachShader(Shader shader)
         {
-            GL.AttachShader(program, shader.shader);
+            ThreadingHelper.BlockOnUIThread(() =>
+                {
+                    GL.AttachShader(program, shader.shader);
+                });
         }
 
         internal void Link()
         {
             if (attached == null)
                 throw new Exception("Already linked");
-            GL.LinkProgram(program);
-            int linked;
-            GL.GetProgram(program, GetProgramParameterName.LinkStatus, out linked);
-            if (linked != 1)
-            {
-                string error = GL.GetProgramInfoLog(program);
-                throw new Exception(error);
-            }
-            foreach (Shader shader in attached)
-            {
-                GL.DetachShader(program, shader.shader);
-            }
+            ThreadingHelper.BlockOnUIThread(() =>
+                {
+                    GL.LinkProgram(program);
+                    int linked;
+                    GL.GetProgram(program, GetProgramParameterName.LinkStatus, out linked);
+                    if (linked != 1)
+                    {
+                        string error = GL.GetProgramInfoLog(program);
+                        throw new Exception(error);
+                    }
+                    foreach (Shader shader in attached)
+                    {
+                        GL.DetachShader(program, shader.shader);
+                    }
+                });
             attached.Clear();
             attached = null;
-            Parameters = new EffectPassParameterCollection(this);
+            ThreadingHelper.BlockOnUIThread(() =>
+                {
+                    Parameters = new EffectPassParameterCollection(this);
+                });
         }
 
         internal EffectPassParameterCollection Parameters{ get; private set; }
@@ -91,12 +112,19 @@ namespace engenious.Graphics
 
         public void Apply()
         {
-            GL.UseProgram(program);
+            ThreadingHelper.BlockOnUIThread(() =>
+                {
+                    GL.UseProgram(program);
+                });
+            
         }
 
         public void Dispose()
         {
-            GL.DeleteProgram(program);
+            ThreadingHelper.BlockOnUIThread(() =>
+                {
+                    GL.DeleteProgram(program);
+                });
         }
 
         public BlendState BlendState{ get; internal set; }

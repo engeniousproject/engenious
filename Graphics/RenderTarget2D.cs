@@ -6,6 +6,7 @@ namespace engenious.Graphics
     public class RenderTarget2D : Texture2D
     {
         int fbo;
+        int depth;
 
         public RenderTarget2D(GraphicsDevice graphicsDevice, int width, int height, PixelInternalFormat surfaceFormat)
             : base(graphicsDevice, width, height, surfaceFormat, PixelFormat.Rgba)
@@ -13,6 +14,12 @@ namespace engenious.Graphics
             ThreadingHelper.BlockOnUIThread(() =>
                 {
                     fbo = GL.GenFramebuffer();
+
+                    GL.GenRenderbuffers(1, out depth);
+
+                    GL.BindRenderbuffer(RenderbufferTarget.RenderbufferExt, depth);
+                    GL.RenderbufferStorage(RenderbufferTarget.RenderbufferExt, (RenderbufferStorage)All.DepthComponent32, width, height);
+
                     GL.BindFramebuffer(FramebufferTarget.Framebuffer, fbo);
                     //GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Rgba8, width, height);
                     GL.FramebufferParameter(FramebufferTarget.Framebuffer, FramebufferDefaultParameter.FramebufferDefaultWidth, width);
@@ -20,8 +27,8 @@ namespace engenious.Graphics
 
                     GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, texture, 0);
 
-                    GL.DrawBuffers(1, new DrawBuffersEnum[]{ DrawBuffersEnum.ColorAttachment0 });
-                    //GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, TextureTarget.Texture2D, texture, 0);
+                    GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depth);
+                    //GL.DrawBuffers(1, new DrawBuffersEnum[]{ DrawBuffersEnum.ColorAttachment0,DrawBuffersEnum.});
                     ErrorHandling();
                 });
         }

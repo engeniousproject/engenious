@@ -42,7 +42,92 @@ namespace engenious
 
         public float? Intersects(Ray ray)
         {
-            float txmin = (Min.X - ray.Position.X) / ray.Direction.X;
+            const float Epsilon = 1e-6f;
+
+            float? tMin = null, tMax = null;
+
+            if (Math.Abs(ray.Direction.X) < Epsilon)
+            {
+                if (ray.Position.X < Min.X || ray.Position.X > Max.X)
+                    return null;
+            }
+            else
+            {
+                tMin = (Min.X - ray.Position.X) / ray.Direction.X;
+                tMax = (Max.X - ray.Position.X) / ray.Direction.X;
+
+                if (tMin > tMax)
+                {
+                    var temp = tMin;
+                    tMin = tMax;
+                    tMax = temp;
+                }
+            }
+
+            if (Math.Abs(ray.Direction.Y) < Epsilon)
+            {
+                if (ray.Position.Y < Min.Y || ray.Position.Y > Max.Y)
+                    return null;
+            }
+            else
+            {
+                var tMinY = (Min.Y - ray.Position.Y) / ray.Direction.Y;
+                var tMaxY = (Max.Y - ray.Position.Y) / ray.Direction.Y;
+
+                if (tMinY > tMaxY)
+                {
+                    var temp = tMinY;
+                    tMinY = tMaxY;
+                    tMaxY = temp;
+                }
+
+                if ((tMin.HasValue && tMin > tMaxY) || (tMax.HasValue && tMinY > tMax))
+                    return null;
+
+                if (!tMin.HasValue || tMinY > tMin)
+                    tMin = tMinY;
+                if (!tMax.HasValue || tMaxY < tMax)
+                    tMax = tMaxY;
+            }
+
+            if (Math.Abs(ray.Direction.Z) < Epsilon)
+            {
+                if (ray.Position.Z < Min.Z || ray.Position.Z > Max.Z)
+                    return null;
+            }
+            else
+            {
+                var tMinZ = (Min.Z - ray.Position.Z) / ray.Direction.Z;
+                var tMaxZ = (Max.Z - ray.Position.Z) / ray.Direction.Z;
+
+                if (tMinZ > tMaxZ)
+                {
+                    var temp = tMinZ;
+                    tMinZ = tMaxZ;
+                    tMaxZ = temp;
+                }
+
+                if ((tMin.HasValue && tMin > tMaxZ) || (tMax.HasValue && tMinZ > tMax))
+                    return null;
+
+                if (!tMin.HasValue || tMinZ > tMin)
+                    tMin = tMinZ;
+                if (!tMax.HasValue || tMaxZ < tMax)
+                    tMax = tMaxZ;
+            }
+
+            // having a positive tMin and a negative tMax means the ray is inside the box
+            // we expect the intesection distance to be 0 in that case
+            if ((tMin.HasValue && tMin < 0) && tMax > 0)
+                return 0;
+
+            // a negative tMin means that the intersection point is behind the ray's origin
+            // we discard these as not hitting the AABB
+            if (tMin < 0)
+                return null;
+
+            return tMin;
+            /*float txmin = (Min.X - ray.Position.X) / ray.Direction.X;
             float txmax = (Max.X - ray.Position.X) / ray.Direction.X;
 
             if (txmin > txmax)
@@ -78,7 +163,7 @@ namespace engenious
             if (tzmax < txmax)
                 txmax = tzmax;
 
-            return (float)Math.Sqrt(txmin * txmin + tymin * tymin + tzmin * tzmin); //TODO: verify?
+            return (float)Math.Sqrt(txmin * txmin + tymin * tymin + tzmin * tzmin);*/ //TODO: verify?
         }
 
         public Vector3[] GetCorners()

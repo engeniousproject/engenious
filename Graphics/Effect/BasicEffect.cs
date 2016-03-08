@@ -15,10 +15,12 @@ in vec2 textureCoordinate;
 out vec4 psColor;
 out vec2 psTexCoord;
 
-uniform mat4 WorldViewProj;
+uniform mat4 World;
+uniform mat4 View;
+uniform mat4 Proj;
 void main(void)
 {
-   gl_Position = WorldViewProj*vec4(position, 1.0);
+   gl_Position = Proj*View*World*vec4(position, 1.0);
    psColor = color;
    psTexCoord = textureCoordinate;
 }
@@ -32,7 +34,7 @@ uniform sampler2D text;
 uniform int textEnabled,colorEnabled;
 void main(void)
 {
-   gl_FragColor = vec4(1.0);
+   gl_FragColor = vec4(1.0,1.0,1.0,1.0);
    if (textEnabled == 1)
      gl_FragColor = gl_FragColor * texture2D(text,psTexCoord);
    if (colorEnabled == 1)
@@ -61,36 +63,70 @@ void main(void)
             pass.BindAttribute(VertexElementUsage.Position, "position");
             pass.Link();
 
+            
+
             technique.Passes.Add(pass);
             Techniques.Add(technique);
             CurrentTechnique = technique;
 
-            
 
             Initialize();
 
-            TextureEnabled = true;
-            VertexColorEnabled = true;
+            World = View = Projection = Matrix.Identity;
+
+
         }
 
         #region IEffectMatrices implementation
 
+        private Matrix world, view, projection;
+
         public Matrix Projection
         {
-            get;
-            set;
+            get
+            {
+                return projection;
+            }
+            set
+            {
+                if (projection != value)
+                {
+                    projection = value;
+                    Parameters["Proj"].SetValue(value);
+                }
+            }
         }
 
         public Matrix View
         {
-            get;
-            set;
+            get
+            {
+                return view;
+            }
+            set
+            {
+                if (view != value)
+                {
+                    view = value;
+                    Parameters["View"].SetValue(value);
+                }
+            }
         }
 
         public Matrix World
         {
-            get;
-            set;
+            get
+            {
+                return world;
+            }
+            set
+            {
+                if (world != value)
+                {
+                    world = value;
+                    Parameters["World"].SetValue(value);
+                }
+            }
         }
 
         public Texture Texture

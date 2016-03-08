@@ -22,8 +22,6 @@ namespace engenious.Graphics
         {
             shader = GL.CreateShader((OpenTK.Graphics.OpenGL4.ShaderType)type);
             GL.ShaderSource(shader, source);
-
-            System.Diagnostics.Debug.WriteLine(source + "\n\n");
         }
 
         internal void Compile()

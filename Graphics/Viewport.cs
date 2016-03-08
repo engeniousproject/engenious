@@ -58,28 +58,30 @@ namespace engenious.Graphics
 
         public Vector3 Unproject(Vector3 source, Matrix matrix)
         {
+            matrix = Matrix.Invert(matrix);
+            source.X = (((source.X - this.X) / ((float)this.Width)) * 2f) - 1f;
+            source.Y = -((((source.Y - this.Y) / ((float)this.Height)) * 2f) - 1f);
+            source.Z = (source.Z - this.MinDepth) / (this.MaxDepth - this.MinDepth);
             Vector3 vector = Vector3.Transform(source, matrix);
             float a = (((source.X * matrix.M14) + (source.Y * matrix.M24)) + (source.Z * matrix.M34)) + matrix.M44;
-
+            //float a = (((source.X * matrix.M41) + (source.Y * matrix.M42)) + (source.Z * matrix.M43)) + matrix.M44;
             vector.X = vector.X / a;
             vector.Y = vector.Y / a;
             vector.Z = vector.Z / a;
 
-            vector.X = (((vector.X + 1f) * 0.5f) * Width) + this.X;
-            vector.Y = (((-vector.Y + 1f) * 0.5f) * Height) + this.Y;
-            vector.Z = (vector.Z * (MaxDepth - MinDepth)) + MinDepth;
             return vector;
         }
 
         public Vector3 Unproject(Vector3 source, Matrix projection, Matrix view, Matrix world)
         {
-            return Unproject(source, world * view * projection);
+            return Unproject(source, projection * view * world);
         }
 
         public Vector3 Project(Vector3 source, Matrix matrix)
         {
+
             Vector3 vector = Vector3.Transform(source, matrix);
-            float a = (((source.X * matrix.M14) + (source.Y * matrix.M24)) + (source.Z * matrix.M34)) + matrix.M44;
+            float a = (((source.X * matrix.M41) + (source.Y * matrix.M42)) + (source.Z * matrix.M43)) + matrix.M44;
 
             vector.X = vector.X / a;
             vector.Y = vector.Y / a;

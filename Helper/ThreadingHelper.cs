@@ -7,30 +7,43 @@ namespace engenious
 {
     internal static class ThreadingHelper
     {
-        private static int uiThread;
+        private static GLSynchronizationContext sync;
+        private static int uiThreadId;
+        private static System.Threading.Thread uiThread;
         private static IGraphicsContext context;
         private static OpenTK.Platform.IWindowInfo windowInfo;
 
         static ThreadingHelper()
         {
-            uiThread = System.Threading.Thread.CurrentThread.ManagedThreadId;
+            uiThread = System.Threading.Thread.CurrentThread;
+            uiThreadId = uiThread.ManagedThreadId;
+            System.Threading.SynchronizationContext.SetSynchronizationContext(sync = new GLSynchronizationContext());
+            //System.Threading.Thread.CurrentThread.Syn
         }
 
-        public static void Initialize(OpenTK.Platform.IWindowInfo windowInfo)
+        public static void Initialize(OpenTK.Platform.IWindowInfo windowInfo, int major, int minor, GraphicsContextFlags contextFlags)
         {
-            ThreadingHelper.context = new GraphicsContext(GraphicsMode.Default, windowInfo);
+            //GraphicsContextFlags flags = GraphicsContextFlags.
+            ThreadingHelper.context = new GraphicsContext(GraphicsMode.Default, windowInfo, major, minor, contextFlags);
             ThreadingHelper.windowInfo = windowInfo;
+            //ThreadingHelper.context.LoadAll();
+
+        }
+
+        public static void RunUIThread()
+        {
+            sync.RunOnCurrentThread();
         }
 
         public static bool IsOnUIThread()
         {
-            return uiThread == System.Threading.Thread.CurrentThread.ManagedThreadId;
+            return uiThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId;
         }
 
-        internal static void BlockOnUIThread(Action action)
+        internal static void BlockOnUIThread(Action action, bool needsUI = false, bool isCheck = false)
         {
-            if (action == null)
-                throw new ArgumentNullException("action");
+            /*if (action == null)
+                throw new ArgumentNullException("action");*/
 
             // If we are already on the UI thread, just call the action and be done with it
             if (IsOnUIThread())
@@ -39,18 +52,36 @@ namespace engenious
                 return;
             }
 
-
             lock (context)
             {
-                // Make the context current on this thread
-                context.MakeCurrent(windowInfo);
-                // Execute the action
+               
+                if (needsUI)
+                {
+                    sync.Post(new System.Threading.SendOrPostCallback(delegate(object state)
+                            {
+                                action();
+                            }), null);
+                    return;
+                }
+                try
+                {
+                    context.MakeCurrent(windowInfo);
+                }
+                catch (Exception ex)
+                {
+                }
+
                 action();
-                // Must flush the GL calls so the texture is ready for the main context to use
+
                 GL.Flush();
-                //TODO:GraphicsExtensions.CheckGLError();
-                // Must make the context not current on this thread or the next thread will get error 170 from the MakeCurrent call
-                context.MakeCurrent(null);
+
+                try
+                {
+                    context.MakeCurrent(null);
+                }
+                catch (Exception ex)
+                {
+                }
             }
 
         }
