@@ -15,6 +15,7 @@ namespace engenious
         public event EventHandler Activated;
         public event EventHandler Deactivated;
         public event EventHandler Exiting;
+        public event EventHandler Resized;
 
         private GameTime gameTime;
         internal int major, minor;

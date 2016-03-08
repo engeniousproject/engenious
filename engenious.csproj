@@ -122,7 +122,6 @@
     <Compile Include="Content\Serialization\Readers\RenderStateReaders.cs" />
     <Compile Include="Content\Serialization\Readers\EffectTypeReader.cs" />
     <Compile Include="Base\ColorByte.cs" />
-    <Compile Include="Input\Key.cs" />
     <Compile Include="Input\ButtonState.cs" />
     <Compile Include="Input\Buttons.cs" />
     <Compile Include="Input\KeyboardState.cs" />
@@ -156,6 +155,7 @@
     <Compile Include="Input\GamePad\GamePadAxes.cs" />
     <Compile Include="Helper\ThreadingHelper.cs" />
     <Compile Include="Helper\GLSynchronizationContext.cs" />
+    <Compile Include="Input\Keys.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

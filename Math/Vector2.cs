@@ -211,6 +211,15 @@ namespace engenious
             throw new NotImplementedException();
         }
 
+        public static void Transform(Vector2[] positions, ref Matrix matrix, Vector2[] output)
+        {
+            int index = 0;
+            foreach (var position in positions)
+            {
+                output[index++] = new Vector2(position.X * matrix.M11 + position.Y * matrix.M12 + matrix.M14, position.X * matrix.M21 + position.Y * matrix.M22 + matrix.M24);
+            }
+        }
+
         public static readonly Vector2 UnitX = new Vector2(1, 0);
         public static readonly Vector2 UnitY = new Vector2(0, 1);
         public static readonly Vector2 One = new Vector2(1, 1);

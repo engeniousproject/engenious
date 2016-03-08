@@ -31,7 +31,7 @@ namespace engenious.Input
     /// <summary>
     /// The available keyboard keys.
     /// </summary>
-    public enum Key : int
+    public enum Keys : int
     {
         /// <summary>A key outside the known keys.</summary>
         Unknown = 0,
@@ -41,34 +41,42 @@ namespace engenious.Input
         ShiftLeft,
         /// <summary>The left shift key (equivalent to ShiftLeft).</summary>
         LShift = ShiftLeft,
+        LeftShift = ShiftLeft,
         /// <summary>The right shift key.</summary>
         ShiftRight,
         /// <summary>The right shift key (equivalent to ShiftRight).</summary>
         RShift = ShiftRight,
+        RightShift = ShiftRight,
         /// <summary>The left control key.</summary>
         ControlLeft,
         /// <summary>The left control key (equivalent to ControlLeft).</summary>
         LControl = ControlLeft,
+        LeftControl = ControlLeft,
         /// <summary>The right control key.</summary>
         ControlRight,
         /// <summary>The right control key (equivalent to ControlRight).</summary>
         RControl = ControlRight,
+        RightControl = ControlRight,
         /// <summary>The left alt key.</summary>
         AltLeft,
         /// <summary>The left alt key (equivalent to AltLeft.</summary>
         LAlt = AltLeft,
+        LeftAlt = AltLeft,
         /// <summary>The right alt key.</summary>
         AltRight,
         /// <summary>The right alt key (equivalent to AltRight).</summary>
         RAlt = AltRight,
+        RightAlt = AltRight,
         /// <summary>The left win key.</summary>
         WinLeft,
         /// <summary>The left win key (equivalent to WinLeft).</summary>
         LWin = WinLeft,
+        LeftWin = WinLeft,
         /// <summary>The right win key.</summary>
         WinRight,
         /// <summary>The right win key (equivalent to WinRight).</summary>
         RWin = WinRight,
+        RightWin = WinRight,
         /// <summary>The menu key.</summary>
         Menu,
 
@@ -343,6 +351,25 @@ namespace engenious.Input
         /// <summary>The number 9 key.</summary>
         Number9,
 
+        D0 = Number0,
+        /// <summary>The number 1 key.</summary>
+        D1 = Number1,
+        /// <summary>The number 2 key.</summary>
+        D2 = Number2,
+        /// <summary>The number 3 key.</summary>
+        D3 = Number3,
+        /// <summary>The number 4 key.</summary>
+        D4 = Number4,
+        /// <summary>The number 5 key.</summary>
+        D5 = Number5,
+        /// <summary>The number 6 key.</summary>
+        D6 = Number6,
+        /// <summary>The number 7 key.</summary>
+        D7 = Number7,
+        /// <summary>The number 8 key.</summary>
+        D8 = Number8,
+        /// <summary>The number 9 key.</summary>
+        D9 = Number9,
         // Symbols
         /// <summary>The tilde key.</summary>
         Tilde,

@@ -35,10 +35,10 @@ namespace engenious.Input
 
         // Allocate enough ints to store all keyboard keys
         const int IntSize = sizeof(int) * 8;
-        const int NumInts = ((int)Key.LastKey + IntSize - 1) / IntSize;
+        const int NumInts = ((int)Keys.LastKey + IntSize - 1) / IntSize;
         // The following line triggers bogus CS0214 in gmcs 2.0.1, sigh...
         //TODO: fix
-        unsafe fixed int Keys[((int)Key.LastKey + sizeof(int) - 1) / sizeof(int)];
+        unsafe fixed int Key[((int)Keys.LastKey + sizeof(int) - 1) / sizeof(int)];
 
         bool is_connected;
 
@@ -52,7 +52,7 @@ namespace engenious.Input
         /// </summary>
         /// <param name="key">The <see cref="OpenTK.Input.Key"/> to check.</param>
         /// <returns>True if key is pressed; false otherwise.</returns>
-        public bool this [Key key]
+        public bool this [Keys key]
         {
             get { return IsKeyDown(key); }
             internal set { SetKeyState(key, value); }
@@ -66,14 +66,14 @@ namespace engenious.Input
         /// <returns>True if code is pressed; false otherwise.</returns>
         public bool this [short code]
         {
-            get { return IsKeyDown((Key)code); }
+            get { return IsKeyDown((Keys)code); }
         }
 
         /// <summary>
         /// Gets a <see cref="System.Boolean"/> indicating whether this key is down.
         /// </summary>
         /// <param name="key">The <see cref="OpenTK.Input.Key"/> to check.</param>
-        public bool IsKeyDown(Key key)
+        public bool IsKeyDown(Keys key)
         {
             return ReadBit((int)key);
         }
@@ -84,14 +84,14 @@ namespace engenious.Input
         /// <param name="code">The scan code to check.</param>
         public bool IsKeyDown(short code)
         {
-            return code >= 0 && code < (short)Key.LastKey && ReadBit(code);
+            return code >= 0 && code < (short)Keys.LastKey && ReadBit(code);
         }
 
         /// <summary>
         /// Gets a <see cref="System.Boolean"/> indicating whether this key is up.
         /// </summary>
         /// <param name="key">The <see cref="OpenTK.Input.Key"/> to check.</param>
-        public bool IsKeyUp(Key key)
+        public bool IsKeyUp(Keys key)
         {
             return !ReadBit((int)key);
         }
@@ -116,7 +116,7 @@ namespace engenious.Input
                 // If any bit is set then a key is down.
                 unsafe
                 {
-                    fixed (int* k = Keys)
+                    fixed (int* k = Key)
                     {
                         for (int i = 0; i < NumInts; ++i)
                         {
@@ -220,7 +220,7 @@ namespace engenious.Input
         {
             unsafe
             {
-                fixed (int* k = Keys)
+                fixed (int* k = Key)
                 {
                     int hashcode = 0;
                     for (int i = 0; i < NumInts; i++)
@@ -234,7 +234,7 @@ namespace engenious.Input
 
         #region Internal Members
 
-        internal void SetKeyState(Key key, bool down)
+        internal void SetKeyState(Keys key, bool down)
         {
             if (down)
             {
@@ -254,7 +254,7 @@ namespace engenious.Input
             int bit_offset = offset % IntSize;
             unsafe
             {
-                fixed (int* k = Keys)
+                fixed (int* k = Key)
                 {
                     return (*(k + int_offset) & (1 << bit_offset)) != 0u;
                 }
@@ -269,7 +269,7 @@ namespace engenious.Input
             int bit_offset = offset % IntSize;
             unsafe
             {
-                fixed (int* k = Keys)
+                fixed (int* k = Key)
                 {
                     *(k + int_offset) |= 1 << bit_offset;
                 }
@@ -284,7 +284,7 @@ namespace engenious.Input
             int bit_offset = offset % IntSize;
             unsafe
             {
-                fixed (int* k = Keys)
+                fixed (int* k = Key)
                 {
                     *(k + int_offset) &= ~(1 << bit_offset);
                 }
@@ -295,8 +295,8 @@ namespace engenious.Input
         {
             unsafe
             {
-                int* k2 = other.Keys;
-                fixed (int* k1 = Keys)
+                int* k2 = other.Key;
+                fixed (int* k1 = Key)
                 {
                     for (int i = 0; i < NumInts; i++)
                         *(k1 + i) |= *(k2 + i);
@@ -334,8 +334,8 @@ namespace engenious.Input
             bool equal = true;
             unsafe
             {
-                int* k2 = other.Keys;
-                fixed (int* k1 = Keys)
+                int* k2 = other.Key;
+                fixed (int* k1 = Key)
                 {
                     for (int i = 0; equal && i < NumInts; i++)
                         equal &= *(k1 + i) == *(k2 + i);
