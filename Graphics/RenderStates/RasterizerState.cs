@@ -11,7 +11,7 @@ namespace engenious.Graphics
         static RasterizerState()
         {
             CullNone = new RasterizerState();
-            CullNone.CullMode = CullFaceMode.Back;
+            CullNone.CullMode = CullFaceMode.FrontAndBack;
             CullNone.FillMode = PolygonMode.Fill;
 
             CullClockwise = new RasterizerState();
@@ -27,7 +27,7 @@ namespace engenious.Graphics
 
         public RasterizerState()
         {
-            this.CullMode = CullFaceMode.FrontAndBack;
+            this.CullMode = CullFaceMode.Back;
             this.FillMode = PolygonMode.Fill;
         }
 

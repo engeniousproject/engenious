@@ -28,12 +28,13 @@ namespace engenious.Graphics
                 source, type, id, severity, msg);
         }
 
+        internal Game game;
+        internal Dictionary<string, bool> extensions = new Dictionary<string, bool>();
 
-        Dictionary<string, bool> extensions = new Dictionary<string, bool>();
-
-        public GraphicsDevice(OpenTK.Graphics.IGraphicsContext context)
+        public GraphicsDevice(Game game, OpenTK.Graphics.IGraphicsContext context)
         {
             this.context = context;
+            this.game = game;
             
 #if DEBUG
             int count = GL.GetInteger(GetPName.NumExtensions);
@@ -87,7 +88,7 @@ namespace engenious.Graphics
                         string method = frame.GetMethod().Name;
                         Debug.WriteLine("[GL] " + filename + ":" + method + " - " + line.ToString() + ":" + code.ToString());
                     }
-                }, true, true);
+                }, true);
             #endif
         }
 
@@ -117,12 +118,13 @@ namespace engenious.Graphics
             {
                 if (viewport.Bounds != value.Bounds)
                 {
+                    viewport = value;
                     ThreadingHelper.BlockOnUIThread(() =>
                         {
+                            //GL.Viewport(viewport.X, game.Window.ClientSize.Height - viewport.Y - viewport.Height, viewport.Width, viewport.Height);
                             GL.Viewport(viewport.X, viewport.Y, viewport.Width, viewport.Height);
-                            GL.Scissor(scissorRectangle.X, Viewport.Height - scissorRectangle.Bottom, scissorRectangle.Width, scissorRectangle.Height);
+                            //TODO?:GL.Scissor(scissorRectangle.X, viewport.Height - scissorRectangle.Bottom, scissorRectangle.Width, scissorRectangle.Height);
                         });
-                    viewport = value;
                 }
             }
         }
@@ -197,29 +199,25 @@ namespace engenious.Graphics
 
         public void DrawPrimitives(PrimitiveType primitiveType, int startVertex, int primitiveCount)
         {
-            ThreadingHelper.BlockOnUIThread(() =>
-                {
-                    VertexBuffer.vao.Bind();
+
+            VertexBuffer.EnsureVAO();
+            VertexBuffer.vao.Bind();
 
 
-                    GL.DrawArrays((OpenTK.Graphics.OpenGL4.PrimitiveType)primitiveType, startVertex, primitiveCount * 3);
-                });
+            GL.DrawArrays((OpenTK.Graphics.OpenGL4.PrimitiveType)primitiveType, startVertex, primitiveCount * 3);
             CheckError();
         }
 
         public void DrawIndexedPrimitives(PrimitiveType primitiveType, int baseVertex, int minVertexIndex, int numVertices, int startIndex, int primitiveCount)
         {
             CheckError();
-            ThreadingHelper.BlockOnUIThread(() =>
-                {
-                    CheckError();
-                    if (VertexBuffer.Bind())
-                    {
-                        IndexBuffer.Bind();
+            VertexBuffer.EnsureVAO();
+            if (VertexBuffer.Bind())
+            {
+                IndexBuffer.Bind();
 
-                        GL.DrawElements((OpenTK.Graphics.OpenGL4.PrimitiveType)primitiveType, primitiveCount * 3, (OpenTK.Graphics.OpenGL4.DrawElementsType)IndexBuffer.IndexElementSize, IntPtr.Zero);
-                    }
-                });
+                GL.DrawElements((OpenTK.Graphics.OpenGL4.PrimitiveType)primitiveType, primitiveCount * 3, (OpenTK.Graphics.OpenGL4.DrawElementsType)IndexBuffer.IndexElementSize, IntPtr.Zero);
+            }
             CheckError();
         }
 
@@ -230,10 +228,12 @@ namespace engenious.Graphics
                     if (target == null)
                     {
                         GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+                        Viewport = new Viewport(game.Window.ClientRectangle);
                     }
                     else
                     {
                         target.BindFBO();
+                        Viewport = new Viewport(target.Bounds);
                     }
                 });
             CheckError();
@@ -296,13 +296,13 @@ namespace engenious.Graphics
             {
                 if (rasterizerState != value)
                 {
-                    rasterizerState = value == null ? RasterizerState.CullNone : value;
+                    rasterizerState = value == null ? RasterizerState.CullClockwise : value;
                     //TODO:apply more
                     ThreadingHelper.BlockOnUIThread(() =>
                         {
                             GL.CullFace((OpenTK.Graphics.OpenGL4.CullFaceMode)rasterizerState.CullMode);
 
-                            //GL.PolygonMode((MaterialFace)rasterizerState.CullMode, (OpenTK.Graphics.OpenGL4.PolygonMode)rasterizerState.FillMode);
+                            GL.PolygonMode((MaterialFace)rasterizerState.CullMode, (OpenTK.Graphics.OpenGL4.PolygonMode)rasterizerState.FillMode);
 
                             if (rasterizerState.MultiSampleAntiAlias)
                                 GL.Enable(EnableCap.Multisample);

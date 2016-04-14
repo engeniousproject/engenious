@@ -40,7 +40,7 @@ namespace engenious
             return uiThreadId == System.Threading.Thread.CurrentThread.ManagedThreadId;
         }
 
-        internal static void BlockOnUIThread(Action action, bool needsUI = false, bool isCheck = false)
+        internal static void BlockOnUIThread(Action action, bool needsUI = false, object additional = null)
         {
             /*if (action == null)
                 throw new ArgumentNullException("action");*/

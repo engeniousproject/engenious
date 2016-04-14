@@ -434,7 +434,48 @@ namespace engenious
             return m;
         }
 
-      
+        public static Matrix CreateFromQuaternion(Quaternion quat)
+        {
+            return CreateFromQuaternion(quat.X, quat.Y, quat.Z, quat.W);
+        }
+
+        public static Matrix CreateFromQuaternion(float x, float y, float z, float w)
+        {
+            var n = w * w + x * x + y * y + z * z;
+            var s = n == 0 ? 0 : 2 / n;
+
+            var sw = s * w;
+            var sx = s * x;
+            var sy = s * y;
+
+            var wx = sw * x;
+            var wy = sw * y;
+            var wz = sw * z;
+            var xx = sx * x;
+            var xy = sx * y;
+            var xz = sx * z;
+            var yy = sy * y;
+            var yz = sy * z;
+            var zz = s * z * z;
+
+            return new Matrix(1 - (yy + zz), xy - wz, xz + wy, 0,
+                xy + wz, 1 - (xx + zz), yz - wx, 0,
+                xz - wy, yz + wx, 1 - (xx + yy), 0,
+                0, 0, 0, 1);
+        }
+
+        public static Matrix CreateScaling(float x, float y, float z)
+        {
+            return new Matrix(x, 0, 0, 0,
+                0, y, 0, 0,
+                0, 0, z, 0,
+                0, 0, 0, 1);
+        }
+
+        public static Matrix CreateScaling(Vector3 vec)
+        {
+            return CreateScaling(vec.X, vec.Y, vec.Z);
+        }
 
         public static Matrix CreateTranslation(Vector3 translation)
         {
@@ -477,6 +518,16 @@ namespace engenious
             ret.M12 = (float)Math.Sin(rot);
             ret.M21 = -ret.M12;//TODO: transpose?
             return ret;
+        }
+
+        public static unsafe Matrix Lerp(Matrix val1, Matrix val2, float amount)
+        {
+            Matrix res = new Matrix();
+            for (int i = 0; i < 16; i++)
+            {
+                res.items[i] = val1.items[i] + (val2.items[i] - val1.items[i]) * amount;
+            }
+            return res;
         }
 
         public static Matrix Invert(Matrix m)

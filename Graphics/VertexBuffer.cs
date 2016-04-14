@@ -6,8 +6,8 @@ namespace engenious.Graphics
 {
     public class VertexBuffer : GraphicsResource
     {
-        private int vbo = -1;
-        private int tempVBO = -1;
+        internal int vbo = -1;
+        internal int tempVBO = -1;
         internal VertexAttributes vao = null;
 
         private VertexBuffer(GraphicsDevice graphicsDevice, int vertexCount, BufferUsageHint usage = BufferUsageHint.StaticDraw)
@@ -35,6 +35,7 @@ namespace engenious.Graphics
             ThreadingHelper.BlockOnUIThread(() =>
                 {
                     vao = new VertexAttributes();
+                    vao.vbo = vbo;
                     vao.Bind();
                     GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
                     VertexAttributes.ApplyAttributes(vao, VertexDeclaration);
@@ -66,6 +67,7 @@ namespace engenious.Graphics
             ThreadingHelper.BlockOnUIThread(() =>
                 {
                     vao = new VertexAttributes();
+                    vao.vbo = vbo;
                     vao.Bind();
                     GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
                     VertexAttributes.ApplyAttributes(vao, VertexDeclaration);
@@ -85,25 +87,38 @@ namespace engenious.Graphics
                     GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
                     GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(VertexCount * VertexDeclaration.VertexStride), IntPtr.Zero, (OpenTK.Graphics.OpenGL4.BufferUsageHint)BufferUsage);
                 });
-            ThreadingHelper.BlockOnUIThread(() =>
+            /*ThreadingHelper.BlockOnUIThread(() =>
                 {
-                    vao.Bind();
-                    GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
-                    VertexAttributes.ApplyAttributes(vao, VertexDeclaration);
 
-                    GL.BindVertexArray(0);
-                }, true);
+                }, true, this);
             ThreadingHelper.BlockOnUIThread(() =>
                 {
-                    GL.DeleteBuffer(tempVBO);
-                    tempVBO = -1;
-                }, true);
+
+                }, true);*/
             if (keepData)
             {
                 //TODO:
                 throw new NotImplementedException();
             }
 
+        }
+
+        internal void EnsureVAO()
+        {
+            if (vao != null && vao.vbo != vbo)
+            {
+                vao.vbo = vbo;
+                vao.Bind();
+                GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+                VertexAttributes.ApplyAttributes(vao, VertexDeclaration);
+
+                GL.BindVertexArray(0);
+
+                if (tempVBO == -1)
+                    return;
+                GL.DeleteBuffer(tempVBO);
+                tempVBO = -1;
+            }
         }
 
         public BufferUsageHint BufferUsage{ get; private set; }
@@ -120,7 +135,7 @@ namespace engenious.Graphics
                     GCHandle buffer = GCHandle.Alloc(data, GCHandleType.Pinned);
                     GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, new IntPtr(VertexCount * VertexDeclaration.VertexStride), buffer.AddrOfPinnedObject());//TODO use bufferusage
                     buffer.Free();
-                }, true);
+                });
             GraphicsDevice.CheckError();
         }
 

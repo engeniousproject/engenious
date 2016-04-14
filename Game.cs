@@ -64,7 +64,7 @@ namespace engenious
 
             ConstructContext();
 
-            GraphicsDevice = new GraphicsDevice(Context);
+            GraphicsDevice = new GraphicsDevice(this, Context);
             GraphicsDevice.Viewport = new Viewport(Window.ClientRectangle);
             Window.Context.MakeCurrent(Window.WindowInfo);
             Window.Context.LoadAll();
@@ -139,7 +139,7 @@ namespace engenious
             GL.Enable(EnableCap.Blend);
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.DepthStencilState = new DepthStencilState();
-            GraphicsDevice.RasterizerState = RasterizerState.CullNone;
+            GraphicsDevice.RasterizerState = RasterizerState.CullClockwise;
             GraphicsDevice.SamplerStates = new SamplerStateCollection(GraphicsDevice);
 
             foreach (var component in Components)

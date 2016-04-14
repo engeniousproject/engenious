@@ -5,7 +5,7 @@ namespace engenious.Graphics
 {
     internal class VertexAttributes:IDisposable
     {
-
+        internal int vbo;
         private int vao;
 
         public VertexAttributes()
