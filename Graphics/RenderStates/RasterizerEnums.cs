@@ -2,11 +2,11 @@
 
 namespace engenious.Graphics
 {
-    public enum CullFaceMode
+    public enum CullMode
     {
-        Front = 1028,
-        Back,
-        FrontAndBack = 1032
+        None,
+        Clockwise = 2304,
+        CounterClockwise = 2305
     }
 
     public enum PolygonMode

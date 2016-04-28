@@ -300,7 +300,15 @@ namespace engenious.Graphics
                     //TODO:apply more
                     ThreadingHelper.BlockOnUIThread(() =>
                         {
-                            GL.CullFace((OpenTK.Graphics.OpenGL4.CullFaceMode)rasterizerState.CullMode);
+                            //GL.FrontFace(FrontFaceDirection.
+                            if (rasterizerState.CullMode == CullMode.None)
+                                GL.Disable(EnableCap.CullFace);
+                            else
+                            {
+                                GL.Enable(EnableCap.CullFace);
+                                GL.FrontFace((FrontFaceDirection)rasterizerState.CullMode);
+                            }
+
 
                             GL.PolygonMode((MaterialFace)rasterizerState.CullMode, (OpenTK.Graphics.OpenGL4.PolygonMode)rasterizerState.FillMode);
 

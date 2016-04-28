@@ -11,15 +11,15 @@ namespace engenious.Graphics
         static RasterizerState()
         {
             CullNone = new RasterizerState();
-            CullNone.CullMode = CullFaceMode.FrontAndBack;
+            CullNone.CullMode = CullMode.None;
             CullNone.FillMode = PolygonMode.Fill;
 
             CullClockwise = new RasterizerState();
-            CullClockwise.CullMode = CullFaceMode.Back;
+            CullClockwise.CullMode = CullMode.Clockwise;
             CullClockwise.FillMode = PolygonMode.Fill;
 
             CullCounterClockwise = new RasterizerState();
-            CullCounterClockwise.CullMode = CullFaceMode.Front;
+            CullCounterClockwise.CullMode = CullMode.CounterClockwise;
             CullCounterClockwise.FillMode = PolygonMode.Fill;
 
 
@@ -27,11 +27,11 @@ namespace engenious.Graphics
 
         public RasterizerState()
         {
-            this.CullMode = CullFaceMode.Back;
+            this.CullMode = CullMode.None;
             this.FillMode = PolygonMode.Fill;
         }
 
-        public CullFaceMode CullMode{ get; set; }
+        public CullMode CullMode{ get; set; }
 
         public PolygonMode FillMode{ get; set; }
 

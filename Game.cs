@@ -178,7 +178,7 @@ namespace engenious
             }
             set
             {
-                //Window.CursorVisible = value;
+                Window.CursorVisible = value;
             }
         }
 

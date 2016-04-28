@@ -17,7 +17,7 @@ namespace engenious.Content.Serialization
             if (reader.ReadBoolean())
                 return null;
             RasterizerState state = new RasterizerState();
-            state.CullMode = (CullFaceMode)reader.ReadUInt16();
+            state.CullMode = (CullMode)reader.ReadUInt16();
             state.FillMode = (PolygonMode)reader.ReadUInt16();
             state.MultiSampleAntiAlias = reader.ReadBoolean();
             state.ScissorTestEnable = reader.ReadBoolean();
