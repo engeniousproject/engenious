@@ -12,7 +12,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>..\..\..\..\Projects\AntMe\AssimpAntMeTest\AssimpAntMeTest\bin\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -20,14 +20,14 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CustomCommands>
       <CustomCommands>
-        <Command type="Execute" command="../../features/monogameui/SampleClient/bin/Debug/SampleClient.exe" workingdir="../../features/monogameui/SampleClient/bin/Debug/" />
+        <Command type="Execute" command="../../../../Projects/AntMe/AssimpAntMeTest/AssimpAntMeTest/bin/Debug/AssimpAntMeTest.exe" workingdir="../../../../Projects/AntMe/AssimpAntMeTest/AssimpAntMeTest/bin/Debug/" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>..\..\..\..\Projects\AntMe\AssimpAntMeTest\AssimpAntMeTest\bin\Debug</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -156,6 +156,13 @@
     <Compile Include="Helper\ThreadingHelper.cs" />
     <Compile Include="Helper\GLSynchronizationContext.cs" />
     <Compile Include="Input\Keys.cs" />
+    <Compile Include="Graphics\Model\Animation.cs" />
+    <Compile Include="Graphics\Model\AnimationFrame.cs" />
+    <Compile Include="Graphics\Model\AnimationNode.cs" />
+    <Compile Include="Graphics\Model\Mesh.cs" />
+    <Compile Include="Graphics\Model\Model.cs" />
+    <Compile Include="Graphics\Model\Node.cs" />
+    <Compile Include="Content\Serialization\Readers\ModelTypeReader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -177,6 +184,7 @@
     <Folder Include="Math\" />
     <Folder Include="Graphics\Enums\" />
     <Folder Include="Input\GamePad\" />
+    <Folder Include="Graphics\Model\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

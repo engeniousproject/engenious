@@ -376,13 +376,22 @@ namespace engenious
             result = m;
         }
 
-        public static Matrix CreateOrthographic(float width, float height, float near, float far)
+        public unsafe static Matrix CreateOrthographic(float width, float height, float near, float far)
         {
-            return CreateOrthographicOffCenter(0, width, height, 0, near, far);
+            Matrix res = Matrix.Identity;
+            res.items[0] = 2f / width;
+            res.items[5] = -2f / height;
+            res.items[10] = 1f / (near - far);
+            res.items[12] = res.items[13] = 0;
+            res.items[14] = -(far + near) / (far - near);
+
+            return res;
         }
 
         public unsafe static Matrix CreateOrthographicOffCenter(float left, float right, float bottom, float top, float near, float far)
         {
+
+
             Matrix res = Matrix.Identity;
             res.items[0] = 2.0f / (right - left);
             res.items[5] = 2.0f / (top - bottom);
@@ -430,7 +439,6 @@ namespace engenious
             m.items[15] = 1.0f;
 
 
-            
             return m;
         }
 

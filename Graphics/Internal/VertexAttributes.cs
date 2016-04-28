@@ -1,4 +1,5 @@
 ﻿using System;
+
 using OpenTK.Graphics.OpenGL4;
 
 namespace engenious.Graphics
@@ -19,6 +20,7 @@ namespace engenious.Graphics
             switch (el.VertexElementUsage)
             {
                 case VertexElementUsage.Color:
+                    
                     GL.EnableVertexAttribArray((int)el.VertexElementUsage);
                     GL.VertexAttribPointer((int)el.VertexElementUsage, el.ByteCount / el.GetGlVertexDataTypeSize(), el.GetGLVertexDataType(), el.IsNormalized, stride, new IntPtr(el.Offset));
                     break;
@@ -37,6 +39,7 @@ namespace engenious.Graphics
                 default:
                     GL.VertexAttribPointer((int)el.VertexElementUsage, el.ByteCount / el.GetGlVertexDataTypeSize(), el.GetGLVertexDataType(), el.IsNormalized, stride, new IntPtr(el.Offset));
                     GL.EnableVertexAttribArray(el.UsageIndex);//TODO:Is this the Intended usage?
+                       
                     break;
             }
             if (perInstances > 0)

@@ -26,6 +26,26 @@ namespace engenious.Content.Serialization
 
         }
 
+        public engenious.Graphics.VertexPositionNormalTexture ReadVertexPositionNormalTexture()
+        {
+            return new engenious.Graphics.VertexPositionNormalTexture(ReadVector3(), ReadVector3(), ReadVector2());
+        }
+
+        public engenious.Graphics.VertexPositionColor ReadVertexPositionColor()
+        {
+            return new engenious.Graphics.VertexPositionColor(ReadVector3(), ReadColor());
+        }
+
+        public engenious.Graphics.VertexPositionColorTexture ReadVertexPositionColorTexture()
+        {
+            return new engenious.Graphics.VertexPositionColorTexture(ReadVector3(), ReadColor(), ReadVector2());
+        }
+
+        public engenious.Graphics.VertexPositionTexture ReadVertexPositionTexture()
+        {
+            return new engenious.Graphics.VertexPositionTexture(ReadVector3(), ReadVector2());
+        }
+
         public Matrix ReadMatrix()
         {
             return new Matrix(ReadVector4(), ReadVector4(), ReadVector4(), ReadVector4());
