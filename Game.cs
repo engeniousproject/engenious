@@ -24,25 +24,25 @@ namespace engenious
 
         private void ConstructContext()
         {
-            OpenTK.Graphics.GraphicsMode mode = OpenTK.Graphics.GraphicsMode.Default;
             OpenTK.Platform.IWindowInfo windowInfo = Window.WindowInfo;
             OpenTK.Graphics.GraphicsContextFlags flags = OpenTK.Graphics.GraphicsContextFlags.Default;
-            int major = 1;
-            int minor = 0;
+            int major = 4;
+            int minor = 5;
             if (this.Context == null || this.Context.IsDisposed)
             {
                 OpenTK.Graphics.ColorFormat colorFormat = new OpenTK.Graphics.ColorFormat(8, 8, 8, 8);
                 int depth = 24;//TODO: wth?
-                int stencil = 0;
-                int samples = 0;
+                int stencil = 8;
+                int samples = 4;
 
-                mode = new OpenTK.Graphics.GraphicsMode(colorFormat, depth, stencil, samples);
+                OpenTK.Graphics.GraphicsMode mode = new OpenTK.Graphics.GraphicsMode(colorFormat, depth, stencil, samples);
                 try
                 {
                     this.Context = new OpenTK.Graphics.GraphicsContext(mode, windowInfo, major, minor, flags);
                 }
                 catch (Exception ex)
                 {
+                    mode = OpenTK.Graphics.GraphicsMode.Default;
                     major = 1;
                     minor = 0;
                     flags = OpenTK.Graphics.GraphicsContextFlags.Default;
