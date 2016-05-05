@@ -19,7 +19,7 @@ namespace engenious
 
         internal void Update(double time)
         {
-            ElapsedGameTime = new TimeSpan((long)(time * 10000000));
+            ElapsedGameTime = new TimeSpan((long)(time * TimeSpan.TicksPerSecond));
             TotalGameTime += ElapsedGameTime;
         }
 

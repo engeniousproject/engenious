@@ -163,6 +163,7 @@ namespace engenious
 
         public ContentManager Content{ get; private set; }
 
+        public System.Drawing.Icon Icon { get { return Window.Icon; } set { Window.Icon = value; } }
         
         internal GameWindow Window{ get; private set; }
 
