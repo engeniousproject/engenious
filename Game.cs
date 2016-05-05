@@ -24,10 +24,14 @@ namespace engenious
 
         private void ConstructContext()
         {
-            OpenTK.Platform.IWindowInfo windowInfo = Window.WindowInfo;
             OpenTK.Graphics.GraphicsContextFlags flags = OpenTK.Graphics.GraphicsContextFlags.Default;
-            int major = 4;
-            int minor = 5;
+            int major = 1;
+            int minor = 0;
+            if (OpenTK.Configuration.RunningOnWindows)
+            {
+                major=4;
+                minor = 4;
+            }
             if (this.Context == null || this.Context.IsDisposed)
             {
                 OpenTK.Graphics.ColorFormat colorFormat = new OpenTK.Graphics.ColorFormat(8, 8, 8, 8);
@@ -38,7 +42,8 @@ namespace engenious
                 OpenTK.Graphics.GraphicsMode mode = new OpenTK.Graphics.GraphicsMode(colorFormat, depth, stencil, samples);
                 try
                 {
-                    this.Context = new OpenTK.Graphics.GraphicsContext(mode, windowInfo, major, minor, flags);
+                    Window = new GameWindow(1280, 720,mode,"Game1",GameWindowFlags.Default,DisplayDevice.Default,major,minor,flags);//this.Context = new OpenTK.Graphics.GraphicsContext(mode, windowInfo, major, minor, flags);
+                    this.Context = Window.Context;
                 }
                 catch (Exception ex)
                 {
@@ -46,9 +51,12 @@ namespace engenious
                     major = 1;
                     minor = 0;
                     flags = OpenTK.Graphics.GraphicsContextFlags.Default;
-                    this.Context = new OpenTK.Graphics.GraphicsContext(mode, windowInfo, major, minor, flags);
+                    Window = new GameWindow(1280, 720,mode,"Game1",GameWindowFlags.Default,DisplayDevice.Default,major,minor,flags);//this.Context = new OpenTK.Graphics.GraphicsContext(mode, windowInfo, major, minor, flags);
+                    this.Context = Window.Context;
+                    //this.Context = new OpenTK.Graphics.GraphicsContext(mode, windowInfo, major, minor, flags);
                 }
             }
+            OpenTK.Platform.IWindowInfo windowInfo = Window.WindowInfo;
             this.Context.MakeCurrent(windowInfo);
             (this.Context as OpenTK.Graphics.IGraphicsContextInternal).LoadAll();
             ThreadingHelper.Initialize(windowInfo, major, minor, contextFlags);
@@ -60,7 +68,6 @@ namespace engenious
         {
 
             OpenTK.Graphics.GraphicsContext.ShareContexts = true;
-            Window = new GameWindow(1280, 720);
 
             ConstructContext();
 
