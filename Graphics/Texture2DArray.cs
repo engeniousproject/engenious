@@ -1,44 +1,53 @@
-﻿using System;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL4;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace engenious.Graphics
 {
-    public class Texture2DArray:TextureArray
+    public class Texture2DArray : Texture
     {
-        public Texture2DArray(GraphicsDevice graphicsDevice,int width,int height,int layerCount=1,int levelCount=1,PixelInternalFormat format=PixelInternalFormat.Rgba8)
-            :base(graphicsDevice,layerCount,levelCount,format)
+        private int texture;
+        public Texture2DArray(GraphicsDevice graphicsDevice, int levels, int width, int height, int layers)
+            : base(graphicsDevice)
         {
+            texture = GL.GenTexture();
+            
+            GL.BindTexture(TextureTarget.Texture2DArray, texture);
+
+            GL.TexStorage3D(TextureTarget3d.Texture2DArray, levels, SizedInternalFormat.Rgba8, width, height, layers);
+
             Width = width;
             Height = height;
-            GL.TexStorage3D(TextureTarget3d.Texture2DArray,levelCount,(SizedInternalFormat)format,width,height,layerCount);
-            GL.GenerateMipmap(GenerateMipmapTarget.Texture2DArray);
+            LayerCount = layers;
         }
-        public int Width{get;private set;}
-        public int Height{get;private set;}
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+        public int LayerCount { get; private set; }
 
-        public void SetData<T>(T[] data,int layer,int level=0) where T : struct//ValueType
+        internal override void Bind()
         {
-            if (Marshal.SizeOf(typeof(T)) * data.Length < Width * Height)
-                throw new ArgumentException("Not enough pixel data");
-
-            unsafe
+            GL.BindTexture(TextureTarget.Texture2DArray, texture);
+        }
+        internal override void SetSampler(SamplerState state)
+        {
+            //TODO:throw new NotImplementedException();
+        }
+        public void SetData<T>(T[] data,int layer,int level=0)where T : struct
+        {
+            GCHandle handle = GCHandle.Alloc(data, GCHandleType.Pinned);
+            ThreadingHelper.BlockOnUIThread(() =>
             {
-                GCHandle handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-                ThreadingHelper.BlockOnUIThread(() =>
-                    {
-                        Bind();
-                        PixelType pxType = PixelType.UnsignedByte;
-                        if (typeof(T) == typeof(Color))
-                            pxType = PixelType.Float;
+                Bind();
+                PixelType pxType = PixelType.UnsignedByte;
+                if (typeof(T) == typeof(Color))
+                    pxType = PixelType.Float;
 
-                        GL.TexSubImage2D(TextureTarget.Texture2DArray,0,0,0,Width,Height,OpenTK.Graphics.OpenGL4.PixelFormat.Bgra,pxType,handle.AddrOfPinnedObject());
-                        //GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, Width, Height, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, pxType, handle.AddrOfPinnedObject());
-                    });
-                handle.Free();
-            }
-            //GL.TexSubImage2D<T> (TextureTarget.Texture2D, 0, 0, 0, Width, Height, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, getPixelType (typeof(T)), data);
+                    GL.TexSubImage3D(TextureTarget.Texture2DArray, level, 0, 0,layer, Width, Height,1, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, pxType, handle.AddrOfPinnedObject());
+            });
+            handle.Free();
         }
     }
 }
-

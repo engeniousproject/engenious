@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -12,17 +12,12 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="Execute" command="../../../../Projects/AntMe/AntMe2/bin/Debug/CoreEngeniousClient.exe" workingdir="../../../../Projects/AntMe/AntMe2/bin/Debug/" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -171,18 +166,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="Graphics\" />
-    <Folder Include="Content\" />
-    <Folder Include="Graphics\Vertices\" />
-    <Folder Include="Graphics\Internal\" />
-    <Folder Include="Graphics\Effect\" />
-    <Folder Include="Graphics\Effect\Shader\" />
-    <Folder Include="Graphics\RenderStates\" />
-    <Folder Include="Content\Serialization\Readers\" />
-    <Folder Include="Graphics\Font\" />
-    <Folder Include="Base\" />
-    <Folder Include="Components\" />
-    <Folder Include="Input\" />
     <Folder Include="Extensions\" />
     <Folder Include="Audio\" />
     <Folder Include="Helper\" />
