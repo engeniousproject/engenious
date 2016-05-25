@@ -14,6 +14,8 @@ namespace engenious.Graphics
 
         public VertexBuffer VB{ get; set; }
 
+        public BoundingBox BoundingBox{get;internal set;}
+
         public void Draw()
         {
             GraphicsDevice.VertexBuffer = VB;

@@ -4,13 +4,20 @@ using System.Runtime.InteropServices;
 namespace engenious
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [System.ComponentModel.TypeConverter(typeof(Vector3Converter))]
     public struct Vector3:IEquatable<Vector3>
     {
-        public float X;
-        public float Y;
-        public float Z;
+        public float X{get;set;}
+        public float Y{get;set;}
+        public float Z{get;set;}
 
-        public Vector3(float x, float y, float z)
+        public Vector3(float w)
+        {
+            X = w;
+            Y = w;
+            Z = w;
+        }
+        public Vector3(float x, float y, float z=0.0f)
         {
             X = x;
             Y = y;
@@ -28,7 +35,7 @@ namespace engenious
                 Z * value2.X - X * value2.Z,
                 X * value2.Y - Y * value2.X);
         }
-
+        [System.ComponentModel.Browsable(false)]
         public float Length
         {
             get
@@ -36,7 +43,7 @@ namespace engenious
                 return (float)Math.Sqrt(X * X + Y * Y + Z * Z);
             }
         }
-
+        [System.ComponentModel.Browsable(false)]
         public float LengthSquared
         {
             get

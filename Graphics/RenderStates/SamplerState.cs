@@ -19,6 +19,7 @@ namespace engenious.Graphics
         {
             //TODO: implement completly	
             this.AddressU = this.AddressV = this.AddressW = TextureWrapMode.ClampToEdge;
+
         }
 
         public TextureWrapMode AddressU{ get; set; }
@@ -26,6 +27,8 @@ namespace engenious.Graphics
         public TextureWrapMode AddressV{ get; set; }
 
         public TextureWrapMode AddressW{ get; set; }
+
+        public TextureFilter TextureFilter{get;set;}
     }
 }
 

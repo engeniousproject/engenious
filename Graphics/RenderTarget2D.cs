@@ -9,7 +9,7 @@ namespace engenious.Graphics
         int depth;
 
         public RenderTarget2D(GraphicsDevice graphicsDevice, int width, int height, PixelInternalFormat surfaceFormat)
-            : base(graphicsDevice, width, height, surfaceFormat, PixelFormat.Rgba)
+            : base(graphicsDevice, width, height,1, surfaceFormat)
         {
             ThreadingHelper.BlockOnUIThread(() =>
                 {

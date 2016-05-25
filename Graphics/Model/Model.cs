@@ -9,7 +9,8 @@ namespace engenious.Graphics
         public Model(GraphicsDevice graphicsDevice)
             : base(graphicsDevice)
         {
-            Animation = new Animation();
+            Animations = new List<Animation>();
+            Transform = Matrix.Identity;
         }
 
         public Mesh[] Meshes{ get; set; }
@@ -18,16 +19,20 @@ namespace engenious.Graphics
 
         internal List<Node> Nodes{ get; set; }
 
-        internal Animation Animation{ get; set; }
+        public List<Animation> Animations{ get; set; }
+
+        public Animation CurrentAnimation{get;set;}
+
+        public Matrix Transform{get;set;}
 
         public void UpdateAnimation(float elapsed)
         {
-            Animation.Update(elapsed);
+            CurrentAnimation.Update(elapsed);
 
             UpdateAnimation(null, RootNode);
         }
 
-        private void UpdateAnimation(Node parent, Node node)
+        internal void UpdateAnimation(Node parent, Node node)
         {
 
             if (parent == null)
@@ -64,7 +69,7 @@ namespace engenious.Graphics
             {
                 pass.Apply();
 
-                effect.World = node.GlobalTransform * node.Transformation;
+                effect.World = Transform*node.GlobalTransform * node.Transformation;
 
                 foreach (var mesh in node.Meshes)
                 {

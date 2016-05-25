@@ -4,12 +4,13 @@ using System.Runtime.InteropServices;
 namespace engenious
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [System.ComponentModel.TypeConverter(typeof(Vector4Converter))]
     public struct Vector4
     {
-        public float X;
-        public float Y;
-        public float Z;
-        public float W;
+        public float X{get;set;}
+        public float Y{get;set;}
+        public float Z{get;set;}
+        public float W{get;set;}
 
         public Vector4(float val)
         {

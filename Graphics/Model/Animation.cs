@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace engenious.Graphics
 {
-    internal class Animation
+    public class Animation
     {
-        public float Time{ get; set; }
+        public float Time{ get;internal set; }
 
-        public float MaxTime{ get; set; }
+        public float MaxTime{ get; internal set; }
 
-        public List<AnimationNode> Channels{ get; set; }
+        internal List<AnimationNode> Channels{ get; set; }
 
         public void Update(float elapsed)
         {

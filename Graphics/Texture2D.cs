@@ -11,14 +11,9 @@ namespace engenious.Graphics
     {
         internal int texture;
 
-        public Texture2D(GraphicsDevice graphicsDevice, int width, int height, PixelFormat format = PixelFormat.Rgba)
-            : this(graphicsDevice, width, height, (PixelInternalFormat)format, format)
-        {
 
-        }
-
-        protected Texture2D(GraphicsDevice graphicsDevice, int width, int height, PixelInternalFormat internalFormat = PixelInternalFormat.Rgba, PixelFormat format = PixelFormat.Rgba)
-            : base(graphicsDevice, 1, format)
+        public Texture2D(GraphicsDevice graphicsDevice, int width, int height,int mipMaps=1, PixelInternalFormat internalFormat = PixelInternalFormat.Rgba8)
+            : base(graphicsDevice, 1, internalFormat)
         {
             Width = width;
             Height = height;
@@ -29,7 +24,8 @@ namespace engenious.Graphics
 
                     Bind();
                     setDefaultTextureParameters();
-                    GL.TexImage2D(TextureTarget.Texture2D, 0, (OpenTK.Graphics.OpenGL4.PixelInternalFormat)internalFormat, width, height, 0, (OpenTK.Graphics.OpenGL4.PixelFormat)Format, PixelType.UnsignedByte, IntPtr.Zero);
+                    GL.TexStorage2D(TextureTarget2d.Texture2D,mipMaps,SizedInternalFormat.Rgba8,width,height);
+                    //GL.TexImage2D(TextureTarget.Texture2D, 0, (OpenTK.Graphics.OpenGL4.PixelInternalFormat)internalFormat, width, height, 0, (OpenTK.Graphics.OpenGL4.PixelFormat)Format, PixelType.UnsignedByte, IntPtr.Zero);
                 });
         }
 
@@ -40,16 +36,12 @@ namespace engenious.Graphics
             //if (GL.SupportsExtension ("Version12")) {
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+
+
             /*} else {
 				GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)All.Clamp);
 				GL.TexParameter (TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)All.Clamp);
 			}*/
-        }
-
-        public Texture2D(GraphicsDevice graphicsDevice, int width, int height, bool mipMap, PixelFormat format)
-            : this(graphicsDevice, width, height, format)
-        {
-            //TODO: mipmap
         }
 
         internal override void Bind()
@@ -89,14 +81,27 @@ namespace engenious.Graphics
             }
             return PixelType.UnsignedByte;
         }
-
-        public void SetData<T>(T[] data) where T : struct//ValueType
+            
+        public void SetData<T>(T[] data,int level=0) where T : struct//ValueType
         {
-            if (Marshal.SizeOf(typeof(T)) * data.Length < Width * Height)
+            SetData(data,level,OpenTK.Graphics.OpenGL4.PixelFormat.Bgra);
+        }
+        internal void SetData<T>(T[] data,int level,OpenTK.Graphics.OpenGL4.PixelFormat format=OpenTK.Graphics.OpenGL4.PixelFormat.Bgra) where T : struct//ValueType
+        {
+            bool hwCompressed = format == (OpenTK.Graphics.OpenGL4.PixelFormat)engenious.Content.TextureContentFormat.DXT1 || format == (OpenTK.Graphics.OpenGL4.PixelFormat)engenious.Content.TextureContentFormat.DXT3 || format == (OpenTK.Graphics.OpenGL4.PixelFormat)engenious.Content.TextureContentFormat.DXT5;
+            if (!hwCompressed && Marshal.SizeOf(typeof(T)) * data.Length < Width * Height)
                 throw new ArgumentException("Not enough pixel data");
 
             unsafe
             {
+                int width=Width,height=Height;
+                for (int i=0;i<level;i++)
+                {
+                    width /= 2;
+                    height /= 2;
+                    if (width == 0 || height == 0)
+                        return;
+                }
                 GCHandle handle = GCHandle.Alloc(data, GCHandleType.Pinned);
                 ThreadingHelper.BlockOnUIThread(() =>
                     {
@@ -104,14 +109,17 @@ namespace engenious.Graphics
                         PixelType pxType = PixelType.UnsignedByte;
                         if (typeof(T) == typeof(Color))
                             pxType = PixelType.Float;
-				
-                        GL.TexSubImage2D(TextureTarget.Texture2D, 0, 0, 0, Width, Height, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, pxType, handle.AddrOfPinnedObject());
+                        if (hwCompressed){
+                            int blockSize = (format==(OpenTK.Graphics.OpenGL4.PixelFormat)engenious.Content.TextureContentFormat.DXT1) ? 8 : 16;
+                            int mipSize = ((width + 3) / 4) * ((height + 3) / 4) * blockSize;
+                            GL.CompressedTexSubImage2D(TextureTarget.Texture2D,level,0,0,width,height,(OpenTK.Graphics.OpenGL4.PixelFormat)format,mipSize,handle.AddrOfPinnedObject());
+                        }else
+                            GL.TexSubImage2D(TextureTarget.Texture2D, level, 0, 0, width, height, format, pxType, handle.AddrOfPinnedObject());
                     });
                 handle.Free();
             }
             //GL.TexSubImage2D<T> (TextureTarget.Texture2D, 0, 0, 0, Width, Height, OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, getPixelType (typeof(T)), data);
         }
-
         public void SetData<T>(T[] data, int startIndex, int elementCount) where T : struct
         {
             throw new NotImplementedException("Need to implement offset");
@@ -201,10 +209,10 @@ namespace engenious.Graphics
             }
         }
 
-        public static Texture2D FromBitmap(GraphicsDevice graphicsDevice, Bitmap bmp)
+        public static Texture2D FromBitmap(GraphicsDevice graphicsDevice, Bitmap bmp,int mipMaps=1)
         {
             Texture2D text = null;
-            text = new Texture2D(graphicsDevice, bmp.Width, bmp.Height, PixelFormat.Rgba);
+            text = new Texture2D(graphicsDevice, bmp.Width, bmp.Height,mipMaps);
             BitmapData bmpData = bmp.LockBits(new System.Drawing.Rectangle(0, 0, text.Width, text.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             ThreadingHelper.BlockOnUIThread(() =>
                 {

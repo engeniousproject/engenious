@@ -20,8 +20,10 @@ namespace engenious.Graphics
 
         public Shader(ShaderType type, string source)
         {
+            ThreadingHelper.BlockOnUIThread(()=>{
             shader = GL.CreateShader((OpenTK.Graphics.OpenGL4.ShaderType)type);
             GL.ShaderSource(shader, source);
+            });
         }
 
         internal void Compile()

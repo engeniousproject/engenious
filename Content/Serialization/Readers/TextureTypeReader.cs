@@ -12,36 +12,44 @@ namespace engenious.Content.Serialization
 
         public override Texture2D Read(ContentManager manager, ContentReader reader)
         {
-			
+            bool genMipMaps = reader.ReadBoolean();
+            int mipCount = reader.ReadInt32();
 
-            bool isPng = reader.ReadByte() == 1;
-            if (isPng)
+            int width=reader.ReadInt32(),height=reader.ReadInt32();
+            TextureContentFormat format = (TextureContentFormat)reader.ReadInt32();
+            bool hwCompressed = format == TextureContentFormat.DXT1 || format == TextureContentFormat.DXT3 || format == TextureContentFormat.DXT5;
+            Texture2D text;
+            int size = reader.ReadInt32();
+            byte[] buffer = reader.ReadBytes(size);
+            if (hwCompressed)
             {
-                int size = reader.ReadInt32();
-                byte[] buffer = reader.ReadBytes(size);
-                using (System.IO.MemoryStream memStream = new System.IO.MemoryStream(buffer))
-                {
-                    using (System.Drawing.Bitmap bmp = (System.Drawing.Bitmap)System.Drawing.Bitmap.FromStream(memStream))
-                        return Texture2D.FromBitmap(manager.graphicsDevice, bmp);
-                }
+                text = new Texture2D(manager.graphicsDevice,width,height,mipCount,(PixelInternalFormat)format);
+
+                text.SetData<byte>(buffer,0,(OpenTK.Graphics.OpenGL4.PixelFormat)format);
+                //TODO:...
             }
             else
             {
-                int width = reader.ReadInt32();
-                int height = reader.ReadInt32();
-
-                Texture2D text = new Texture2D(manager.graphicsDevice, width, height);
-                int[] data = new int[width * height];
-                for (int i = 0; i < data.Length; i++)
-                {
-                    data[i] = reader.ReadInt32();
-                }
-
-                text.SetData<int>(data);
-
-                return text;
+                text = new Texture2D(manager.graphicsDevice,width,height,mipCount);
+                using (var stream = new System.IO.MemoryStream(buffer))
+                    text = Texture2D.FromBitmap(manager.graphicsDevice,new System.Drawing.Bitmap(stream),mipCount);
             }
 
+            if (genMipMaps)
+                return text;
+            for (int i=1;i<mipCount;i++)
+            {
+                size = reader.ReadInt32();
+                buffer = reader.ReadBytes(size);
+                hwCompressed = format == TextureContentFormat.DXT1 || format == TextureContentFormat.DXT3 || format == TextureContentFormat.DXT5;
+                if (hwCompressed)
+                    text.SetData<byte>(buffer,i,(OpenTK.Graphics.OpenGL4.PixelFormat)format);
+                else{
+                    using (var stream = new System.IO.MemoryStream(buffer))
+                        text.SetData<byte>(buffer,i);
+                }
+            }
+            return text;
         }
     }
 }

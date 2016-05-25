@@ -45,6 +45,35 @@ namespace engenious
             result.Z = val1.W * val2.Z + val1.Z * val2.W + val1.X * val2.Y - val1.Y * val2.X;
             return result;
         }
+
+        public static Quaternion Lerp(Quaternion quaternion1, Quaternion quaternion2, float amount)//copied from MonoGame
+        {
+            float num = amount;
+            float num2 = 1f - num;
+            Quaternion quaternion = new Quaternion();
+            float num5 = (((quaternion1.X * quaternion2.X) + (quaternion1.Y * quaternion2.Y)) + (quaternion1.Z * quaternion2.Z)) + (quaternion1.W * quaternion2.W);
+            if (num5 >= 0f)
+            {
+                quaternion.X = (num2 * quaternion1.X) + (num * quaternion2.X);
+                quaternion.Y = (num2 * quaternion1.Y) + (num * quaternion2.Y);
+                quaternion.Z = (num2 * quaternion1.Z) + (num * quaternion2.Z);
+                quaternion.W = (num2 * quaternion1.W) + (num * quaternion2.W);
+            }
+            else
+            {
+                quaternion.X = (num2 * quaternion1.X) - (num * quaternion2.X);
+                quaternion.Y = (num2 * quaternion1.Y) - (num * quaternion2.Y);
+                quaternion.Z = (num2 * quaternion1.Z) - (num * quaternion2.Z);
+                quaternion.W = (num2 * quaternion1.W) - (num * quaternion2.W);
+            }
+            float num4 = (((quaternion.X * quaternion.X) + (quaternion.Y * quaternion.Y)) + (quaternion.Z * quaternion.Z)) + (quaternion.W * quaternion.W);
+            float num3 = 1f / ((float) Math.Sqrt((double) num4));
+            quaternion.X *= num3;
+            quaternion.Y *= num3;
+            quaternion.Z *= num3;
+            quaternion.W *= num3;
+            return quaternion;
+        }
     }
 }
 

@@ -47,13 +47,13 @@ void main(void)
             : base(graphicsDevice)
         {
             var technique = new EffectTechnique("Basic");
-
+            ThreadingHelper.BlockOnUIThread(()=>{
             Shader[] shaders = new Shader[]
             {
                 new Shader(ShaderType.VertexShader, vertexShader),
                 new Shader(ShaderType.FragmentShader, pixelShader)
             };
-            
+
             foreach (Shader shader in shaders)
                 shader.Compile();
             EffectPass pass = new EffectPass("Basic");
@@ -63,10 +63,11 @@ void main(void)
             pass.BindAttribute(VertexElementUsage.Position, "position");
             pass.Link();
 
-            
+
 
             technique.Passes.Add(pass);
             Techniques.Add(technique);
+            });
             CurrentTechnique = technique;
 
 

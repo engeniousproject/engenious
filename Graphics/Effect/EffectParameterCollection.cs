@@ -13,6 +13,7 @@ namespace engenious.Graphics
 
 		public EffectParameterCollection (EffectTechniqueCollection techniques)
 		{
+            ThreadingHelper.BlockOnUIThread(()=>{
 			parameters = new Dictionary<string, EffectParameter> ();
 			parameterList = new List<EffectParameter> ();
 
@@ -30,6 +31,7 @@ namespace engenious.Graphics
 					}
 				}
 			}
+            });
 		}
 
 		internal void Add (EffectParameter parameter)

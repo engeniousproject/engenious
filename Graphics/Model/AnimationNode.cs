@@ -20,29 +20,22 @@ namespace engenious.Graphics
             Frames = Frames.OrderBy(f => f.Frame).ToList();
         }
 
-        int lastFrame;
-
         public void ApplyAnimation(float time, float maxTime)
         {
             Sort();
-            int frameIndex = Frames.FindIndex(f => f.Frame >= time);
+            int frameIndex = (Frames.FindIndex(f => f.Frame >= time) + Frames.Count - 1)% Frames.Count;
             AnimationFrame frame = Frames[frameIndex];
             AnimationFrame nextFrame = Frames[(frameIndex + 1) % Frames.Count];
-            float diff = time - frame.Frame;
+            float diff = time-frame.Frame;
             float frameTime = nextFrame.Frame - frame.Frame;
-            //if (frameIndex == Frames.Count - 1)
+            if (diff == 0)
             {
-                //TODO
+                Node.LocalTransform = frame.Transform.ToMatrix();
             }
-            //else// if (diff == 0)
+            else if (diff > 0)
             {
-                Node.LocalTransform = frame.Transform;
+                Node.LocalTransform = AnimationTransform.Lerp(frame.Transform, nextFrame.Transform, diff / frameTime).ToMatrix();
             }
-            //else if (diff > 0)
-            {
-                //Node.LocalTransform = Matrix.Lerp(frame.Transform, nextFrame.Transform, diff / frameTime);
-            }
-            lastFrame = frameIndex;
         }
     }
 }

@@ -4,10 +4,11 @@ using System.Runtime.InteropServices;
 namespace engenious
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [System.ComponentModel.TypeConverter(typeof(Vector2Converter))]
     public struct Vector2 : IEquatable<Vector2>
     {
-        public float X;
-        public float Y;
+        public float X{get;set;}
+        public float Y{get;set;}
 
         public Vector2(float w)
         {
@@ -29,7 +30,7 @@ namespace engenious
         {
             return new Vector2(X, -Y);
         }
-
+        [System.ComponentModel.Browsable(false)]
         public float Length
         {
             get
@@ -37,7 +38,7 @@ namespace engenious
                 return (float)Math.Sqrt(X * X + Y * Y);
             }
         }
-
+        [System.ComponentModel.Browsable(false)]
         public float LengthSquared
         {
             get

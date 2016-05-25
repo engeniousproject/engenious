@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 namespace engenious
 {
     [StructLayout(LayoutKind.Explicit, Pack = 1)]
+    [System.ComponentModel.TypeConverter(typeof(MatrixConverter))]
     public struct Matrix :IEquatable<Matrix>
     {
         [FieldOffset(0)]
