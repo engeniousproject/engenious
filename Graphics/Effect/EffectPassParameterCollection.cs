@@ -25,8 +25,13 @@ namespace engenious.Graphics
 
 		private EffectPassParameter CacheParameter (string name)
 		{
-			int location = pass.GetUniformLocation (name);
-			return new EffectPassParameter (pass, name, location);
+            EffectPassParameter param=null;
+            ThreadingHelper.BlockOnUIThread(() =>
+                {
+			        int location = pass.GetUniformLocation (name);
+                    param= new EffectPassParameter (pass, name, location);
+                });
+            return param;
 		}
 
 		public EffectPassParameter this [int index] { 

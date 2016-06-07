@@ -12,13 +12,8 @@ namespace engenious.Graphics
         {
             this.Name = name;
             ThreadingHelper.BlockOnUIThread(() =>
-                {
+               {
                     program = GL.CreateProgram();
-
-                    /*BindAttribute(VertexElementUsage.Color, "color");//TODO: custom naming
-                    BindAttribute(VertexElementUsage.Position, "position");
-                    BindAttribute(VertexElementUsage.Normal, "normal");
-                    BindAttribute(VertexElementUsage.TextureCoordinate, "textureCoordinate");*/
                 });
 
         }
@@ -87,6 +82,8 @@ namespace engenious.Graphics
                     if (linked != 1)
                     {
                         string error = GL.GetProgramInfoLog(program);
+                        if (string.IsNullOrEmpty(error))
+                            throw new Exception("Unknown error occured");
                         throw new Exception(error);
                     }
                     foreach (Shader shader in attached)

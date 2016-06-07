@@ -26,8 +26,6 @@ namespace engenious
             //GraphicsContextFlags flags = GraphicsContextFlags.
             ThreadingHelper.context = new GraphicsContext(GraphicsMode.Default, windowInfo, major, minor, contextFlags);
             ThreadingHelper.windowInfo = windowInfo;
-            //ThreadingHelper.context.LoadAll();
-
         }
 
         public static void RunUIThread()

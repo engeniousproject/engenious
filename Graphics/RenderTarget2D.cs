@@ -8,34 +8,42 @@ namespace engenious.Graphics
         int fbo;
         int depth;
 
+
         public RenderTarget2D(GraphicsDevice graphicsDevice, int width, int height, PixelInternalFormat surfaceFormat)
-            : base(graphicsDevice, width, height,1, surfaceFormat)
+            : base(graphicsDevice, width, height,1,surfaceFormat)
         {
             ThreadingHelper.BlockOnUIThread(() =>
                 {
+                    bool isDepthTarget = ((int)surfaceFormat >= (int)PixelInternalFormat.DepthComponent16 && (int)surfaceFormat <= (int)PixelInternalFormat.DepthComponent32Sgix);
+                    if (!isDepthTarget){
+                        GL.GenRenderbuffers(1, out depth);
+
+                        GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, depth);
+                        GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, (RenderbufferStorage)All.DepthComponent32, width, height);
+                    }
+
                     fbo = GL.GenFramebuffer();
-
-                    GL.GenRenderbuffers(1, out depth);
-
-                    GL.BindRenderbuffer(RenderbufferTarget.RenderbufferExt, depth);
-                    GL.RenderbufferStorage(RenderbufferTarget.RenderbufferExt, (RenderbufferStorage)All.DepthComponent32, width, height);
-
                     GL.BindFramebuffer(FramebufferTarget.Framebuffer, fbo);
                     //GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Rgba8, width, height);
                     //GL.FramebufferParameter(FramebufferTarget.Framebuffer, FramebufferDefaultParameter.FramebufferDefaultWidth, width);
                     //GL.FramebufferParameter(FramebufferTarget.Framebuffer, FramebufferDefaultParameter.FramebufferDefaultHeight, height);
-
-                    GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, texture, 0);
-
-                    GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depth);
-                    //GL.DrawBuffers(1, new DrawBuffersEnum[]{ DrawBuffersEnum.ColorAttachment0,DrawBuffersEnum.});
+                   
+                    if (isDepthTarget)
+                        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, TextureTarget.Texture2D, texture, 0);
+                    else{
+                        GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, texture, 0);
+                    
+                        GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depth);
+                        GL.DrawBuffers(1, new DrawBuffersEnum[]{ DrawBuffersEnum.ColorAttachment0});
+                    }
                     ErrorHandling();
+
+                    GL.BindFramebuffer(FramebufferTarget.Framebuffer,0);
                 });
         }
-
         internal void BindFBO()
         {
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, fbo);
+            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, fbo);
         }
 
         private void ErrorHandling()

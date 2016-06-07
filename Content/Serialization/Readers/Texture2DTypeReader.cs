@@ -3,7 +3,7 @@ using engenious.Graphics;
 
 namespace engenious.Content.Serialization
 {
-    [ContentTypeReaderAttribute()]
+    [ContentTypeReaderAttribute(typeof(Texture2D))]
     public class Texture2DTypeReader:ContentTypeReader<Texture2D>
     {
         public Texture2DTypeReader()

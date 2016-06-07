@@ -3,7 +3,7 @@ using engenious.Graphics;
 
 namespace engenious.Content.Serialization
 {
-    [ContentTypeReaderAttribute()]
+    [ContentTypeReaderAttribute(typeof(RasterizerState))]
     public class RasterizerStateTypeReader : ContentTypeReader<RasterizerState>
     {
         public RasterizerStateTypeReader()
@@ -27,7 +27,7 @@ namespace engenious.Content.Serialization
         #endregion
     }
 
-    [ContentTypeReaderAttribute()]
+    [ContentTypeReaderAttribute(typeof(DepthStencilState))]
     public class DepthStencilStateTypeReader : ContentTypeReader<DepthStencilState>
     {
         public DepthStencilStateTypeReader()
@@ -59,7 +59,7 @@ namespace engenious.Content.Serialization
         #endregion
     }
 
-    [ContentTypeReaderAttribute()]
+    [ContentTypeReaderAttribute(typeof(BlendState))]
     public class BlendStateTypeReader : ContentTypeReader<BlendState>
     {
         public BlendStateTypeReader()

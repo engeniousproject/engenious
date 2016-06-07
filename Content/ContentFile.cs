@@ -25,11 +25,13 @@ namespace engenious.Content
 
         public string FileType{ get; private set; }
 
-        public object Load(ContentManager manager, Stream stream)
+        public object Load(ContentManager manager, Stream stream,Type type)
         {
             ContentReader reader = new ContentReader(stream);
             string readName = reader.ReadString();
-            IContentTypeReader tp = manager.GetReader(readName);
+            IContentTypeReader tp = manager.GetReaderByOutput(type.FullName);
+            if (tp == null)
+                tp = manager.GetReader(readName);
             return tp.Read(manager, reader);
         }
     }

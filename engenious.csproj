@@ -12,12 +12,17 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="Execute" command="../../../../Projects/AntMe/AntMe2/bin/Debug/CoreEngeniousClient.exe" workingdir="/home/julian/Projects/AntMe/AntMe2/bin/Debug" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
@@ -83,7 +88,6 @@
     <Compile Include="Content\Serialization\IContentTypeReader.cs" />
     <Compile Include="Content\ContentManager.cs" />
     <Compile Include="Content\ContentFile.cs" />
-    <Compile Include="Content\Serialization\Readers\TextureTypeReader.cs" />
     <Compile Include="Graphics\TextureCollection.cs" />
     <Compile Include="Graphics\Effect\EffectPassParameter.cs" />
     <Compile Include="Graphics\Effect\EffectPassParameterCollection.cs" />
@@ -163,6 +167,16 @@
     <Compile Include="Graphics\Model\AnimationTransform.cs" />
     <Compile Include="Content\Serialization\TextureContentFormat.cs" />
     <Compile Include="Converters\VectorConverters.cs" />
+    <Compile Include="Graphics\Model\Content\AnimationContent.cs" />
+    <Compile Include="Graphics\Model\Content\AnimationNodeContent.cs" />
+    <Compile Include="Graphics\Model\Content\MeshContent.cs" />
+    <Compile Include="Graphics\Model\Content\ModelContent.cs" />
+    <Compile Include="Graphics\Model\Content\NodeContent.cs" />
+    <Compile Include="Content\Serialization\Readers\ModelContentTypeReader.cs" />
+    <Compile Include="Content\Serialization\Readers\Texture2DTypeReader.cs" />
+    <Compile Include="Graphics\Model\PrimitiveModels.cs" />
+    <Compile Include="Graphics\Vertices\VertexPositionNormal.cs" />
+    <Compile Include="Graphics\Vertices\VertexPosition.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -174,6 +188,7 @@
     <Folder Include="Input\GamePad\" />
     <Folder Include="Graphics\Model\" />
     <Folder Include="Converters\" />
+    <Folder Include="Graphics\Model\Content\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

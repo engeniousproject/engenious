@@ -4,7 +4,7 @@ using OpenTK;
 
 namespace engenious.Content.Serialization
 {
-    [ContentTypeReaderAttribute()]
+    [ContentTypeReaderAttribute(typeof(SpriteFont))]
     public class SpriteFontTypeReader:ContentTypeReader<SpriteFont>
     {
         public SpriteFontTypeReader()

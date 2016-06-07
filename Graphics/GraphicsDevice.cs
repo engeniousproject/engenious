@@ -123,7 +123,8 @@ namespace engenious.Graphics
                         {
                             //GL.Viewport(viewport.X, game.Window.ClientSize.Height - viewport.Y - viewport.Height, viewport.Width, viewport.Height);
                             GL.Viewport(viewport.X, viewport.Y, viewport.Width, viewport.Height);
-                            //TODO?:GL.Scissor(scissorRectangle.X, viewport.Height - scissorRectangle.Bottom, scissorRectangle.Width, scissorRectangle.Height);
+                            //TODO?:
+                            GL.Scissor(scissorRectangle.X, Viewport.Height - scissorRectangle.Bottom, scissorRectangle.Width, scissorRectangle.Height);
                         });
                 }
             }
@@ -310,7 +311,7 @@ namespace engenious.Graphics
                             }
 
 
-                            GL.PolygonMode((MaterialFace)rasterizerState.CullMode, (OpenTK.Graphics.OpenGL4.PolygonMode)rasterizerState.FillMode);
+                            GL.PolygonMode(MaterialFace.Back, (OpenTK.Graphics.OpenGL4.PolygonMode)rasterizerState.FillMode);
 
                             if (rasterizerState.MultiSampleAntiAlias)
                                 GL.Enable(EnableCap.Multisample);
@@ -326,11 +327,11 @@ namespace engenious.Graphics
             }
         }
 
-        public SamplerStateCollection SamplerStates
-        {
-            get;
-            internal set;
-        }
+        //public SamplerStateCollection SamplerStates
+        //{
+        //    get;
+        //    internal set;
+        //}
 
         public Rectangle ScissorRectangle
         {

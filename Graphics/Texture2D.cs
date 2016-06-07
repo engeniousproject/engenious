@@ -24,7 +24,7 @@ namespace engenious.Graphics
 
                     Bind();
                     setDefaultTextureParameters();
-                    GL.TexStorage2D(TextureTarget2d.Texture2D,mipMaps,SizedInternalFormat.Rgba8,width,height);
+                    GL.TexStorage2D(TextureTarget2d.Texture2D,mipMaps,(OpenTK.Graphics.OpenGL4.SizedInternalFormat)internalFormat,width,height);
                     //GL.TexImage2D(TextureTarget.Texture2D, 0, (OpenTK.Graphics.OpenGL4.PixelInternalFormat)internalFormat, width, height, 0, (OpenTK.Graphics.OpenGL4.PixelFormat)Format, PixelType.UnsignedByte, IntPtr.Zero);
                 });
         }
@@ -34,8 +34,8 @@ namespace engenious.Graphics
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)All.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)All.Linear);
             //if (GL.SupportsExtension ("Version12")) {
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+            //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
 
 
             /*} else {

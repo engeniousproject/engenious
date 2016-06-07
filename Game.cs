@@ -150,7 +150,7 @@ namespace engenious
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.DepthStencilState = new DepthStencilState();
             GraphicsDevice.RasterizerState = RasterizerState.CullClockwise;
-            GraphicsDevice.SamplerStates = new SamplerStateCollection(GraphicsDevice);
+            //GraphicsDevice.SamplerStates = new SamplerStateCollection(GraphicsDevice);
 
             foreach (var component in Components)
             {

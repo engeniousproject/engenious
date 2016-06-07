@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace engenious.Content.Serialization
 {
-    [ContentTypeReaderAttribute()]
+    [ContentTypeReaderAttribute(typeof(Effect))]
     public class EffectTypeReader:ContentTypeReader<Effect>
     {
         public EffectTypeReader()

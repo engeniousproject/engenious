@@ -1,36 +1,37 @@
 ﻿using System;
 using engenious.Graphics;
+using System.Collections.Generic;
 
 namespace engenious.Content.Serialization
 {
-    [ContentTypeReaderAttribute(typeof(Model))]
-    public class ModelTypeReader:ContentTypeReader<Model>
+    [ContentTypeReaderAttribute(typeof(ModelContent))]
+    public class ModelContentTypeReader:ContentTypeReader<ModelContent>
     {
-        public ModelTypeReader()
+        public ModelContentTypeReader()
         {
         }
 
-        private Node ReadTree(Model model, ContentReader reader)
+        private NodeContent ReadTree(ModelContent model, ContentReader reader)
         {
             int index = reader.ReadInt32();
             var node = model.Nodes[index];
             node.Transformation = reader.ReadMatrix();
             int childCount = reader.ReadInt32();
-            node.Children = new System.Collections.Generic.List<Node>();
+            node.Children = new List<NodeContent>();
             for (int i = 0; i < childCount; i++)
                 node.Children.Add(ReadTree(model, reader));
 
             return node;
         }
 
-        public override Model Read(ContentManager manager, ContentReader reader)
+        public override ModelContent Read(ContentManager manager, ContentReader reader)
         {
-            Model model = new Model(manager.graphicsDevice);
+            ModelContent model = new ModelContent();
             int meshCount = reader.ReadInt32();
-            model.Meshes = new Mesh[meshCount];
+            model.Meshes = new MeshContent[meshCount];
             for (int meshIndex = 0; meshIndex < meshCount; meshIndex++)
             {
-                Mesh m = new Mesh(model.GraphicsDevice);
+                MeshContent m = new MeshContent();
                 m.PrimitiveCount = reader.ReadInt32();
                 int vertexCount = reader.ReadInt32();
                 VertexPositionNormalTexture[] vertices = new VertexPositionNormalTexture[vertexCount];
@@ -55,23 +56,22 @@ namespace engenious.Content.Serialization
 
                     vertices[vertexIndex] = vertex;
                 }
-                m.VB = new VertexBuffer(m.GraphicsDevice, VertexPositionNormalTexture.VertexDeclaration, vertexCount);
-                m.VB.SetData(vertices);
-                m.BoundingBox = new BoundingBox(minVertex,maxVertex);
+                m.Vertices = vertices;
+                //m.BoundingBox = new BoundingBox(minVertex,maxVertex);
                 model.Meshes[meshIndex] = m;
             }
             int nodeCount = reader.ReadInt32();
-            model.Nodes = new System.Collections.Generic.List<Node>();
+            model.Nodes = new List<NodeContent>();
             for (int nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
             {
-                Node node = new Node();
+                NodeContent node = new NodeContent();
                 node.Name = reader.ReadString();
                 node.LocalTransform = reader.ReadMatrix();
                 int nodeMeshCount = reader.ReadInt32();
-                node.Meshes = new System.Collections.Generic.List<Mesh>();
+                node.Meshes = new List<int>();
                 for (int meshIndex = 0; meshIndex < nodeMeshCount; meshIndex++)
                 {
-                    node.Meshes.Add(model.Meshes[reader.ReadInt32()]);
+                    node.Meshes.Add(reader.ReadInt32());
                 }
                 model.Nodes.Add(node);
             }
@@ -80,13 +80,13 @@ namespace engenious.Content.Serialization
             int animationCount = reader.ReadInt32();
             for (int animationIndex=0;animationIndex<animationCount;animationIndex++)
             {
-                var anim = new Animation();
+                var anim = new AnimationContent();
                 anim.MaxTime = reader.ReadSingle();
                 int channelCount = reader.ReadInt32();
-                anim.Channels = new System.Collections.Generic.List<AnimationNode>();
+                anim.Channels = new List<AnimationNodeContent>();
                 for (int channel = 0; channel < channelCount; channel++)
                 {
-                    AnimationNode node = new AnimationNode();
+                    AnimationNodeContent node = new AnimationNodeContent();
                     node.Node = model.Nodes[reader.ReadInt32()];
                     node.Frames = new System.Collections.Generic.List<AnimationFrame>();
                     int frameCount = reader.ReadInt32();
@@ -102,7 +102,7 @@ namespace engenious.Content.Serialization
                 model.Animations.Add(anim);
             }
 
-            model.UpdateAnimation(null, model.RootNode);
+            //model.UpdateAnimation(null, model.RootNode);
             return model;
         }
     }

@@ -2,7 +2,6 @@
 
 namespace engenious.Content.Serialization
 {
-
 	public abstract class ContentTypeReader<T> : IContentTypeReader
 	{
 		public ContentTypeReader ()

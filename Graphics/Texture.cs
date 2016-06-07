@@ -12,6 +12,20 @@ namespace engenious.Graphics
             this.Format = format;
         }
 
+        private SamplerState samplerState;
+        public SamplerState SamplerState{
+            get{
+                return samplerState;
+            }
+            set{
+                if (value == null)
+                    samplerState = SamplerState.LinearWrap;
+                else
+                    samplerState = value;
+                SetSampler(samplerState);
+            }
+        }
+
         public PixelInternalFormat Format { get; protected set; }
 
         public int LevelCount { get; protected set; }

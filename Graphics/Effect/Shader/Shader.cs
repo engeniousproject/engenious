@@ -28,6 +28,7 @@ namespace engenious.Graphics
 
         internal void Compile()
         {
+            ThreadingHelper.BlockOnUIThread(()=>{
             GL.CompileShader(shader);
 
             int compiled;
@@ -37,6 +38,7 @@ namespace engenious.Graphics
                 string error = GL.GetShaderInfoLog(shader);
                 throw new Exception(error);
             }
+            });
         }
 
         public void Dispose()

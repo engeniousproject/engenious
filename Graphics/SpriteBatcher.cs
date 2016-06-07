@@ -140,8 +140,7 @@ namespace engenious.Graphics
             graphicsDevice.VertexBuffer = vertexBuffer;
             graphicsDevice.IndexBuffer = indexBuffer;
             graphicsDevice.Textures[0] = texture;
-            graphicsDevice.SamplerStates[0] = samplerState;
-
+            //graphicsDevice.SamplerStates[0] = samplerState;
             foreach (EffectPass pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();

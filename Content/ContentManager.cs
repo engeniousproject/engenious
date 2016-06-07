@@ -11,6 +11,7 @@ namespace engenious.Content
     public class ContentManager
     {
         private Dictionary<string ,IContentTypeReader> typeReaders;
+        private Dictionary<string ,IContentTypeReader> typeReadersOutput;
         private Dictionary<string,object> assets;
         private System.Runtime.Serialization.IFormatter formatter;
         internal GraphicsDevice graphicsDevice;
@@ -26,6 +27,7 @@ namespace engenious.Content
             this.RootDirectory = rootDirectory;
             this.graphicsDevice = graphicsDevice;
             typeReaders = new Dictionary<string, IContentTypeReader>();
+            typeReadersOutput = new Dictionary<string, IContentTypeReader>();
             assets = new Dictionary<string, object>();
             formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
             AddAssembly(Assembly.GetExecutingAssembly());
@@ -36,14 +38,25 @@ namespace engenious.Content
             foreach (Type t in assembly.GetTypes())
             {
 
-                if (t.GetInterfaces().Contains(typeof(IContentTypeReader)) && t.GetCustomAttributes(typeof(ContentTypeReaderAttribute), true).FirstOrDefault() != null)
+                if (t.GetInterfaces().Contains(typeof(IContentTypeReader)) && !(t.IsInterface || t.IsAbstract))
                 {
-                    IContentTypeReader reader = Activator.CreateInstance(t) as IContentTypeReader;
-                    typeReaders.Add(t.Namespace + "." + t.Name, reader);
+                    var attr = (ContentTypeReaderAttribute)t.GetCustomAttributes(typeof(ContentTypeReaderAttribute), true).FirstOrDefault();
+                    if (attr != null){
+                        IContentTypeReader reader = Activator.CreateInstance(t) as IContentTypeReader;
+                        typeReaders.Add(t.FullName, reader);
+                        if (attr.OutputType != null)
+                            typeReadersOutput.Add(attr.OutputType.FullName,reader);
+                    }
                 }
             }
         }
-
+        internal IContentTypeReader GetReaderByOutput(string outputType)
+        {
+            IContentTypeReader res;
+            if (!typeReadersOutput.TryGetValue(outputType, out res))
+                return null;
+            return res;
+        }
         internal IContentTypeReader GetReader(string reader)
         {
             IContentTypeReader res;
@@ -57,18 +70,20 @@ namespace engenious.Content
         public T Load<T>(string assetName)
         {
             object asset;
+            bool containsName =false;
             if (assets.TryGetValue(assetName, out asset))
             {
+                containsName = true;
                 if (asset is T)
                 {
                     return (T)asset;
                 }
-                return default(T);
             }
             T tmp = ReadAsset<T>(assetName);
             if (tmp != null)
             {
-                assets.Add(assetName, tmp);
+                if (!containsName)
+                    assets.Add(assetName, tmp);
             }
             return tmp;
         }
@@ -82,7 +97,7 @@ namespace engenious.Content
                     ContentFile res = formatter.Deserialize(fs) as ContentFile;
                     if (res == null)
                         throw new Exception("Could not load non content file");
-                    return (T)res.Load(this, fs);
+                    return (T)res.Load(this, fs,typeof(T));
                 }
             }
             catch (IOException ex)
