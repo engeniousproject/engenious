@@ -123,7 +123,6 @@ namespace engenious.Graphics
                         {
                             //GL.Viewport(viewport.X, game.Window.ClientSize.Height - viewport.Y - viewport.Height, viewport.Width, viewport.Height);
                             GL.Viewport(viewport.X, viewport.Y, viewport.Width, viewport.Height);
-                            //TODO?:
                             GL.Scissor(scissorRectangle.X, Viewport.Height - scissorRectangle.Bottom, scissorRectangle.Width, scissorRectangle.Height);
                         });
                 }
@@ -235,6 +234,7 @@ namespace engenious.Graphics
                     {
                         target.BindFBO();
                         Viewport = new Viewport(target.Bounds);
+                        ScissorRectangle = target.Bounds;
                     }
                 });
             CheckError();

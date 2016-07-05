@@ -48,7 +48,7 @@ namespace engenious
                 try
                 {
                     this.Context = new OpenTK.Graphics.GraphicsContext(mode, windowInfo, major, minor, flags);
-                    this.Context = Window.Context;
+                    //this.Context = Window.Context;
                 }
                 catch (Exception ex)
                 {

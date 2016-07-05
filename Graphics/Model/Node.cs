@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace engenious.Graphics
 {
-    internal class Node
+    public class Node
     {
         public Node()
         {

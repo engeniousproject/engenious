@@ -7,6 +7,7 @@ namespace engenious.Graphics
     {
         public ModelContent()
         {
+            Animations =new List<AnimationContent>();
         }
 
         public MeshContent[] Meshes{ get; set; }

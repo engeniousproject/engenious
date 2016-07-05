@@ -66,7 +66,7 @@ namespace engenious.Content.Serialization
             {
                 Node node = new Node();
                 node.Name = reader.ReadString();
-                node.LocalTransform = reader.ReadMatrix();
+                node.Transformation = reader.ReadMatrix();
                 int nodeMeshCount = reader.ReadInt32();
                 node.Meshes = new System.Collections.Generic.List<Mesh>();
                 for (int meshIndex = 0; meshIndex < nodeMeshCount; meshIndex++)
@@ -94,7 +94,7 @@ namespace engenious.Content.Serialization
                     {
                         AnimationFrame f = new AnimationFrame();
                         f.Frame = reader.ReadSingle();
-                        f.Transform = new AnimationTransform(reader.ReadVector3(),reader.ReadVector3(),reader.ReadQuaternion());
+                        f.Transform = new AnimationTransform(node.Node.Name,reader.ReadVector3(),reader.ReadVector3(),reader.ReadQuaternion());
                         node.Frames.Add(f);
                     }
                     anim.Channels.Add(node);

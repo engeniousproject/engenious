@@ -7,13 +7,13 @@ namespace engenious.Graphics
     {
         public float Time{ get;internal set; }
 
-        public float MaxTime{ get; internal set; }
+        public float MaxTime{ get; set; }
 
-        internal List<AnimationNode> Channels{ get; set; }
+        public List<AnimationNode> Channels{ get; set; }
 
         public void Update(float elapsed)
         {
-            Time += elapsed;
+            Time = elapsed;
             Time %= MaxTime;
             foreach (var channel in Channels)
                 channel.ApplyAnimation(Time, MaxTime);

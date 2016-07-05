@@ -12,7 +12,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>..\..\AntMe\AssimpAntMeTest\AssimpAntMeTest\bin\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -20,14 +20,14 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CustomCommands>
       <CustomCommands>
-        <Command type="Execute" command="../../../../Projects/AntMe/AntMe2/bin/Debug/CoreEngeniousClient.exe" workingdir="/home/julian/Projects/AntMe/AntMe2/bin/Debug" />
+        <Command type="Execute" command="../../AntMe/AssimpAntMeTest/AssimpAntMeTest/bin/Debug/AssimpAntMeTest.exe" workingdir="../../AntMe/AssimpAntMeTest/AssimpAntMeTest/bin/Debug/" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>..\..\AntMe\AssimpAntMeTest\AssimpAntMeTest\bin\Debug</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>

@@ -22,6 +22,7 @@ using System.Runtime.CompilerServices;
 [assembly:InternalsVisibleTo("ContentTool")]
 [assembly:InternalsVisibleTo("engenious.Pipeline")]
 [assembly:InternalsVisibleTo("Sample")]
+[assembly:InternalsVisibleTo("XNA.BLEND")]
 // The following attributes are used to specify the signing key for the assembly,
 // if desired. See the Mono documentation for more information about signing.
 

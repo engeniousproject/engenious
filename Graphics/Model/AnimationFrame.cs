@@ -2,7 +2,7 @@
 
 namespace engenious.Graphics
 {
-    internal class AnimationFrame
+    public class AnimationFrame
     {
         public AnimationTransform Transform{ get; set; }
 

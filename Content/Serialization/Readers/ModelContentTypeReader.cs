@@ -94,7 +94,7 @@ namespace engenious.Content.Serialization
                     {
                         AnimationFrame f = new AnimationFrame();
                         f.Frame = reader.ReadSingle();
-                        f.Transform = new AnimationTransform(reader.ReadVector3(),reader.ReadVector3(),reader.ReadQuaternion());
+                        f.Transform = new AnimationTransform(node.Node.Name,reader.ReadVector3(),reader.ReadVector3(),reader.ReadQuaternion());
                         node.Frames.Add(f);
                     }
                     anim.Channels.Add(node);

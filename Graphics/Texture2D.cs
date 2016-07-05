@@ -24,7 +24,12 @@ namespace engenious.Graphics
 
                     Bind();
                     setDefaultTextureParameters();
-                    GL.TexStorage2D(TextureTarget2d.Texture2D,mipMaps,(OpenTK.Graphics.OpenGL4.SizedInternalFormat)internalFormat,width,height);
+                    bool isDepthTarget = ((int)internalFormat >= (int)PixelInternalFormat.DepthComponent16 && (int)internalFormat <= (int)PixelInternalFormat.DepthComponent32Sgix);
+                    if (isDepthTarget)
+                        GL.TexImage2D(TextureTarget.Texture2D, 0,(OpenTK.Graphics.OpenGL4.PixelInternalFormat)internalFormat, width, height,0,OpenTK.Graphics.OpenGL4.PixelFormat.DepthComponent,PixelType.Float,IntPtr.Zero);
+                    else
+                        GL.TexStorage2D(TextureTarget2d.Texture2D,mipMaps,(OpenTK.Graphics.OpenGL4.SizedInternalFormat)internalFormat,width,height);
+                        
                     //GL.TexImage2D(TextureTarget.Texture2D, 0, (OpenTK.Graphics.OpenGL4.PixelInternalFormat)internalFormat, width, height, 0, (OpenTK.Graphics.OpenGL4.PixelFormat)Format, PixelType.UnsignedByte, IntPtr.Zero);
                 });
         }

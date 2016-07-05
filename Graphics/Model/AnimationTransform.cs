@@ -2,10 +2,14 @@
 
 namespace engenious
 {
-    internal class AnimationTransform
+    public class AnimationTransform
     {
-        public AnimationTransform(Vector3 location, Vector3 scale, Quaternion quaternion)
+        static string dubi;
+        public AnimationTransform(string name,Vector3 location, Vector3 scale, Quaternion quaternion)
         {
+            this.name = name;
+
+            //dubi += name + ": " + quaternion.ToString() + "\n";
             Location = location;
             Scale = scale;
             Rotation = quaternion;
@@ -13,6 +17,7 @@ namespace engenious
         public Quaternion Rotation{get;private set;}
         public Vector3 Location{get;private set;}
         public Vector3 Scale{get;private set;}
+        string name;
         public Matrix ToMatrix()
         {
             Matrix res = Matrix.CreateFromQuaternion(Rotation.X, Rotation.Y, Rotation.Z, Rotation.W);
@@ -33,7 +38,7 @@ namespace engenious
 
         public static AnimationTransform Lerp(AnimationTransform transform1,AnimationTransform transform2,float amount)
         {
-            return new AnimationTransform(Vector3.Lerp(transform1.Location,transform2.Location,amount),
+            return new AnimationTransform(transform1.name,Vector3.Lerp(transform1.Location,transform2.Location,amount),
                                             Vector3.Lerp(transform1.Scale,transform2.Scale,amount),
                                             Quaternion.Lerp(transform1.Rotation,transform2.Rotation,amount));
         }
