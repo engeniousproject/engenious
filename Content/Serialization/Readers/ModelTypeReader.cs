@@ -1,5 +1,6 @@
 ﻿using System;
 using engenious.Graphics;
+using System.Linq;
 
 namespace engenious.Content.Serialization
 {
@@ -14,7 +15,6 @@ namespace engenious.Content.Serialization
         {
             int index = reader.ReadInt32();
             var node = model.Nodes[index];
-            node.Transformation = reader.ReadMatrix();
             int childCount = reader.ReadInt32();
             node.Children = new System.Collections.Generic.List<Node>();
             for (int i = 0; i < childCount; i++)
@@ -101,7 +101,21 @@ namespace engenious.Content.Serialization
                 }
                 model.Animations.Add(anim);
             }
-
+            foreach(var anim in model.Animations)
+            {
+                foreach(var ch in anim.Channels)
+                {
+                    if (!ch.Node.Name.Contains("$"))
+                        continue;
+                    var firstFrame = ch.Frames.FirstOrDefault();
+                    for (int j=1;j<ch.Frames.Count;j++)
+                    {
+                        firstFrame = ch.Frames[j-1];
+                        var f = ch.Frames[j];
+                        f.Transform = new AnimationTransform("",f.Transform.Location,f.Transform.Scale,f.Transform.Rotation);
+                    }
+                }
+            }
             model.UpdateAnimation(null, model.RootNode);
             return model;
         }

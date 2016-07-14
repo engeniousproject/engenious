@@ -68,7 +68,7 @@ namespace engenious.Graphics
             foreach (var pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();
-
+                
                 effect.World = Transform*node.GlobalTransform * node.Transformation;
 
                 foreach (var mesh in node.Meshes)

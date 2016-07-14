@@ -60,5 +60,10 @@ namespace engenious
         public static readonly Vector4 UnitY = new Vector4(0, 1, 0, 0);
         public static readonly Vector4 UnitZ = new Vector4(0, 0, 1, 0);
         public static readonly Vector4 UnitW = new Vector4(0, 0, 0, 1);
+
+        public override string ToString()
+        {
+            return string.Format("{{{0}, {1}, {2}, {3}}}", X, Y, Z, W);
+        }
     }
 }

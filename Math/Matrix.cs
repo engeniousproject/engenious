@@ -651,6 +651,11 @@ namespace engenious
         }
 
         public static readonly Matrix Identity = new Matrix(Vector4.UnitX, Vector4.UnitY, Vector4.UnitZ, Vector4.UnitW);
+
+        public override string ToString()
+        {
+            return string.Format("[Matrix: {{{0},{1},{2},{3}}}]", Column0, Column1, Column2, Column3);
+        }
     }
 }
     

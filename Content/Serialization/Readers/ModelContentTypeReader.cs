@@ -15,7 +15,7 @@ namespace engenious.Content.Serialization
         {
             int index = reader.ReadInt32();
             var node = model.Nodes[index];
-            node.Transformation = reader.ReadMatrix();
+            reader.ReadMatrix();
             int childCount = reader.ReadInt32();
             node.Children = new List<NodeContent>();
             for (int i = 0; i < childCount; i++)
@@ -66,7 +66,7 @@ namespace engenious.Content.Serialization
             {
                 NodeContent node = new NodeContent();
                 node.Name = reader.ReadString();
-                node.LocalTransform = reader.ReadMatrix();
+                node.Transformation = reader.ReadMatrix();
                 int nodeMeshCount = reader.ReadInt32();
                 node.Meshes = new List<int>();
                 for (int meshIndex = 0; meshIndex < nodeMeshCount; meshIndex++)
