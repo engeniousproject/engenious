@@ -175,7 +175,7 @@ namespace engenious
 
         public System.Drawing.Icon Icon { get { return Window.Icon; } set { Window.Icon = value; } }
         
-        internal Window Window{ get; private set; }
+        public Window Window{ get; private set; }
 
         public MouseDevice Mouse{ get; private set; }
 
