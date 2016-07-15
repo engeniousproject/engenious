@@ -27,7 +27,7 @@ namespace engenious
             OpenTK.Graphics.GraphicsContextFlags flags = OpenTK.Graphics.GraphicsContextFlags.Default;
             int major = 1;
             int minor = 0;
-            OpenTK.Platform.IWindowInfo windowInfo = Window.WindowInfo;
+            OpenTK.Platform.IWindowInfo windowInfo = Window.window.WindowInfo;
             if (System.Environment.OSVersion.Platform == PlatformID.Win32NT ||
                         System.Environment.OSVersion.Platform == PlatformID.Win32S ||
                         System.Environment.OSVersion.Platform == PlatformID.Win32Windows ||
@@ -71,26 +71,26 @@ namespace engenious
         {
 
             OpenTK.Graphics.GraphicsContext.ShareContexts = true;
-            Window = new GameWindow(1280, 720);
+            var window = new GameWindow(1280, 720);
             ConstructContext();
 
             GraphicsDevice = new GraphicsDevice(this, Context);
-            GraphicsDevice.Viewport = new Viewport(Window.ClientRectangle);
-            Window.Context.MakeCurrent(Window.WindowInfo);
-            Window.Context.LoadAll();
-            GL.Viewport(Window.ClientRectangle);
+            GraphicsDevice.Viewport = new Viewport(window.ClientRectangle);
+            window.Context.MakeCurrent(window.WindowInfo);
+            window.Context.LoadAll();
+            GL.Viewport(window.ClientRectangle);
             //Window.Location = new System.Drawing.Point();
-            Mouse = new MouseDevice(Window.Mouse);
-            engenious.Input.Mouse.UpdateWindow(Window);
-            Window.FocusedChanged += Window_FocusedChanged;
-            Window.Closing += delegate(object sender, System.ComponentModel.CancelEventArgs e)
+            Mouse = new MouseDevice(window.Mouse);
+            engenious.Input.Mouse.UpdateWindow(window);
+            window.FocusedChanged += Window_FocusedChanged;
+            window.Closing += delegate(object sender, System.ComponentModel.CancelEventArgs e)
             {
                 Exiting?.Invoke(this, new EventArgs());
             };
             
             gameTime = new GameTime(new TimeSpan(), new TimeSpan());
 
-            Window.UpdateFrame += delegate(object sender, FrameEventArgs e)
+            window.UpdateFrame += delegate(object sender, FrameEventArgs e)
             {
                 Components.Sort();
 
@@ -98,7 +98,7 @@ namespace engenious
 
                 Update(gameTime);
             };
-            Window.RenderFrame += delegate(object sender, FrameEventArgs e)
+            window.RenderFrame += delegate(object sender, FrameEventArgs e)
             {
                 ThreadingHelper.RunUIThread();
                 GraphicsDevice.Clear(Color.CornflowerBlue);
@@ -106,23 +106,23 @@ namespace engenious
 
                 GraphicsDevice.Present();
             };
-            Window.Resize += delegate(object sender, EventArgs e)
+            window.Resize += delegate(object sender, EventArgs e)
             {
-                GraphicsDevice.Viewport = new Viewport(Window.ClientRectangle);
-                GL.Viewport(Window.ClientRectangle);
+                GraphicsDevice.Viewport = new Viewport(window.ClientRectangle);
+                GL.Viewport(window.ClientRectangle);
 
                 OnResize(this, e);
             };
-            Window.Load += delegate(object sender, EventArgs e)
+            window.Load += delegate(object sender, EventArgs e)
             {
                 Initialize();
                 LoadContent();
             };
-            Window.Closing += delegate(object sender, System.ComponentModel.CancelEventArgs e)
+            window.Closing += delegate(object sender, System.ComponentModel.CancelEventArgs e)
             {
                 OnExiting(this, new EventArgs());
             };
-            Window.KeyPress += delegate(object sender, KeyPressEventArgs e)
+            window.KeyPress += delegate(object sender, KeyPressEventArgs e)
             {
                 KeyPress?.Invoke(this, e.KeyChar);
             };
@@ -131,7 +131,7 @@ namespace engenious
             Content = new engenious.Content.ContentManager(GraphicsDevice);
             Components = new GameComponentCollection();
             
-
+            Window = new Window(window);
 
         }
 
@@ -175,7 +175,7 @@ namespace engenious
 
         public System.Drawing.Icon Icon { get { return Window.Icon; } set { Window.Icon = value; } }
         
-        internal GameWindow Window{ get; private set; }
+        internal Window Window{ get; private set; }
 
         public MouseDevice Mouse{ get; private set; }
 
@@ -203,12 +203,12 @@ namespace engenious
 
         public void Run()
         {
-            Window.Run();
+            Window.window.Run();
         }
 
         public void Run(double updatesPerSec, double framesPerSec)
         {
-            Window.Run(updatesPerSec, framesPerSec);
+            Window.window.Run(updatesPerSec, framesPerSec);
         }
 
         public GameComponentCollection Components{ get; private set; }

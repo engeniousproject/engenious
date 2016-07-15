@@ -181,6 +181,9 @@
     <Compile Include="Graphics\Vertices\VertexPositionNormal.cs" />
     <Compile Include="Graphics\Vertices\VertexPosition.cs" />
     <Compile Include="Audio\OggStream.cs" />
+    <Compile Include="Audio\SoundSourceManager.cs" />
+    <Compile Include="Audio\SoundEffect.cs" />
+    <Compile Include="Window.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
