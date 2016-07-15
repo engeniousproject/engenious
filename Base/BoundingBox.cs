@@ -39,7 +39,10 @@ namespace engenious
             val1 = val2;
             val2 = tmp;
         }
-
+        public bool Intersects(BoundingBox box)
+        {
+            throw new NotImplementedException();//TODO: return (this.Max.X >= box.Min.X) && (this.Min.X <= box.Max.X)
+        }
         public float? Intersects(Ray ray)
         {
             const float Epsilon = 1e-6f;
