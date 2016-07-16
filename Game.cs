@@ -72,6 +72,8 @@ namespace engenious
 
             OpenTK.Graphics.GraphicsContext.ShareContexts = true;
             var window = new GameWindow(1280, 720);
+
+            Window = new Window(window);
             ConstructContext();
 
             GraphicsDevice = new GraphicsDevice(this, Context);
@@ -111,6 +113,7 @@ namespace engenious
                 GraphicsDevice.Viewport = new Viewport(window.ClientRectangle);
                 GL.Viewport(window.ClientRectangle);
 
+                Resized.Invoke(sender,e);
                 OnResize(this, e);
             };
             window.Load += delegate(object sender, EventArgs e)
@@ -130,8 +133,7 @@ namespace engenious
 
             Content = new engenious.Content.ContentManager(GraphicsDevice);
             Components = new GameComponentCollection();
-            
-            Window = new Window(window);
+           
 
         }
 

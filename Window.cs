@@ -71,6 +71,19 @@ namespace engenious
                 window.WindowBorder = allowUserResizing ? WindowBorder.Resizable : WindowBorder.Fixed;
             }
         }
+        private bool fullscreen;
+        private WindowState oWindowState= WindowState.Normal;
+        public bool Fullscreen{
+            get{
+                return fullscreen;
+            }
+            set{
+                if (!fullscreen)
+                    oWindowState = window.WindowState;
+                fullscreen = value;
+                window.WindowState = fullscreen ? WindowState.Fullscreen : oWindowState;
+            }
+        }
         public string Title{
             get{
                 return window.Title;
@@ -104,6 +117,7 @@ namespace engenious
                 window.Y = value;
             }
         }
+
 
 
         public void Close()
