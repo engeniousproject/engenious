@@ -113,7 +113,7 @@ namespace engenious
                 GraphicsDevice.Viewport = new Viewport(window.ClientRectangle);
                 GL.Viewport(window.ClientRectangle);
 
-                Resized.Invoke(sender,e);
+                Resized?.Invoke(sender,e);
                 OnResize(this, e);
             };
             window.Load += delegate(object sender, EventArgs e)

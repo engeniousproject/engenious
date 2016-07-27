@@ -9,15 +9,16 @@ namespace engenious.Graphics
     {
         private int ibo;
         //private byte[] buffer;
+        private int elementSize;
         public IndexBuffer(GraphicsDevice graphicsDevice, Type indexType, int indexCount, BufferUsageHint usage = BufferUsageHint.StaticDraw)
             : base(graphicsDevice)
         {
-            int sz = System.Runtime.InteropServices.Marshal.SizeOf(indexType);
-            if (sz <= 8)
+            elementSize = System.Runtime.InteropServices.Marshal.SizeOf(indexType);
+            if (elementSize <= 8)
                 this.IndexElementSize = DrawElementsType.UnsignedByte;
-            else if (sz <= 16)
+            else if (elementSize <= 16)
                 this.IndexElementSize = DrawElementsType.UnsignedShort;
-            else if (sz <= 32)
+            else if (elementSize <= 32)
                 this.IndexElementSize = DrawElementsType.UnsignedInt;
             else
                 throw new ArgumentException("Invalid Type(bigger than 32 bits)");
@@ -28,7 +29,7 @@ namespace engenious.Graphics
                 {
                     ibo = GL.GenBuffer();
                     GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo);
-                    GL.BufferData(BufferTarget.ElementArrayBuffer, new IntPtr(indexCount * sz), IntPtr.Zero, (OpenTK.Graphics.OpenGL4.BufferUsageHint)BufferUsage);
+                    GL.BufferData(BufferTarget.ElementArrayBuffer, new IntPtr(indexCount * elementSize), IntPtr.Zero, (OpenTK.Graphics.OpenGL4.BufferUsageHint)BufferUsage);
                 });
             GraphicsDevice.CheckError();
             //buffer = new byte[indexCount * (int)IndexElementSize / 8];
@@ -44,8 +45,8 @@ namespace engenious.Graphics
                 {
                     ibo = GL.GenBuffer();
                     GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo);
-                    int sz = (indexElementSize == DrawElementsType.UnsignedByte ? 1 : (indexElementSize == DrawElementsType.UnsignedShort ? 2 : 4));
-                    GL.BufferData(BufferTarget.ElementArrayBuffer, new IntPtr(indexCount * sz), IntPtr.Zero, (OpenTK.Graphics.OpenGL4.BufferUsageHint)BufferUsage);
+                    elementSize = (indexElementSize == DrawElementsType.UnsignedByte ? 1 : (indexElementSize == DrawElementsType.UnsignedShort ? 2 : 4));
+                    GL.BufferData(BufferTarget.ElementArrayBuffer, new IntPtr(indexCount * elementSize), IntPtr.Zero, (OpenTK.Graphics.OpenGL4.BufferUsageHint)BufferUsage);
                 });
             GraphicsDevice.CheckError();
             //buffer = new byte[indexCount * (int)IndexElementSize / 8];
@@ -109,11 +110,36 @@ namespace engenious.Graphics
             ThreadingHelper.BlockOnUIThread(() =>
                 {
                     Bind();
-                    GL.BufferSubData<T>(BufferTarget.ElementArrayBuffer, IntPtr.Zero, new IntPtr(IndexCount * Marshal.SizeOf(default(T))), data);//TODO:
+                    GL.BufferSubData<T>(BufferTarget.ElementArrayBuffer, IntPtr.Zero, new IntPtr(data.Length * Marshal.SizeOf(default(T))), data);//TODO:
                 });
             GraphicsDevice.CheckError();
             //Buffer.BlockCopy (data, 0, buffer, 0, data.Length);
         }
+        public void Resize(int indexCount, bool keepData = false)
+        {
+            
+            int tempIBO;
+            ThreadingHelper.BlockOnUIThread(() =>
+                {
+                    tempIBO = GL.GenBuffer();
+                    GL.BindBuffer(BufferTarget.ElementArrayBuffer, tempIBO);
+                    GL.BufferData(BufferTarget.ElementArrayBuffer, new IntPtr(indexCount * elementSize), IntPtr.Zero, (OpenTK.Graphics.OpenGL4.BufferUsageHint)BufferUsage);
+
+
+                    GL.DeleteBuffer(ibo);
+                    ibo = tempIBO;
+
+                    this.IndexCount = indexCount;
+                });
+                    
+            if (keepData)
+            {
+                //TODO:
+                throw new NotImplementedException();
+            }
+
+        }
+
 
         internal void Bind()
         {

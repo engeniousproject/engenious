@@ -6,7 +6,7 @@ namespace engenious.Graphics
 {
     public sealed class EffectPass :IDisposable
     {
-        private int program;
+        internal int program;
 
         internal EffectPass(string name)//TODO: content loading
         {
@@ -38,9 +38,21 @@ namespace engenious.Graphics
                         ActiveUniformType type;
                         string name = GL.GetActiveUniform(program, i, out size, out type);
                         int location = GetUniformLocation(name);
-
                         Parameters.Add(new EffectPassParameter(this, name, location));
                     }
+                    GL.GetProgram(program,GetProgramParameterName.ActiveUniformBlocks,out total);
+                    for (int i=0;i<total;++i)
+                    {
+                        int size;
+                        System.Text.StringBuilder sb = new System.Text.StringBuilder(512);
+                        GL.GetActiveUniformBlockName(program,i,512,out size,sb);
+                        string name = sb.ToString();
+                        int location = i;//TODO: is index really the correct location?
+                        location = GL.GetUniformBlockIndex(program,name);
+                        Parameters.Add(new EffectPassParameter(this,name,location));
+                    }
+                    //TODO: ssbos?
+
                 });
         }
 

@@ -87,7 +87,27 @@ namespace engenious.Content
             }
             return tmp;
         }
-
+        public IEnumerable<string> ListContent(string path,bool recursive=false)
+        {
+            path = System.IO.Path.Combine(RootDirectory, path);
+            return System.IO.Directory.GetFiles(path,"*.ego",recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+        }
+        public IEnumerable<string> ListContent<T>(string path,bool recursive=false)//rather slow(needs to load part of files)
+        {
+            var tp = GetReaderByOutput(typeof(T).FullName);
+            foreach(var file in ListContent(path,false)){
+                using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read))
+                {
+                    ContentFile res = formatter.Deserialize(fs) as ContentFile;
+                    if (res == null)
+                        continue;
+                    Console.WriteLine(res.FileType);
+                    if (res.FileType == tp.GetType().FullName)//TODO inheritance
+                        yield return file;
+                }
+            }
+            yield break;
+        }
         protected T ReadAsset<T>(string assetName)
         {
             try

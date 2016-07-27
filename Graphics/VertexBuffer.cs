@@ -79,14 +79,23 @@ namespace engenious.Graphics
 
         public void Resize(int vertexCount, bool keepData = false)
         {
-            this.VertexCount = vertexCount;
-            tempVBO = vbo;
+            
+            int tempVBO;
             ThreadingHelper.BlockOnUIThread(() =>
                 {
-                    vbo = GL.GenBuffer();
-                    GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+                    tempVBO = GL.GenBuffer();
+                    vao.Bind();
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, tempVBO);
                     GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(VertexCount * VertexDeclaration.VertexStride), IntPtr.Zero, (OpenTK.Graphics.OpenGL4.BufferUsageHint)BufferUsage);
+                    VertexAttributes.ApplyAttributes(vao, VertexDeclaration);
+                    GL.BindVertexArray(0);
+                    this.VertexCount = vertexCount;
+                    GL.DeleteBuffer(vbo);
+                    vbo = tempVBO;
+
+
                 });
+            
             /*ThreadingHelper.BlockOnUIThread(() =>
                 {
 
@@ -132,8 +141,9 @@ namespace engenious.Graphics
             ThreadingHelper.BlockOnUIThread(() =>
                 {
                     GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+
                     GCHandle buffer = GCHandle.Alloc(data, GCHandleType.Pinned);
-                    GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, new IntPtr(VertexCount * VertexDeclaration.VertexStride), buffer.AddrOfPinnedObject());//TODO use bufferusage
+                    GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, new IntPtr(data.Length * VertexDeclaration.VertexStride), buffer.AddrOfPinnedObject());//TODO use bufferusage
                     buffer.Free();
                 });
             GraphicsDevice.CheckError();

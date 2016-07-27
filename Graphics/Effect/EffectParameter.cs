@@ -261,6 +261,18 @@ namespace engenious.Graphics
                 });
         }
 
+        public void SetValue(ConstantBuffer value)
+        {
+            ThreadingHelper.BlockOnUIThread(() =>
+                {
+                    foreach (var param in parameters)
+                    {
+                        param.pass.Apply();
+                        param.SetValue(value);
+                    }
+                });
+        }
+
     }
 }
 

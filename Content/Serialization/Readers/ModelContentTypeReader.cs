@@ -15,7 +15,6 @@ namespace engenious.Content.Serialization
         {
             int index = reader.ReadInt32();
             var node = model.Nodes[index];
-            reader.ReadMatrix();
             int childCount = reader.ReadInt32();
             node.Children = new List<NodeContent>();
             for (int i = 0; i < childCount; i++)

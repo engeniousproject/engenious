@@ -14,10 +14,20 @@ namespace engenious
             MasterVolume = 1.0f;
         }
 
+        public bool Streaming{get;protected set;}=false;
 
         public SoundEffect()
         {
         }
+
+        public void Update(int sid)
+        {
+            if (Streaming)
+            {
+                
+            }
+        }
+        
     }
 }
 

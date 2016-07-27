@@ -151,6 +151,10 @@ namespace engenious
                 }
             }
         }
+        public void SetValue(ConstantBuffer value)
+        {
+            GL.UniformBlockBinding(pass.program,location,value.ubo);
+        }
 			
     }
 }
