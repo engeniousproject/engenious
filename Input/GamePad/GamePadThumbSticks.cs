@@ -7,6 +7,9 @@ namespace engenious.Input
         const float ConversionFactor = 1.0f / short.MaxValue;
         short left_x, left_y;
         short right_x, right_y;
+
+        const short leftThumbDeadZone = 7864;//0.24f * short.MaxValue;//MonoGame
+        const short rightThumbDeadZone = 8683;
         //
         // Properties
         //
@@ -31,10 +34,20 @@ namespace engenious.Input
         //
         internal GamePadThumbSticks(short left_x, short left_y, short right_x, short right_y)
         {
-            this.left_x = left_x;
-            this.left_y = left_y;
-            this.right_x = right_x;
-            this.right_y = right_y;
+            this.left_x = ExcludeAxisDeadZone(left_x, leftThumbDeadZone);//TODO: circular dead zone?
+            this.left_y = ExcludeAxisDeadZone(left_y, leftThumbDeadZone);
+            this.right_x = ExcludeAxisDeadZone(right_x, rightThumbDeadZone);
+            this.right_y = ExcludeAxisDeadZone(right_y, rightThumbDeadZone);
+        }
+        private static short ExcludeAxisDeadZone(short value, short deadZone)
+        {
+            if (value < -deadZone)
+                value += deadZone;
+            else if (value > deadZone)
+                value -= deadZone;
+            else
+                return 0;
+            return (short)(value / (short.MaxValue - deadZone));
         }
 
         //
