@@ -9,6 +9,15 @@ namespace engenious
         internal Window(GameWindow window)
         {
             this.window = window;
+            window.KeyDown += delegate(object sender, OpenTK.Input.KeyboardKeyEventArgs e)
+            {
+                if (e.Key == OpenTK.Input.Key.F4 && e.Alt)
+                {
+                    Close();
+                    return;
+                }
+            };
+
         }
         public Rectangle ClientRectangle{
             get{

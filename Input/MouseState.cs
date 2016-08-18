@@ -109,6 +109,7 @@ namespace engenious.Input
         public MouseScroll Scroll
         {
             get { return scroll; }
+            internal set{scroll = value;}
         }
 
         /// <summary>

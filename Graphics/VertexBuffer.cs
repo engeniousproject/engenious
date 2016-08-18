@@ -80,26 +80,24 @@ namespace engenious.Graphics
         public void Resize(int vertexCount, bool keepData = false)
         {
             
-            int tempVBO;
+            int tempVBO=0;
             ThreadingHelper.BlockOnUIThread(() =>
                 {
                     tempVBO = GL.GenBuffer();
                     vao.Bind();
                     GL.BindBuffer(BufferTarget.ArrayBuffer, tempVBO);
-                    GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(VertexCount * VertexDeclaration.VertexStride), IntPtr.Zero, (OpenTK.Graphics.OpenGL4.BufferUsageHint)BufferUsage);
+                    GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(vertexCount * VertexDeclaration.VertexStride), IntPtr.Zero, (OpenTK.Graphics.OpenGL4.BufferUsageHint)BufferUsage);
+
+                });
+            
+            ThreadingHelper.BlockOnUIThread(() =>
+                {
                     VertexAttributes.ApplyAttributes(vao, VertexDeclaration);
                     GL.BindVertexArray(0);
                     this.VertexCount = vertexCount;
                     GL.DeleteBuffer(vbo);
                     vbo = tempVBO;
-
-
-                });
-            
-            /*ThreadingHelper.BlockOnUIThread(() =>
-                {
-
-                }, true, this);
+                }, true, this);/*
             ThreadingHelper.BlockOnUIThread(() =>
                 {
 

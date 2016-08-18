@@ -37,7 +37,11 @@ namespace engenious.Input
     public struct MouseScroll : IEquatable<MouseScroll>
     {
         #region Public Members
-
+        public MouseScroll(float x,float y)
+        {
+            this.X = x;
+            this.Y = y;
+        }
         /// <summary>
         /// Gets the absolute horizontal offset of the wheel,
         /// or 0 if no horizontal scroll wheel exists.

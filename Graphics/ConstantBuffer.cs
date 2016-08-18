@@ -16,26 +16,29 @@ namespace engenious
                     GL.BufferData(BufferTarget.UniformBuffer,new IntPtr(size),IntPtr.Zero, BufferUsageHint.DynamicDraw);
                 });
         }
-        public void Update(IntPtr data)
+        public void Update(IntPtr data,uint size)
         {
             ThreadingHelper.BlockOnUIThread(() =>
                 {
                 GL.BindBuffer(BufferTarget.UniformBuffer, ubo);
-                IntPtr ptr = GL.MapBuffer(BufferTarget.UniformBuffer,BufferAccess.WriteOnly);
+                    IntPtr ptr = GL.MapBuffer(BufferTarget.UniformBuffer,BufferAccess.WriteOnly);
+                    MemoryHelper.CopyBulk(data,ptr,size);
                     //Buffer.BlockCopy(
                 GL.UnmapBuffer(BufferTarget.UniformBuffer);
                 });
         }
         public void Update<T>(T data) where T : struct
         {
+            uint size = (uint)Marshal.SizeOf(data);
             GCHandle h = GCHandle.Alloc(data,GCHandleType.Pinned);
             Update(h.AddrOfPinnedObject());
             h.Free();
         }
         public void Update<T>(T[] data) where T : struct
         {
+            uint size = (uint)(Marshal.SizeOf(typeof(T))*data.Length);
             GCHandle h = GCHandle.Alloc(data,GCHandleType.Pinned);
-            Update(h.AddrOfPinnedObject());
+            Update(h.AddrOfPinnedObject(),size);
             h.Free();
         }
     }

@@ -9,7 +9,7 @@ namespace engenious.Input
     {
 
         private static OpenTK.GameWindow window;
-
+        static float deltaPrecise=0;
         static Mouse()
         {
             if (!WrappingHelper.ValidateStructs<OpenTK.Input.MouseState,MouseState>())
@@ -19,11 +19,16 @@ namespace engenious.Input
         internal static void UpdateWindow(OpenTK.GameWindow window)
         {
             Mouse.window = window;
+            window.MouseWheel += delegate(object sender, OpenTK.Input.MouseWheelEventArgs e)
+            {
+                deltaPrecise+=(e.DeltaPrecise);
+            };
         }
         public static unsafe MouseState GetState(int index)
         {
             OpenTK.Input.MouseState state = OpenTK.Input.Mouse.GetState(index);
             MouseState actual = *(MouseState*)(&state);
+            
             actual.X = window.Mouse.X;
             actual.Y = window.Mouse.Y;
             return actual;
@@ -35,6 +40,8 @@ namespace engenious.Input
             MouseState actual = *(MouseState*)(&state);
             actual.X = window.Mouse.X;
             actual.Y = window.Mouse.Y;
+            //actual.Scroll = new MouseScroll(actual.Scroll.X,deltaPrecise);//.Y = ;
+            deltaPrecise = 0;
             return actual;
 
         }

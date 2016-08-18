@@ -129,6 +129,7 @@ namespace engenious
             {
                 KeyPress?.Invoke(this, e.KeyChar);
             };
+
             //Window.Context.MakeCurrent(Window.WindowInfo);
 
             Content = new engenious.Content.ContentManager(GraphicsDevice);

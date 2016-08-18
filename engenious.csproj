@@ -180,6 +180,8 @@
     <Compile Include="Audio\SoundEffect.cs" />
     <Compile Include="Window.cs" />
     <Compile Include="Graphics\ConstantBuffer.cs" />
+    <Compile Include="Helper\MemoryHelper.cs" />
+    <Compile Include="Graphics\ClearBufferMask.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

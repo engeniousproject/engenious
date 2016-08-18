@@ -31,7 +31,7 @@ namespace engenious.Graphics
             int total = -1;
             ThreadingHelper.BlockOnUIThread(() =>
                 {
-                    GL.GetProgram(program, GetProgramParameterName.ActiveUniforms, out total); 
+                    GL.GetProgram(program,GetProgramParameterName.ActiveUniforms, out total); 
                     for (int i = 0; i < total; ++i)
                     {
                         int size;

@@ -14,7 +14,7 @@ namespace engenious.Input
             OpenTK.Input.GamePadState state = OpenTK.Input.GamePad.GetState(index);
 
             GamePadState actual = *(GamePadState*)&state;
-
+            //TODO:actual.ThumbSticks.Left = new Vector2(Math.M
             return actual;
         }
     }

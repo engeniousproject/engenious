@@ -18,7 +18,7 @@ namespace engenious.Graphics
         private OpenTK.Graphics.IGraphicsContext context;
 
 
-        DebugProc DebugCallbackInstance = DebugCallback;
+        /*DebugProc DebugCallbackInstance = DebugCallback;
 
         static void DebugCallback(DebugSource source, DebugType type, int id,
                                   DebugSeverity severity, int length, IntPtr message, IntPtr userParam)
@@ -26,7 +26,7 @@ namespace engenious.Graphics
             string msg = Marshal.PtrToStringAnsi(message);
             Console.WriteLine("[GL] {0}; {1}; {2}; {3}; {4}",
                 source, type, id, severity, msg);
-        }
+        }*/
 
         internal Game game;
         internal Dictionary<string, bool> extensions = new Dictionary<string, bool>();
@@ -35,9 +35,10 @@ namespace engenious.Graphics
         {
             this.context = context;
             this.game = game;
-            
+
 #if DEBUG
-            int count = GL.GetInteger(GetPName.NumExtensions);
+            int count;
+            GL.GetInteger(GetPName.NumExtensions,out count);
             for (int i = 0; i < count; i++)
             {
                 string extension = GL.GetString(StringNameIndexed.Extensions, i);
@@ -60,12 +61,18 @@ namespace engenious.Graphics
             CheckError();
             //TODO: samplerstate
         }
-
+        public void Clear(ClearBufferMask mask)
+        {
+            ThreadingHelper.BlockOnUIThread(() =>
+                {
+                    GL.Clear((OpenTK.Graphics.OpenGL4.ClearBufferMask)mask);
+                });
+        }
         public void Clear(ClearBufferMask mask, System.Drawing.Color color)
         {
             ThreadingHelper.BlockOnUIThread(() =>
                 {
-                    GL.Clear(mask);
+                    GL.Clear((OpenTK.Graphics.OpenGL4.ClearBufferMask)mask);
                     GL.ClearColor(color);
                 });
         }
@@ -96,7 +103,7 @@ namespace engenious.Graphics
         {
             ThreadingHelper.BlockOnUIThread(() =>
                 {
-                    GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+                    GL.Clear(OpenTK.Graphics.OpenGL4.ClearBufferMask.ColorBufferBit | OpenTK.Graphics.OpenGL4.ClearBufferMask.DepthBufferBit);
                     GL.ClearColor(color.R, color.G, color.B, color.A);
                 });
             CheckError();
