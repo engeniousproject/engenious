@@ -179,9 +179,9 @@ namespace engenious
 
         public static void Clamp(Vector3 value, Vector3 min, Vector3 max, out Vector3 output)
         {
-            output.X = Math.Min(Math.Max(min.X, value.X), max.X);
-            output.Y = Math.Min(Math.Max(min.Y, value.Y), max.Y);
-            output.Z = Math.Min(Math.Max(min.Z, value.Z), max.Z);
+            output = new Vector3(Math.Min(Math.Max(min.X, value.X), max.X),
+                                    Math.Min(Math.Max(min.Y, value.Y), max.Y),
+                                    Math.Min(Math.Max(min.Z, value.Z), max.Z));
         }
 
         public static float Dot(Vector3 value1, Vector3 value2)

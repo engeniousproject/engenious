@@ -93,37 +93,39 @@ namespace engenious
 
         private void pVertex(Vector3 normal, BoundingBox box, out Vector3 vn, out Vector3 vp)
         {
+            float vNx, vNy,vNz,vPx,vPy,vPz;
             if (normal.X >= 0)
             {
-                vp.X = box.Max.X;
-                vn.X = box.Min.X;
+                vPx = box.Max.X;
+                vNx = box.Min.X;
             }
             else
             {
-                vp.X = box.Min.X;
-                vn.X = box.Max.X;
+                vPx = box.Min.X;
+                vNx = box.Max.X;
             }
             if (normal.Y >= 0)
             {
-                vp.Y = box.Max.Y;
-                vn.Y = box.Min.Y;
+                vPy = box.Max.Y;
+                vNy = box.Min.Y;
             }
             else
             {
-                vp.Y = box.Min.Y;
-                vn.Y = box.Max.Y;
+                vPy = box.Min.Y;
+                vNy = box.Max.Y;
             }
             if (normal.Z >= 0)
             {
-                vp.Z = box.Max.Z;
-                vn.Z = box.Min.Z;
+                vPz = box.Max.Z;
+                vNz = box.Min.Z;
             }
             else
             {
-                vp.Z = box.Min.Z;
-                vn.Z = box.Max.Z;
+                vPz = box.Min.Z;
+                vNz = box.Max.Z;
             }
-
+            vp = new Vector3(vPx, vPy, vPz);
+            vn = new Vector3(vNx, vNy, vNz);
         }
 
         public bool Contains(BoundingBox box, out CollisionType type)

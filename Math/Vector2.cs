@@ -160,8 +160,8 @@ namespace engenious
 
         public static void Clamp(Vector2 value, Vector2 min, Vector2 max, out Vector2 output)
         {
-            output.X = Math.Min(Math.Max(min.X, value.X), max.X);
-            output.Y = Math.Min(Math.Max(min.Y, value.Y), max.Y);
+            output =new Vector2( Math.Min(Math.Max(min.X, value.X), max.X),
+                                Math.Min(Math.Max(min.Y, value.Y), max.Y));
         }
 
         public static float Dot(Vector2 value1, Vector2 value2)
