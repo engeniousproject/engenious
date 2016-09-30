@@ -4,10 +4,10 @@ namespace engenious
 {
 	public enum VertexElementUsage
 	{
-		Normal,
-		Position,
-		TextureCoordinate,
-		Color
+		Normal=0,
+		Position=1,
+		TextureCoordinate=2,
+		Color=3
 	}
 }
 

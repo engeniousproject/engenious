@@ -26,7 +26,7 @@ namespace engenious.Audio
         private List<int> playing;
         public SoundSourceManager()
         {
-            sources = AL.GenBuffers(MAX_SOURCES);
+            sources = AL.GenSources(MAX_SOURCES);
 
             inUse = new List<int>();
             playing = new List<int>();
@@ -44,6 +44,13 @@ namespace engenious.Audio
         {
             inUse.Remove(source);
             available.Add(source);
+        }
+        public void Enqueue(int[] sources)
+        {
+            foreach(var source in sources)
+            {
+                Enqueue(source);
+            }
         }
 
         public void Update()

@@ -40,8 +40,10 @@ namespace engenious.Audio
                 {
                     volume = value;
                     AL.Source (sid, ALSourcef.Gain, value);
+                    
                 }
             }
+            
         }
 
         public float Pitch{
@@ -72,8 +74,9 @@ namespace engenious.Audio
 
         public void Apply3D(AudioListener[] listeners, AudioEmitter emitter)
         {
-            foreach(var l in listeners)
-                Apply3D(l,emitter);
+            throw new NotSupportedException("Just one listener is supported!");
+            //foreach(var l in listeners)
+            //    Apply3D(l,emitter);
         }
 
         private void Apply3D(AudioListener listener,AudioEmitter emitter)

@@ -182,6 +182,8 @@
     <Compile Include="Graphics\ConstantBuffer.cs" />
     <Compile Include="Helper\MemoryHelper.cs" />
     <Compile Include="Graphics\ClearBufferMask.cs" />
+    <Compile Include="Audio\DynamicSoundEffectInstance.cs" />
+    <Compile Include="Helper\PlatformHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

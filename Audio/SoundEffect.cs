@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace engenious
+namespace engenious.Audio
 {
-    public class SoundEffect
+    public class SoundEffect : IDisposable
     {
         public static float SpeedOfSound { get; set; }
 
@@ -14,20 +14,21 @@ namespace engenious
             MasterVolume = 1.0f;
         }
 
-        public bool Streaming{get;protected set;}=false;
 
         public SoundEffect()
         {
         }
 
-        public void Update(int sid)
+        public System.IO.Stream OpenStream()
         {
-            if (Streaming)
-            {
-                
-            }
+            return null;
         }
-        
+        #region IDisposable implementation
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }
 

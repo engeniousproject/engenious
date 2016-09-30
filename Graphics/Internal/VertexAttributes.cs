@@ -56,7 +56,7 @@ namespace engenious.Graphics
             attribs.Bind();
             foreach (var el in declaration.VertexElements)
             {
-                attribs.Add(el, declaration.VertexStride);
+                attribs.Add(el, declaration.VertexStride,declaration.InstanceDivisor);
             }
             GL.BindVertexArray(0);
         }

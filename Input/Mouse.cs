@@ -21,11 +21,13 @@ namespace engenious.Input
             Mouse.window = window;
             window.MouseWheel += delegate(object sender, OpenTK.Input.MouseWheelEventArgs e)
             {
-                deltaPrecise+=(e.DeltaPrecise);
+                deltaPrecise-=(e.DeltaPrecise);
             };
         }
         public static unsafe MouseState GetState(int index)
         {
+            return GetState();
+            //TODO multiple mice
             OpenTK.Input.MouseState state = OpenTK.Input.Mouse.GetState(index);
             MouseState actual = *(MouseState*)(&state);
             
@@ -40,8 +42,8 @@ namespace engenious.Input
             MouseState actual = *(MouseState*)(&state);
             actual.X = window.Mouse.X;
             actual.Y = window.Mouse.Y;
-            //actual.Scroll = new MouseScroll(actual.Scroll.X,deltaPrecise);//.Y = ;
-            deltaPrecise = 0;
+            actual.Scroll = new MouseScroll(actual.Scroll.X,deltaPrecise);//.Y = ;
+            //deltaPrecise = 0;
             return actual;
 
         }

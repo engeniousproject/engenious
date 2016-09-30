@@ -227,6 +227,12 @@ namespace engenious.Graphics
             }
             CheckError();
         }
+        public void DrawInstancedPrimitives(PrimitiveType primitiveType, int baseVertex, int startIndex, int primitiveCount, int instanceCount)
+        {
+            VertexBuffer.EnsureVAO();
+            VertexBuffer.vao.Bind();
+            GL.DrawArraysInstancedBaseInstance((OpenTK.Graphics.OpenGL4.PrimitiveType)primitiveType,startIndex,primitiveCount * 3,instanceCount,0);
+        }
 
         public void SetRenderTarget(RenderTarget2D target)
         {

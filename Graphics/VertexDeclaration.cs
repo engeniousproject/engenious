@@ -20,6 +20,7 @@ namespace engenious.Graphics
 		}
 		public VertexElement[] VertexElements{get;private set;}
 		public int VertexStride{ get; private set;}
+        public int InstanceDivisor{get;set;}=-1;
 	}
 }
 

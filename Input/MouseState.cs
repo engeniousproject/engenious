@@ -37,7 +37,7 @@ namespace engenious.Input
     public struct MouseState : IEquatable<MouseState>
     {
         #region Fields
-
+        internal const int WheelDelta = 1;//Windows wheel
         internal const int MaxButtons = 16;
         // we are storing in an ushort
         Vector2 position;
@@ -91,7 +91,7 @@ namespace engenious.Input
         /// </summary>
         public int Wheel
         {
-            get { return (int)Math.Round(scroll.Y, MidpointRounding.AwayFromZero); }
+            get { return (int)(scroll.Y*WheelDelta); }
         }
 
         /// <summary>
