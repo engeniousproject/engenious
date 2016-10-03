@@ -169,7 +169,7 @@ namespace engenious.Graphics
                 if (fontChar == null)
                     continue;
                 
-                Draw(spriteFont.texture, position + offset - new Vector2(-fontChar.Offset.X,fontChar.Offset.Y-spriteFont.BaseLine), fontChar.TextureRegion, color, rotation, origin - offset, 1.0f, SpriteEffects.None, layerDepth);
+                Draw(spriteFont.texture, position + offset + fontChar.Offset, fontChar.TextureRegion, color, rotation, origin - offset, 1.0f, SpriteEffects.None, layerDepth);
                 offset.X += fontChar.Advance;
                 if (i < text.Length - 1)
                 {
