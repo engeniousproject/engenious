@@ -151,6 +151,7 @@ namespace engenious.Graphics
             Vector2 offset = new Vector2(0.0f, 0.0f);
             for (int i = 0; i < text.Length; i++)
             {
+
                 char c = text[i];
                 FontCharacter fontChar;
                 if (!spriteFont.characterMap.TryGetValue(c, out fontChar))
