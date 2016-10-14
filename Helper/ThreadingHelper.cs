@@ -10,7 +10,7 @@ namespace engenious
         private static GLSynchronizationContext sync;
         private static int uiThreadId;
         private static System.Threading.Thread uiThread;
-        private static IGraphicsContext context;
+        internal static IGraphicsContext context;
         private static OpenTK.Platform.IWindowInfo windowInfo;
 
         static ThreadingHelper()
@@ -25,6 +25,8 @@ namespace engenious
         {
             //GraphicsContextFlags flags = GraphicsContextFlags.
             ThreadingHelper.context = new GraphicsContext(GraphicsMode.Default, windowInfo, major, minor, contextFlags);
+            ThreadingHelper.context.MakeCurrent(windowInfo);
+            (ThreadingHelper.context as IGraphicsContextInternal).LoadAll();
             ThreadingHelper.windowInfo = windowInfo;
         }
 
