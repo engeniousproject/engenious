@@ -83,21 +83,20 @@ namespace engenious.Graphics
             int tempVBO=0;
             ThreadingHelper.BlockOnUIThread(() =>
                 {
+                    GL.BindVertexArray(0);
                     tempVBO = GL.GenBuffer();
-                    vao.Bind();
                     GL.BindBuffer(BufferTarget.ArrayBuffer, tempVBO);
                     GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(vertexCount * VertexDeclaration.VertexStride), IntPtr.Zero, (OpenTK.Graphics.OpenGL4.BufferUsageHint)BufferUsage);
-
+                    GraphicsDevice.CheckError();
                 });
             
             ThreadingHelper.BlockOnUIThread(() =>
                 {
-                    VertexAttributes.ApplyAttributes(vao, VertexDeclaration);
-                    GL.BindVertexArray(0);
                     this.VertexCount = vertexCount;
                     GL.DeleteBuffer(vbo);
                     vbo = tempVBO;
-                }, true, this);/*
+                    GraphicsDevice.CheckError();
+                });/*
             ThreadingHelper.BlockOnUIThread(() =>
                 {
 
@@ -120,11 +119,6 @@ namespace engenious.Graphics
                 VertexAttributes.ApplyAttributes(vao, VertexDeclaration);
 
                 GL.BindVertexArray(0);
-
-                if (tempVBO == -1)
-                    return;
-                GL.DeleteBuffer(tempVBO);
-                tempVBO = -1;
             }
         }
 
