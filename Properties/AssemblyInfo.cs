@@ -6,10 +6,6 @@ using System.Runtime.CompilerServices;
 
 [assembly: AssemblyTitle("engenious")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("julian")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -17,7 +13,6 @@ using System.Runtime.CompilerServices;
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 
-[assembly: AssemblyVersion("1.0.*")]
 
 [assembly:InternalsVisibleTo("ContentTool")]
 [assembly:InternalsVisibleTo("engenious.Pipeline")]
