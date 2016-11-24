@@ -41,6 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SolutionInfo.cs" />
+    <Compile Include="Graphics\Effect\IEffect.cs" />
+    <Compile Include="Graphics\Model\IModelEffect.cs" />
+    <Compile Include="Graphics\Effect\ITextureEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />

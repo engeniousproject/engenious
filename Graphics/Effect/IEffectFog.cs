@@ -1,7 +1,7 @@
 ﻿using System;
 using OpenTK;
 
-namespace engenious
+namespace engenious.Graphics
 {
 	public interface IEffectFog
 	{
