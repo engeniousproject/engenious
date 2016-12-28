@@ -26,9 +26,11 @@
 #endregion
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace engenious.Input
 {
+    [StructLayout(LayoutKind.Sequential,Pack=1)]
     public struct KeyboardState: IEquatable<KeyboardState>
     {
         #region Fields
@@ -38,7 +40,7 @@ namespace engenious.Input
         const int NumInts = ((int)Keys.LastKey + IntSize - 1) / IntSize;
         // The following line triggers bogus CS0214 in gmcs 2.0.1, sigh...
         //TODO: fix
-        unsafe fixed int Key[((int)Keys.LastKey + sizeof(int) - 1) / sizeof(int)];
+        unsafe fixed int Key[NumInts];
 
         bool is_connected;
 

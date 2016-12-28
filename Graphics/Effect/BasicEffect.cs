@@ -3,7 +3,7 @@ using OpenTK;
 
 namespace engenious.Graphics
 {
-    public class BasicEffect : Effect,IEffectMatrices
+    public class BasicEffect : Effect,IModelEffect
     {
         private const string vertexShader = 
             @"

@@ -54,12 +54,12 @@ namespace engenious.Graphics
             }
         }
 
-        public void Draw(BasicEffect effect, Texture2D text)
+        public void Draw(IModelEffect effect, Texture2D text)
         {
             DrawNode(RootNode, effect, text);
         }
 
-        internal void DrawNode(Node node, BasicEffect effect, Texture2D text)
+        internal void DrawNode(Node node, IModelEffect effect, Texture2D text)
         {
             if (node.Meshes.Count == 0 && node.Children.Count == 0)
                 return;

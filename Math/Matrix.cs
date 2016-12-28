@@ -8,8 +8,7 @@ namespace engenious
     public struct Matrix :IEquatable<Matrix>
     {
         [FieldOffset(0)]
-        private unsafe fixed float
-            items[16];
+        private unsafe fixed float items[16];
         [FieldOffset(0)]
         public float M11;
         [FieldOffset(4)]
@@ -150,19 +149,12 @@ namespace engenious
             }
         }
 
-        public float Determinant
-        {
-            get
-            {
-                return
-                    M11 * M22 * M33 * M44 - M11 * M22 * M34 * M43 + M11 * M23 * M34 * M42 - M11 * M23 * M32 * M44
-                + M11 * M24 * M32 * M43 - M11 * M24 * M33 * M42 - M12 * M23 * M34 * M41 + M12 * M23 * M31 * M44
-                - M12 * M24 * M31 * M43 + M12 * M24 * M33 * M41 - M12 * M21 * M33 * M44 + M12 * M21 * M34 * M43
-                + M13 * M24 * M31 * M42 - M13 * M24 * M32 * M41 + M13 * M21 * M32 * M44 - M13 * M21 * M34 * M42
-                + M13 * M22 * M34 * M41 - M13 * M22 * M31 * M44 - M14 * M21 * M32 * M43 + M14 * M21 * M33 * M42
-                - M14 * M22 * M33 * M41 + M14 * M22 * M31 * M43 - M14 * M23 * M31 * M42 + M14 * M23 * M32 * M41;
-            }
-        }
+        public float Determinant =>   M11 * M22 * M33 * M44 - M11 * M22 * M34 * M43 + M11 * M23 * M34 * M42 - M11 * M23 * M32 * M44
+                                    + M11 * M24 * M32 * M43 - M11 * M24 * M33 * M42 - M12 * M23 * M34 * M41 + M12 * M23 * M31 * M44
+                                    - M12 * M24 * M31 * M43 + M12 * M24 * M33 * M41 - M12 * M21 * M33 * M44 + M12 * M21 * M34 * M43
+                                    + M13 * M24 * M31 * M42 - M13 * M24 * M32 * M41 + M13 * M21 * M32 * M44 - M13 * M21 * M34 * M42
+                                    + M13 * M22 * M34 * M41 - M13 * M22 * M31 * M44 - M14 * M21 * M32 * M43 + M14 * M21 * M33 * M42
+                                    - M14 * M22 * M33 * M41 + M14 * M22 * M31 * M43 - M14 * M23 * M31 * M42 + M14 * M23 * M32 * M41;
 
         public unsafe float this [int columnIndex, int rowIndex]
         {
@@ -261,7 +253,7 @@ namespace engenious
         {
             for (int i = 0; i < 16; i++)
             {
-                value1.items[i] += value2.items[i];   
+                value1.items[i] += value2.items[i];
             }
             return value1;
         }
@@ -270,7 +262,7 @@ namespace engenious
         {
             for (int i = 0; i < 16; i++)
             {
-                value1.items[i] -= value2.items[i];  
+                value1.items[i] -= value2.items[i];
             }
             return value1;
         }
@@ -279,7 +271,7 @@ namespace engenious
         {
             for (int i = 0; i < 16; i++)
             {
-                value.items[i] *= scalar;  
+                value.items[i] *= scalar;
             }
             return value;
         }
@@ -311,22 +303,22 @@ namespace engenious
                 value1.M12 * value2.M11 + value1.M22 * value2.M12 + value1.M32 * value2.M13 + value1.M42 * value2.M14,
                 value1.M13 * value2.M11 + value1.M23 * value2.M12 + value1.M33 * value2.M13 + value1.M43 * value2.M14,
                 value1.M14 * value2.M11 + value1.M24 * value2.M12 + value1.M34 * value2.M13 + value1.M44 * value2.M14,
-                             
+
                 value1.M11 * value2.M21 + value1.M21 * value2.M22 + value1.M31 * value2.M23 + value1.M41 * value2.M24,
                 value1.M12 * value2.M21 + value1.M22 * value2.M22 + value1.M32 * value2.M23 + value1.M42 * value2.M24,
                 value1.M13 * value2.M21 + value1.M23 * value2.M22 + value1.M33 * value2.M23 + value1.M43 * value2.M24,
                 value1.M14 * value2.M21 + value1.M24 * value2.M22 + value1.M34 * value2.M23 + value1.M44 * value2.M24,
-                             
+
                 value1.M11 * value2.M31 + value1.M21 * value2.M32 + value1.M31 * value2.M33 + value1.M41 * value2.M34,
                 value1.M12 * value2.M31 + value1.M22 * value2.M32 + value1.M32 * value2.M33 + value1.M42 * value2.M34,
                 value1.M13 * value2.M31 + value1.M23 * value2.M32 + value1.M33 * value2.M33 + value1.M43 * value2.M34,
                 value1.M14 * value2.M31 + value1.M24 * value2.M32 + value1.M34 * value2.M33 + value1.M44 * value2.M34,
-                             
+
                 value1.M11 * value2.M41 + value1.M21 * value2.M42 + value1.M31 * value2.M43 + value1.M41 * value2.M44,
                 value1.M12 * value2.M41 + value1.M22 * value2.M42 + value1.M32 * value2.M43 + value1.M42 * value2.M44,
                 value1.M13 * value2.M41 + value1.M23 * value2.M42 + value1.M33 * value2.M43 + value1.M43 * value2.M44,
                 value1.M14 * value2.M41 + value1.M24 * value2.M42 + value1.M34 * value2.M43 + value1.M44 * value2.M44);*/
-            
+
         }
 
 
@@ -356,13 +348,12 @@ namespace engenious
 
         public unsafe static void CreatePerspectiveOffCenter(float left, float right, float bottom, float top, float near, float far, out Matrix result)
         {
-            if (left == right)
-                throw new ArgumentOutOfRangeException("left or right");
+            if (left  == right)
+                throw new ArgumentOutOfRangeException($"{nameof(left)} or {nameof(right)}");
             if (bottom == top)
-                throw new ArgumentOutOfRangeException("bottom or top");
+                throw new ArgumentOutOfRangeException($"{nameof(bottom)} or {nameof(top)}");
             if (near == far)
-                throw new ArgumentOutOfRangeException("near or far");
-
+                throw new ArgumentOutOfRangeException($"{nameof(near)} or {nameof(far)}");
             Matrix m = Matrix.Identity;
             m.items[0] = 2.0f * near / (right - left);
             m.items[5] = 2.0f * near / (top - bottom);
@@ -499,7 +490,7 @@ namespace engenious
             res.M43 = z;
             //res = res.Transposed();
             return res;
-        
+
         }
 
         public static Matrix CreateRotationX(float rot)
@@ -641,7 +632,7 @@ namespace engenious
             m[8] * m[2] * m[5];
             det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
             if (det == 0)
-                throw new Exception("Not invertable");
+                throw new ArgumentException("Not invertible",nameof(m));
 
             det = 1.0f / det;
 
@@ -654,8 +645,7 @@ namespace engenious
 
         public override string ToString()
         {
-            return string.Format("[Matrix: {{{0},{1},{2},{3}}}]", Column0, Column1, Column2, Column3);
+            return $"[Matrix: {{{Column0},{Column1},{Column2},{Column3}}}]";
         }
     }
 }
-    

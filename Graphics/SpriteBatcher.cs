@@ -94,7 +94,7 @@ namespace engenious.Graphics
                 this.texture = texture;
                 Vector4 tempText;
                 if (sourceRectangle.HasValue)
-                    tempText = new Vector4((float)sourceRectangle.Value.X / (float)texture.Width, sourceRectangle.Value.Y / texture.Height, (float)sourceRectangle.Value.Width / texture.Width, (float)sourceRectangle.Value.Height / texture.Height);
+                    tempText = new Vector4((float)sourceRectangle.Value.X / texture.Width, (float)sourceRectangle.Value.Y / texture.Height, (float)sourceRectangle.Value.Width / texture.Width, (float)sourceRectangle.Value.Height / texture.Height);
                 else
                     tempText = new Vector4(0, 0, 1, 1);
                 InitBatchItem(position, color, rotation, origin, new Vector2(size.X, size.Y), effects, layerDepth, sortMode, tempText);

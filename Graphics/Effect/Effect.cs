@@ -2,7 +2,7 @@
 
 namespace engenious.Graphics
 {
-	public class Effect:GraphicsResource
+	public class Effect:GraphicsResource,IEffect
 	{
 		public Effect (GraphicsDevice graphicsDevice)
 			: base (graphicsDevice)

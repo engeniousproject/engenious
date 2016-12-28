@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace engenious
+namespace engenious.Graphics
 {
     public interface IEffectMatrices
     {

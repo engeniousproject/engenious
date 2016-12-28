@@ -30,13 +30,14 @@ namespace engenious.Graphics
 
         internal Game game;
         internal Dictionary<string, bool> extensions = new Dictionary<string, bool>();
-
+        internal int majorVersion,minorVersion;
         public GraphicsDevice(Game game, OpenTK.Graphics.IGraphicsContext context)
         {
             this.context = context;
             this.game = game;
 
-#if DEBUG
+            majorVersion = GL.GetInteger(GetPName.MajorVersion);
+            minorVersion = GL.GetInteger(GetPName.MinorVersion);
             int count;
             GL.GetInteger(GetPName.NumExtensions,out count);
             for (int i = 0; i < count; i++)
@@ -44,6 +45,7 @@ namespace engenious.Graphics
                 string extension = GL.GetString(StringNameIndexed.Extensions, i);
                 extensions.Add(extension, true);
             }
+#if DEBUG
             if (extensions.ContainsKey("GL_ARB_debug_output"))
             {
                 this.context.ErrorChecking = true;
@@ -51,8 +53,6 @@ namespace engenious.Graphics
                 //GL.Enable(EnableCap.DebugOutputSynchronous);
                 //GL.DebugMessageCallback(DebugCallbackInstance, IntPtr.Zero);
             }
-
-
 #endif
 
 
