@@ -10,6 +10,7 @@ namespace engenious.Graphics
     public class Texture2DArray : Texture
     {
         private int texture;
+        private PixelInternalFormat _internalFormat;
         public Texture2DArray(GraphicsDevice graphicsDevice, int levels, int width, int height, int layers)
             : base(graphicsDevice)
         {
@@ -17,7 +18,7 @@ namespace engenious.Graphics
                 texture = GL.GenTexture();
                 
                 GL.BindTexture(TextureTarget.Texture2DArray, texture);
-
+                _internalFormat = PixelInternalFormat.Rgba8;//TODO dynamic format
                 GL.TexStorage3D(TextureTarget3d.Texture2DArray, levels, SizedInternalFormat.Rgba8, width, height, Math.Max(layers,1));
             });
             Width = width;
@@ -63,9 +64,21 @@ namespace engenious.Graphics
         {
             GL.BindTexture(TextureTarget.Texture2DArray, texture);
         }
+
+        public override void BindComputation(int unit = 0)
+        {
+            GL.BindImageTexture(unit, texture, 0, false, 0, TextureAccess.WriteOnly,
+                (OpenTK.Graphics.OpenGL4.SizedInternalFormat) _internalFormat);
+        }
+
         internal override void SetSampler(SamplerState state)
         {
-            //TODO:throw new NotImplementedException();
+            ThreadingHelper.BlockOnUIThread(() =>
+            {
+                state = state == null ? SamplerState.LinearClamp : state;
+                GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureWrapS, (int) state.AddressU);
+                GL.TexParameter(TextureTarget.Texture2DArray, TextureParameterName.TextureWrapT, (int) state.AddressV);
+            });
         }
         public void SetData<T>(T[] data,int layer,int level=0)where T : struct
         {

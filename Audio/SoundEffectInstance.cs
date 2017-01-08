@@ -7,11 +7,11 @@ namespace engenious.Audio
     {
         internal int sid;
         private bool isLooped;
-        private float volume,pitch,pan;
+        private float volume=1f,pitch=1f,pan;
         private SoundEffect effect;
-        public SoundEffectInstance()
+        public SoundEffectInstance(SoundEffect effect)
         {
-
+            this.effect = effect;
         }
 
 
@@ -121,8 +121,8 @@ namespace engenious.Audio
             if (sid==0)
             {
                 sid = SoundSourceManager.Instance.Dequeue();
-                //TODO:int bufferId = effect.SoundBuffer.OpenALDataBuffer;
-                //AL.Source(sid, ALSourcei.Buffer, bufferId);
+                int bufferId = effect.Buffer;
+                AL.Source(sid, ALSourcei.Buffer, bufferId);
             }
 
             if (sid==0)

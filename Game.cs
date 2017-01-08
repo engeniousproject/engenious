@@ -4,7 +4,9 @@ using OpenTK.Graphics.OpenGL4;
 using engenious.Graphics;
 using engenious.Content;
 using System.Linq;
+using engenious.Audio;
 using engenious.Input;
+using OpenTK.Audio.OpenAL;
 
 namespace engenious
 {
@@ -21,7 +23,7 @@ namespace engenious
         internal int major, minor;
         internal OpenTK.Graphics.GraphicsContextFlags contextFlags;
         private OpenTK.Graphics.IGraphicsContext Context;
-
+        private Audio.AudioDevice audio;
         private void ConstructContext()
         {
             OpenTK.Graphics.GraphicsContextFlags flags = OpenTK.Graphics.GraphicsContextFlags.Default;
@@ -69,7 +71,7 @@ namespace engenious
 
         public Game()
         {
-
+            audio = new AudioDevice();
             OpenTK.Graphics.GraphicsContext.ShareContexts = true;
             var window = new GameWindow(1280, 720);
 

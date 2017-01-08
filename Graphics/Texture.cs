@@ -33,6 +33,8 @@ namespace engenious.Graphics
         internal abstract void SetSampler(SamplerState state);
 
         internal abstract void Bind();
+
+        public abstract void BindComputation(int unit=0);
     }
 }
 

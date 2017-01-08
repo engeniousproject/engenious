@@ -125,7 +125,25 @@ namespace engenious.Graphics
                 {
                     GL.UseProgram(program);
                 });
-            
+
+        }
+
+
+        public void Compute(int x,int y=1,int z=1)
+        {
+            ThreadingHelper.BlockOnUIThread(() =>
+            {
+                GL.UseProgram(program);
+                GL.DispatchCompute(x, y, z);
+            });
+        }
+
+        public void WaitForImageCompletion()
+        {
+            ThreadingHelper.BlockOnUIThread(() =>
+            {
+                GL.MemoryBarrier(MemoryBarrierFlags.ShaderImageAccessBarrierBit);
+            });
         }
 
         public void Dispose()

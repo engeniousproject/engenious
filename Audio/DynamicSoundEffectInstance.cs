@@ -9,7 +9,8 @@ namespace engenious.Audio
         private int pendingBufferCount;
         public event EventHandler BufferNeeded;
         private const int MINIMUM_BUFFER_CHECK = 2;
-        public DynamicSoundEffectInstance()
+        public DynamicSoundEffectInstance(SoundEffect effect)
+            :base(effect)
         {
             pendingBufferCount = 0;
         }

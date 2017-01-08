@@ -6,6 +6,7 @@ namespace engenious.Graphics
     public class TextureArray : Texture
     {
         protected static int MaxTextureArrays;
+        private PixelInternalFormat _internalFormat;
         static TextureArray()
         {
             MaxTextureArrays = GL.GetInteger(GetPName.MaxArrayTextureLayers);
@@ -15,7 +16,8 @@ namespace engenious.Graphics
         public TextureArray(GraphicsDevice graphicsDevice,int layerCount=1,int levelCount=1,PixelInternalFormat format=PixelInternalFormat.Rgba8)
             :base(graphicsDevice,levelCount,format)
         {
-            this.LayerCount = layerCount;
+            _internalFormat = format;
+            LayerCount = layerCount;
             texture=GL.GenTexture();
             GL.BindTexture(TextureTarget.Texture2DArray,texture);
             setDefaultTextureParameters();
@@ -49,7 +51,11 @@ namespace engenious.Graphics
         {
             GL.BindTexture(TextureTarget.Texture2DArray,texture);
         }
-
+        public override void BindComputation(int unit = 0)
+        {
+            GL.BindImageTexture(unit, texture, 0, false, 0, TextureAccess.WriteOnly,
+                (OpenTK.Graphics.OpenGL4.SizedInternalFormat) _internalFormat);
+        }
         #endregion
     }
 }
