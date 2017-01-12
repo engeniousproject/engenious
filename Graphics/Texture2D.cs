@@ -70,9 +70,11 @@ namespace engenious.Graphics
         {
             ThreadingHelper.BlockOnUIThread(() =>
             {
-                state = state == null ? SamplerState.LinearClamp : state;
+                state = state ?? SamplerState.LinearClamp;
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int) state.AddressU);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int) state.AddressV);
+                GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureMagFilter,(int)state.TextureFilter);
+                GL.TexParameter(TextureTarget.Texture2D,TextureParameterName.TextureMinFilter,(int)state.TextureFilter);
             });
         }
 
