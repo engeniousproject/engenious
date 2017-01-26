@@ -72,7 +72,7 @@ namespace engenious.Graphics
             Draw(texture, destinationRectangle, null, color);
         }
 
-        public void Draw(Texture2D texture, Rectangle destinationRectangle, Nullable<Rectangle> sourceRectangle, Color color)
+        public void Draw(Texture2D texture, Rectangle destinationRectangle, Rectangle? sourceRectangle, Color color)
         {
             //TODO
             Draw(texture, new Vector2(destinationRectangle.X, destinationRectangle.Y), sourceRectangle, color, 0f, new Vector2(), new Vector2(destinationRectangle.Width, destinationRectangle.Height), SpriteEffects.None, 0.0f);
@@ -83,19 +83,19 @@ namespace engenious.Graphics
             Draw(texture, position, null, color);
         }
 
-        public void Draw(Texture2D texture, Vector2 position, Nullable<Rectangle> sourceRectangle, Color color)
+        public void Draw(Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color)
         {
             Draw(texture, position, sourceRectangle, color, 0, new Vector2(texture.Width / 2f, texture.Height / 2f), 1f, SpriteEffects.None, 0.0f);//TODO?
         }
 
-        public void Draw(Texture2D texture, Vector2 position, Nullable<Rectangle> sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth = 0.0f)
+        public void Draw(Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth = 0.0f)
         {
             Draw(texture, position, sourceRectangle, color, rotation, origin, new Vector2(scale * texture.Width, scale * texture.Height), effects, layerDepth);//TODO?
         }
 
-        public void Draw(Texture2D texture, Vector2 position, Nullable<Rectangle> sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteEffects effects, float layerDepth)
+        public void Draw(Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteEffects effects, float layerDepth)
         {
-            batcher.Batches.Add(new SpriteBatcher.BatchItem(texture, position, sourceRectangle, color, rotation, origin, size, effects, layerDepth, sortMode));
+            batcher.AddBatch(SpriteBatcher.BatchPool.AquireBatch(texture, position, sourceRectangle, color, rotation, origin, size, effects, layerDepth, sortMode));
         }
 
         public void Draw(Texture2D texture, Rectangle destinationRectangle, RectangleF sourceRectangle, Color color)
@@ -116,7 +116,7 @@ namespace engenious.Graphics
 
         public void Draw(Texture2D texture, Vector2 position, RectangleF sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteEffects effects, float layerDepth)
         {
-            batcher.Batches.Add(new SpriteBatcher.BatchItem(texture, position, sourceRectangle, color, rotation, origin, size, effects, layerDepth, sortMode));
+            batcher.AddBatch(SpriteBatcher.BatchPool.AquireBatch(texture, position, sourceRectangle, color, rotation, origin, size, effects, layerDepth, sortMode));
         }
 
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using OpenTK;
 using System.Linq;
@@ -8,7 +9,52 @@ namespace engenious.Graphics
 {
     internal class SpriteBatcher: IDisposable
     {
-		
+        public class BatchItemPool
+        {
+            private const int BATCH_COUNT = 256;
+            Stack<BatchItem> _batchItems = new Stack<BatchItem>(BATCH_COUNT);
+
+            public BatchItemPool()
+            {
+                for (int i = 0; i < BATCH_COUNT; i++)
+                {
+                    _batchItems.Push(new BatchItem());
+                }
+            }
+
+            public void ReleaseBatch(BatchItem batch)
+            {
+                _batchItems.Push(batch);
+            }
+            public BatchItem AquireBatch(Texture2D texture, Vector2 position, RectangleF? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode)
+            {
+                BatchItem item;
+                if (_batchItems.Count == 0)
+                {
+                    item = new BatchItem();
+                }
+                else
+                {
+                    item = _batchItems.Pop();
+                }
+                item.InitBatchItem(texture,position,sourceRectangle,color,rotation,origin,size,effects,layerDepth,sortMode);
+                return item;
+            }
+            public BatchItem AquireBatch(Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode)
+            {
+                BatchItem item;
+                if (_batchItems.Count == 0)
+                {
+                    item = new BatchItem();
+                }
+                else
+                {
+                    item = _batchItems.Pop();
+                }
+                item.InitBatchItem(texture,position,sourceRectangle,color,rotation,origin,size,effects,layerDepth,sortMode);
+                return item;
+            }
+        }
         public class BatchItem
         {
             internal Vector2 texTopLeft;
@@ -17,6 +63,11 @@ namespace engenious.Graphics
             internal Color color;
             internal Texture2D texture;
             internal float sortingKey;
+
+            public BatchItem()
+            {
+                positions = new Vector3[4];
+            }
 
             private void InitBatchItem(Vector2 position, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode, Vector4 tempText)
             {
@@ -41,8 +92,7 @@ namespace engenious.Graphics
                     texTopLeft.Y = tempText.Y;
                     texBottomRight.Y = tempText.Y + tempText.W;
                 }
-                    
-                positions = new Vector3[4];
+
                 positions[0] = new Vector3(-origin.X, -origin.Y, layerDepth);
                 positions[1] = new Vector3(-origin.X + size.X, -origin.Y, layerDepth);
                 positions[2] = new Vector3(-origin.X, -origin.Y + size.Y, layerDepth);
@@ -77,7 +127,7 @@ namespace engenious.Graphics
                 }
             }
 
-            public BatchItem(Texture2D texture, Vector2 position, Nullable<RectangleF> sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode)
+            public void InitBatchItem(Texture2D texture, Vector2 position, RectangleF? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode)
             {
                 this.texture = texture;
                 Vector4 tempText;
@@ -89,7 +139,7 @@ namespace engenious.Graphics
                 InitBatchItem(position, color, rotation, origin, new Vector2(size.X * tempText.Z, size.Y * tempText.W), effects, layerDepth, sortMode, tempText);
             }
 
-            public BatchItem(Texture2D texture, Vector2 position, Nullable<Rectangle> sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode)
+            public void InitBatchItem(Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode)
             {
                 this.texture = texture;
                 Vector4 tempText;
@@ -109,18 +159,21 @@ namespace engenious.Graphics
         private const int MAX_BATCH = 256;
         private SpriteBatch.SpriteSortMode sortMode;
         private GraphicsDevice graphicsDevice;
+        public static BatchItemPool BatchPool = new BatchItemPool();
+
+        private readonly List<BatchItem> _batches;
 
         public SpriteBatcher(GraphicsDevice graphicsDevice)
         {
             this.graphicsDevice = graphicsDevice;
-            Batches = new List<BatchItem>(MAX_BATCH);
+            _batches = new List<BatchItem>(MAX_BATCH);
             vertexBuffer = new DynamicVertexBuffer(graphicsDevice, VertexPositionColorTexture.VertexDeclaration, 4 * MAX_BATCH);
             indexBuffer = new DynamicIndexBuffer(graphicsDevice, DrawElementsType.UnsignedShort, 6 * MAX_BATCH);
         }
 
         public void Begin(SpriteBatch.SpriteSortMode sortMode)
         {
-            Batches.Clear();
+            _batches.Clear();
             this.sortMode = sortMode;
         }
 
@@ -153,14 +206,14 @@ namespace engenious.Graphics
 
         public void End(Effect effect)
         {
-            if (Batches.Count == 0)
+            if (_batches.Count == 0)
                 return;
 
 
 
             if (sortMode != SpriteBatch.SpriteSortMode.Immediate && sortMode != SpriteBatch.SpriteSortMode.Deffered)
             {
-                Batches.Sort((x, y) =>
+                _batches.Sort((x, y) =>
                     {
                         int first = y.sortingKey.CompareTo(x.sortingKey);
                         return first;
@@ -168,13 +221,13 @@ namespace engenious.Graphics
             }
 
 
-            //Array.Sort (Batches, 0, Batches.Count);
-            Texture currentTexture = Batches.First().texture;
+            //Array.Sort (_batches, 0, _batches.Count);
+            Texture currentTexture = _batches.First().texture;
             int batchStart = 0, batchCount = 0;
 
             ushort bufferIndex = 0;
             ushort indicesIndex = 0;
-            foreach (BatchItem item in Batches)
+            foreach (BatchItem item in _batches)
             {
                 if (item.texture != currentTexture || batchCount == MAX_BATCH)
                 {
@@ -202,7 +255,10 @@ namespace engenious.Graphics
                 Flush(effect, currentTexture, batchStart, batchCount);
         }
 
-        public List<BatchItem> Batches{ get; private set; }
+        public void AddBatch(BatchItem batch)
+        {
+            _batches.Add(batch);
+        }
 
         public void Dispose()
         {
