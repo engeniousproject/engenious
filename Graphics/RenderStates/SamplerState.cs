@@ -213,7 +213,7 @@ namespace engenious.Graphics
 
         private void ApplyMaxAnisotropyGl()
         {
-            GL.TexParameter(_boundTexture.Target, TextureParameterNameTextureMaxAnisotropy,MathHelper.Clamp(MaxAnisotropy, 1.0f, GraphicsDevice.Capabilities.MaxTextureAnisotropy));
+            GL.TexParameter(_boundTexture.Target, TextureParameterNameTextureMaxAnisotropy, MathHelper.Clamp(MaxAnisotropy, 1.0f, GraphicsDevice.Capabilities.MaxTextureAnisotropy));
         }
 
         

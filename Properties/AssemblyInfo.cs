@@ -5,7 +5,6 @@ using System.Runtime.CompilerServices;
 // Change them to the values specific to your project.
 
 [assembly: AssemblyTitle("engenious")]
-[assembly: AssemblyDescription("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
