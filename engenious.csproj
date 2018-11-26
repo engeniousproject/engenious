@@ -8,16 +8,17 @@
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="OpenTK, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4">
-            <HintPath>..\libs\OpenTK.dll</HintPath>
+            <HintPath>libs\OpenTK.dll</HintPath>
         </Reference>
         <PackageReference Include="NVorbis" Version="0.8.6" />
         <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
     </ItemGroup>
     <ItemGroup>
-      <None Remove="engenious.nuspec.template" />
-      <LitGitTemplateReference Include="engenious.nuspec.template" />
-      <None Remove="engenious.Solution.cs.template" />
-      <LitGitTemplateReference Include="engenious.Solution.cs.template" />
+        <None Remove="engenious.nuspec.template" />
+        <LitGitTemplateReference Include="engenious.nuspec.template" />
+        <None Remove="engenious.Solution.cs.template" />
+        <LitGitTemplateReference Include="engenious.Solution.cs.template" />
+
+        <PackageReference Include="LitGit" Version="0.1.0.10" />
     </ItemGroup>
-    <Import Project="..\Build\version-prebuilt.targets" />
 </Project>

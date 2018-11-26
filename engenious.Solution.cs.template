@@ -7,8 +7,8 @@ using System.Reflection;
 
 [assembly: AssemblyCompany("${COMPANY}")]
 [assembly: AssemblyProduct("${PRODUCT}")]
-[assembly: AssemblyVersion("${VERSION_SHORT_REV}")]
-[assembly: AssemblyFileVersion("${VERSION_SHORT}")]
+[assembly: AssemblyVersion("${VERSION_SHORT_BUILD}")]
+[assembly: AssemblyFileVersion("${VERSION_LONG}")]
 [assembly: AssemblyInformationalVersion("${INFORMATIONAL_VERSION}")]
 [assembly: AssemblyCopyright("${COPYRIGHT}")]
 [assembly: AssemblyDescription("${DESCRIPTION}")]

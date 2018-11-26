@@ -2,7 +2,7 @@
 <package>
     <metadata>
         <id>${NUGET_ID}</id>
-        <version>${VERSION_SHORT_REV_ADD}</version>
+        <version>${VERSION_FULL}</version>
         <title>${NUGET_TITLE}</title>
         <authors>${AUTHORS}</authors>
         <projectUrl>${PROJECT_URL}</projectUrl>
