@@ -3,7 +3,7 @@
 
 #CUSTOM FILES
 *.ego
-engenious.nuspec
+engenious.Nuget.props
 engenious.Solution.cs
 
 # User-specific files
