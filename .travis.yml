@@ -5,6 +5,7 @@ matrix:
         - os: linux
           mono: 5.16.0
         - os: windows
+          mono: none
 env:
   - CG_CONTEXT_SHOW_BACKTRACE=1
 before_script:
