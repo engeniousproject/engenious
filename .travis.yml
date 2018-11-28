@@ -1,5 +1,10 @@
 language: csharp
 dotnet: 2.1.500
+matrix:
+    include:
+        - os: linux
+          mono: 5.16.0
+        - os: windows
 mono: 5.16.0
 env:
   - CG_CONTEXT_SHOW_BACKTRACE=1
@@ -9,6 +14,3 @@ script:
   - dotnet test -c Release
   - dotnet build -c Release
   - dotnet pack -c Release -o ./artifacts
-os:
-  - linux
-  - windows
