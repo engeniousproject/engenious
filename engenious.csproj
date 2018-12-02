@@ -5,32 +5,30 @@
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-
-        <ImportDirectoryTargetsForCrossTargeting>true</ImportDirectoryTargetsForCrossTargeting>
-    </PropertyGroup>
-    <PropertyGroup>
-        <PackageVersion>0.1.38.2-alpha</PackageVersion>
+        <Description>engenious graphics framework core assembly, similar to XNA/MonoGame.</Description>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="OpenTK, Version=3.0.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4">
-            <HintPath>libs\OpenTK.dll</HintPath>
-        </Reference>
-        <PackageReference Include="NVorbis" Version="0.8.6" />
-        <PackageReference Include="LitGit" Version="0.1.0.15-alpha" PrivateAssets="all" />
-        <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
+        <PackageReference Include="engenious.OpenTK" Version="3.0.1-pre" PrivateAssets="all"/>
+
+
+        <PackageReference Include="LitGit" Version="0.1.0.15-alpha" PrivateAssets="all"/>
+        <PackageReference Include="NVorbis" Version="0.8.6" Exclude="compile" PrivateAssets="compile"/>
+        <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" PrivateAssets="compile"/>
     </ItemGroup>
     <ItemGroup>
-        <None Remove="engenious.Nuget.props.template" />
-        <LitGitTemplateReference Include="engenious.Nuget.props.template" />
-        <None Remove="engenious.Solution.cs.template" />
-        <LitGitTemplateReference Include="engenious.Solution.cs.template" />
-        
+        <LitGitTemplateReference Include="Properties\AssemblyInfo.cs.template"/>
+        <None Remove="engenious.Nuget.props.template"/>
+        <LitGitTemplateReference Include="engenious.Nuget.props.template"/>
+        <None Remove="Properties\AssemblyInfo.cs.template"/>
+
+        <Compile Update="Properties\AssemblyInfo.cs">
+            <DependentUpon>Assemblyinfo.cs.template</DependentUpon>
+        </Compile>
+
         <None Update="engenious.Nuget.props" Condition="Exists('engenious.Nuget.props')">
             <DependentUpon>engenious.Nuget.props.template</DependentUpon>
         </None>
-        <Compile Update="engenious.Solution.cs" Condition="Exists('engenious.Solution.cs')">
-            <DependentUpon>engenious.Solution.cs.template</DependentUpon>
-        </Compile>
+
     </ItemGroup>
-    <Import Project="engenious.Nuget.props" Condition="Exists('engenious.Nuget.props')" />
+    <Import Project="engenious.Nuget.props" Condition="Exists('engenious.Nuget.props')"/>
 </Project>
