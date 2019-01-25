@@ -80,14 +80,14 @@ namespace engenious.Graphics
             try
             {
                 fullVersion = GL.GetString(StringName.Version);
-                var splt = fullVersion.Split(' ');
+                var splt = fullVersion.Split(new []{' '}, StringSplitOptions.None);
                 versionString = splt.FirstOrDefault();
                 if (versionString == null)
                     return;
                 DriverVersion = new Version(versionString);
                 DriverVendor = GL.GetString(StringName.Vendor);
                 fullVersion = GL.GetString(StringName.ShadingLanguageVersion);
-                versionString = fullVersion.Split(' ').FirstOrDefault();
+                versionString = fullVersion.Split(new []{' '}, StringSplitOptions.None).FirstOrDefault();
                 if (versionString == null)
                     return;
 
