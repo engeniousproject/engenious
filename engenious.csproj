@@ -8,7 +8,7 @@
         <Description>engenious graphics framework core assembly, similar to XNA/MonoGame.</Description>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="engenious.OpenTK" Version="3.0.1-pre" PrivateAssets="all"/>
+        <PackageReference Include="engenious.OpenTK" Version="3.0.1-pre" PrivateAssets="compile"/>
 
 
         <PackageReference Include="LitGit" Version="0.1.0.15-alpha" PrivateAssets="all"/>
