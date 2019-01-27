@@ -8,18 +8,18 @@
         <Description>engenious graphics framework core assembly, similar to XNA/MonoGame.</Description>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="engenious.OpenTK" Version="3.0.1-pre" PrivateAssets="compile"/>
+        <PackageReference Include="engenious.OpenTK" Version="3.0.1-pre" PrivateAssets="compile" />
 
 
-        <PackageReference Include="LitGit" Version="0.1.0.15-alpha" PrivateAssets="all"/>
-        <PackageReference Include="NVorbis" Version="0.8.6" Exclude="compile" PrivateAssets="compile"/>
-        <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" PrivateAssets="compile"/>
+        <PackageReference Include="LitGit" Version="0.1.0.17-alpha" PrivateAssets="all" />
+        <PackageReference Include="NVorbis" Version="0.8.6" Exclude="compile" PrivateAssets="compile" />
+        <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" PrivateAssets="compile" />
     </ItemGroup>
     <ItemGroup>
-        <LitGitTemplateReference Include="Properties\AssemblyInfo.cs.template"/>
-        <None Remove="engenious.Nuget.props.template"/>
-        <LitGitTemplateReference Include="engenious.Nuget.props.template"/>
-        <None Remove="Properties\AssemblyInfo.cs.template"/>
+        <LitGitTemplateReference Include="Properties\AssemblyInfo.cs.template" />
+        <None Remove="engenious.Nuget.props.template" />
+        <LitGitTemplateReference Include="engenious.Nuget.props.template" />
+        <None Remove="Properties\AssemblyInfo.cs.template" />
 
         <Compile Update="Properties\AssemblyInfo.cs">
             <DependentUpon>Assemblyinfo.cs.template</DependentUpon>
@@ -30,5 +30,5 @@
         </None>
 
     </ItemGroup>
-    <Import Project="engenious.Nuget.props" Condition="Exists('engenious.Nuget.props')"/>
+    <Import Project="engenious.Nuget.props" Condition="Exists('engenious.Nuget.props')" />
 </Project>
