@@ -232,7 +232,7 @@ namespace engenious
 #else
             value1.X *= value2.X;
             value1.Y *= value2.Y;
-            return value1.X+value2.Y;
+            return value1.X+value1.Y;
 #endif
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
