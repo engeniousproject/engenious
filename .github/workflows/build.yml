@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     env:
-    	FrameworkPathOverride: /usr/lib/mono/4.5/
+        FrameworkPathOverride: /usr/lib/mono/4.5/
     	NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
     runs-on: [ubuntu-latest, windows-latest]
 
