@@ -78,7 +78,7 @@ namespace engenious.Content.Serialization
                 try
                 {
                     effect = (Effect) Activator.CreateInstance(customType, manager.GraphicsDevice);
-                    effectType = customType;
+                    //effectType = customType;
                     useCustomType = true;
                 }
                 catch (Exception ex)
@@ -112,9 +112,10 @@ namespace engenious.Content.Serialization
                 {
                     try
                     {
-                        string customTypeName = effectType.FullName + "+" + reader.ReadString();
+                        string customTypeName = reader.ReadString();
 
-                        var techniqueType = _effectTypes[customTypeName];
+                        if (!_effectTypes.TryGetValue(customType.FullName + "+" + customTypeName, out var techniqueType))
+                            techniqueType = _effectTypes[effectType.FullName + "+" + customTypeName];
                         technique = (EffectTechnique) Activator.CreateInstance(techniqueType,techniqueName);
                     }
                     catch (Exception ex)
