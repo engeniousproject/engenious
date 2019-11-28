@@ -4,7 +4,7 @@
 
 |  | master | develop |
 | --- | ----- | ---- |
-| Travis CI (Linux / Windows) | [![Build Status](https://travis-ci.org/engeniousproject/engenious.svg?branch=master)](https://travis-ci.org/engeniousproject/engenious) | [![Build Status](https://travis-ci.org/engeniousproject/engenious.svg?branch=develop)](https://travis-ci.org/engeniousproject/engenious)|(https://ci.appveyor.com/project/reicheltp/engenious/branch/master) |
+| Github Actions (Linux / Windows) | ![Build Status](https://github.com/engeniousproject/engenious/workflows/engenious%20Build/badge.svg?branch=master&event=push) |![Build Status](https://github.com/engeniousproject/engenious/workflows/engenious%20Build/badge.svg?branch=develop&event=push) |
 
 ## Guidelines
 Copy & Paste
