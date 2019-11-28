@@ -10,7 +10,10 @@ jobs:
     env:
         FrameworkPathOverride: /usr/lib/mono/4.5/
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-    runs-on: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
 
     steps:
     - uses: actions/checkout@v1
@@ -26,3 +29,5 @@ jobs:
       run: dotnet pack -c Release -o ./artifacts
     - name: Deploy Nuget Package
       run: dotnet nuget push ./artifacts/*.nupkg -k $NUGET_API_KEY -s https://api.nuget.org/v3/index.json
+      shell: bash
+      if: matrix.os == 'windows-latest'
