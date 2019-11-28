@@ -39,7 +39,7 @@ namespace engenious
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector2 Cross()
         {
-            return new Vector2(X, -Y);
+            return new Vector2(Y, -X);
         }
         [Browsable(false)]
         public float Length
