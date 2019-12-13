@@ -103,6 +103,22 @@ namespace engenious.Graphics
                 }
             }
         }
+        
+        public unsafe void SetValue(Vector2d value)
+        {
+            GL.Uniform2(Location,1,(double*)&value);
+        }
+
+        public void SetValue(Vector2d[] values)
+        {
+            unsafe
+            {
+                fixed(Vector2d* ptr = values)
+                {
+                    GL.Uniform2(Location, values.Length, (double*)ptr);//TODO: verify?
+                }
+            }
+        }
 
         public unsafe void SetValue(Vector3 value)
         {
@@ -119,6 +135,22 @@ namespace engenious.Graphics
                 }
             }
         }
+        
+        public unsafe void SetValue(Vector3d value)
+        {
+            GL.Uniform3(Location, 1, (double*)&value);
+        }
+
+        public void SetValue(Vector3d[] values)
+        {
+            unsafe
+            {
+                fixed(Vector3d* ptr = values)
+                {
+                    GL.Uniform3(Location, values.Length, (double*)ptr);//TODO: verify?
+                }
+            }
+        }
 
         public unsafe void SetValue(Vector4 value)
         {
@@ -130,6 +162,19 @@ namespace engenious.Graphics
             fixed(Vector4* ptr = values)
             {
                 GL.Uniform4(Location, values.Length, (float*)ptr);//TODO: verify?
+            }
+        }
+
+        public unsafe void SetValue(Vector4d value)
+        {
+            GL.Uniform4(Location, 1, (double*)&value);
+        }
+
+        public unsafe void SetValue(Vector4d[] values)
+        {
+            fixed(Vector4d* ptr = values)
+            {
+                GL.Uniform4(Location, values.Length, (double*)ptr);//TODO: verify?
             }
         }
 
