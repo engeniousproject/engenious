@@ -11,7 +11,7 @@
         <PackageReference Include="engenious.OpenTK" Version="3.0.1-pre" PrivateAssets="compile" />
 
 
-        <PackageReference Include="LitGit" Version="0.1.0.17-alpha" PrivateAssets="all" />
+        <PackageReference Include="LitGit" Version="0.2.0.11-alpha" PrivateAssets="all" />
         <PackageReference Include="NVorbis" Version="0.8.6" Exclude="compile" PrivateAssets="compile" />
         <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" PrivateAssets="compile" />
     </ItemGroup>
