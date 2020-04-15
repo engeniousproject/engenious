@@ -7,6 +7,9 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Description>engenious graphics framework core assembly, similar to XNA/MonoGame.</Description>
     </PropertyGroup>
+    <PropertyGroup>
+      <DocumentationFile>engenious.xml</DocumentationFile>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="engenious.OpenTK" Version="3.0.1-pre" PrivateAssets="compile" />
 
