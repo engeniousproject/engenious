@@ -276,13 +276,15 @@ namespace engenious
             {
                 if (rowIndex < 0 || columnIndex < 0 || rowIndex >= 4 || columnIndex >= 4)
                     throw new IndexOutOfRangeException();
-                return items[rowIndex + columnIndex * 4];
+                fixed(float* ptr = items)
+                    return ptr[rowIndex + columnIndex * 4];
             }
             set
             {
                 if (rowIndex < 0 || columnIndex < 0 || rowIndex >= 4 || columnIndex >= 4)
                     throw new IndexOutOfRangeException();
-                items[rowIndex + columnIndex * 4] = value;
+                fixed(float* ptr = items)
+                    ptr[rowIndex + columnIndex * 4] = value;
             }
         }
 
@@ -297,13 +299,15 @@ namespace engenious
             {
                 if (index < 0 || index >= 16)
                     throw new IndexOutOfRangeException();
-                return items[index];
+                fixed(float* ptr = items)
+                    return ptr[index];
             }
             set
             {
                 if (index < 0 || index >= 16)
                     throw new IndexOutOfRangeException();
-                items[index] = value;
+                fixed(float* ptr = items)
+                    ptr[index] = value;
             }
         }
 
