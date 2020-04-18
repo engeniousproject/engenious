@@ -5,13 +5,34 @@ using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// Specifies shader types.
+    /// </summary>
     public enum ShaderType
     {
+        /// <summary>
+        /// Fragment(pixel) shader.
+        /// </summary>
         FragmentShader = 35632,
+        /// <summary>
+        /// Vertex shader.
+        /// </summary>
         VertexShader,
+        /// <summary>
+        /// Geometry shader.
+        /// </summary>
         GeometryShader = 36313,
+        /// <summary>
+        /// Tessellation evaluation shader.
+        /// </summary>
         TessEvaluationShader = 36487,
+        /// <summary>
+        /// Tessellation control shader.
+        /// </summary>
         TessControlShader,
+        /// <summary>
+        /// Compute shader.
+        /// </summary>
         ComputeShader = 37305
     }
 

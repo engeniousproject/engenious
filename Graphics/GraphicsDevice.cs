@@ -10,6 +10,9 @@ using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// The graphics device for rendering on the GPU.
+    /// </summary>
     public class GraphicsDevice : IDisposable
     {
         private BlendState _blendState;
@@ -34,7 +37,11 @@ namespace engenious.Graphics
         internal Version DriverVersion;
         internal Version GlslVersion;
 
-        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GraphicsDevice"/> class.
+        /// </summary>
+        /// <param name="game">The base game this <see cref="GraphicsDevice"/> is used for.</param>
+        /// <param name="context">The graphics context of this device.</param>
         public GraphicsDevice(Game game, IGraphicsContext context)
         {
             _context = context;
@@ -122,6 +129,10 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Clears the backbuffer using a clearing mask.
+        /// </summary>
+        /// <param name="mask">A value indicating which buffers to clear.</param>
         public void Clear(ClearBufferMask mask)
         {
             using (Execute.OnUiContext)
@@ -130,6 +141,11 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Clears the backbuffer using a clearing mask with a specified color.
+        /// </summary>
+        /// <param name="mask">A value indicating which buffers to clear.</param>
+        /// <param name="color">A value indicating the color with which to clear the color buffer.</param>
         public void Clear(ClearBufferMask mask, System.Drawing.Color color)
         {
             using (Execute.OnUiContext)
@@ -171,6 +187,10 @@ namespace engenious.Graphics
 #endif
         }
 
+        /// <summary>
+        /// Clears the color backbuffer  with a specified color.
+        /// </summary>
+        /// <param name="color">A value indicating the color with which to clear the color buffer.</param>
         public void Clear(Color color)
         {
             using (Execute.OnUiContext)
@@ -183,13 +203,23 @@ namespace engenious.Graphics
             CheckError();
         }
 
+        /// <summary>
+        /// Swaps the backbuffer with the front buffer to present the renderings on the screen.
+        /// </summary>
         public void Present()
         {
             CheckError();
             _context.SwapBuffers();
         }
 
+        /// <summary>
+        /// Gets the graphics capabilities of this <see cref="GraphicsDevice"/>.
+        /// </summary>
         public GraphicsCapabilities Capabilities { get; }
+
+        /// <summary>
+        /// Gets or sets the current <see cref="Viewport"/>.
+        /// </summary>
         public Viewport Viewport
         {
             get { return _viewport; }
@@ -209,8 +239,17 @@ namespace engenious.Graphics
             }
         }
 
-        Dictionary<VertexDeclaration, VertexBuffer> userBuffers = new Dictionary<VertexDeclaration, VertexBuffer>();
+        private readonly Dictionary<VertexDeclaration, VertexBuffer> _userBuffers = new Dictionary<VertexDeclaration, VertexBuffer>();
 
+        /// <summary>
+        /// Renders passed in vertex buffer data.
+        /// </summary>
+        /// <param name="primitiveType">The <see cref="PrimitiveType"/> to use for rendering.</param>
+        /// <param name="vertexData">The vertex data to use for rendering.</param>
+        /// <param name="vertexOffset">The vertex offset to start rendering at.</param>
+        /// <param name="primitiveCount">The number of primitives to render.</param>
+        /// <typeparam name="T">The vertex data type.</typeparam>
+        /// <exception cref="ArgumentException">Thrown if <typeparamref name="T"/> is not a valid vertex type.</exception>
         [Obsolete("Do not use this function")]
         public void DrawUserPrimitives<T>(PrimitiveType primitiveType, T[] vertexData, int vertexOffset,
             int primitiveCount) where T : struct
@@ -222,6 +261,16 @@ namespace engenious.Graphics
             CheckError();
         }
 
+        /// <summary>
+        /// Renders passed in vertex buffer data.
+        /// </summary>
+        /// <param name="primitiveType">The <see cref="PrimitiveType"/> to use for rendering.</param>
+        /// <param name="vertexData">The vertex data to use for rendering.</param>
+        /// <param name="vertexOffset">The vertex offset to start rendering at.</param>
+        /// <param name="primitiveCount">The number of primitives to render.</param>
+        /// <param name="vertexDeclaration">The vertex declaration used for describing the vertex data structure.</param>
+        /// <typeparam name="T">The vertex data type.</typeparam>
+        /// <exception cref="ArgumentException">Thrown if <typeparamref name="T"/> is not a valid vertex type.</exception>
         [Obsolete("Do not use this function")]
         public void DrawUserPrimitives<T>(PrimitiveType primitiveType, T[] vertexData, int vertexOffset,
             int primitiveCount, VertexDeclaration vertexDeclaration) where T : struct
@@ -230,17 +279,17 @@ namespace engenious.Graphics
             using (Execute.OnUiContext)
             {
                 VertexBuffer current;
-                if (!userBuffers.TryGetValue(vertexDeclaration, out current))
+                if (!_userBuffers.TryGetValue(vertexDeclaration, out current))
                 {
                     current = new VertexBuffer(this, vertexDeclaration, vertexData.Length);
-                    userBuffers.Add(vertexDeclaration, current);
+                    _userBuffers.Add(vertexDeclaration, current);
                 }
                 else if (current.VertexCount < vertexData.Length)
                 {
                     if (!current.IsDisposed)
                         current.Dispose();
                     current = new VertexBuffer(this, vertexDeclaration, vertexData.Length);
-                    userBuffers[vertexDeclaration] = current;
+                    _userBuffers[vertexDeclaration] = current;
                 }
 
                 current.SetData(vertexData);
@@ -254,10 +303,23 @@ namespace engenious.Graphics
             CheckError();
         }
 
+        /// <summary>
+        /// Renders passed in vertex buffer and index buffer data.
+        /// </summary>
+        /// <param name="primitiveType">The <see cref="PrimitiveType"/> to use for rendering.</param>
+        /// <param name="vertexData">The vertex data to use for rendering.</param>
+        /// <param name="vertexOffset">The vertex offset to start rendering at.</param>
+        /// <param name="numVertices">The number of vertices used for rendering</param>
+        /// <param name="indexData">The indexing data used for indexing the vertices.</param>
+        /// <param name="indexOffset">The index offset to start rendering at.</param>
+        /// <param name="primitiveCount">The number of primitives to render.</param>
+        /// <typeparam name="T">The vertex data type.</typeparam>
+        /// <exception cref="ArgumentException">Thrown if <typeparamref name="T"/> is not a valid vertex type.</exception>
         [Obsolete("Do not use this function")]
         public void DrawUserIndexedPrimitives<T>(PrimitiveType primitiveType, T[] vertexData, int vertexOffset,
             int numVertices, short[] indexData, int indexOffset, int primitiveCount)
         {
+            throw new NotImplementedException();
             //TODO:
             /*IVertexType tp = Activator.CreateInstance<T>() as IVertexType;
             if (tp == null)
@@ -285,6 +347,12 @@ namespace engenious.Graphics
             CheckError();*/
         }
 
+        /// <summary>
+        /// Renders primitives using the <see cref="VertexBuffer"/> for vertices.
+        /// </summary>
+        /// <param name="primitiveType">The <see cref="PrimitiveType"/> to use for rendering.</param>
+        /// <param name="startVertex">The vertex to start rendering at.</param>
+        /// <param name="vertexCount">The number of vertices to render.</param>
         public void DrawPrimitives(PrimitiveType primitiveType, int startVertex, int vertexCount)
         {
             VertexBuffer.EnsureVao();
@@ -295,6 +363,15 @@ namespace engenious.Graphics
             CheckError();
         }
 
+        /// <summary>
+        /// Renders primitives using the <see cref="VertexBuffer"/> for vertices and <see cref="IndexBuffer"/> for indices.
+        /// </summary>
+        /// <param name="primitiveType">The <see cref="PrimitiveType"/> to use for rendering.</param>
+        /// <param name="baseVertex">The base vertex offset to start indexing at.</param>
+        /// <param name="minVertexIndex">Suggestive minimal vertex parameter for more optimal rendering.</param>
+        /// <param name="numVertices">The number of vertices used in indexing.</param>
+        /// <param name="startIndex">The index to start rendering at.</param>
+        /// <param name="primitiveCount">The numbers of primitives to render.</param>
         public void DrawIndexedPrimitives(PrimitiveType primitiveType, int baseVertex, int minVertexIndex,
             int numVertices, int startIndex, int primitiveCount)
         {
@@ -304,22 +381,35 @@ namespace engenious.Graphics
             {
                 IndexBuffer.Bind();
 
-                GL.DrawElements((OpenTK.Graphics.OpenGL.PrimitiveType) primitiveType, primitiveCount * 3,
-                    (OpenTK.Graphics.OpenGL.DrawElementsType) IndexBuffer.IndexElementSize, IntPtr.Zero);
+                GL.DrawElementsBaseVertex((OpenTK.Graphics.OpenGL.PrimitiveType) primitiveType, primitiveCount * 3,
+                    (OpenTK.Graphics.OpenGL.DrawElementsType) IndexBuffer.IndexElementSize, IntPtr.Zero, baseVertex);
             }
 
             CheckError();
         }
 
+        /// <summary>
+        /// Renders primitives using the <see cref="VertexBuffer"/> for vertices and <see cref="IndexBuffer"/> for indices.
+        /// </summary>
+        /// <param name="primitiveType">The <see cref="PrimitiveType"/> to use for rendering.</param>
+        /// <param name="baseVertex">The base vertex offset to start indexing at.</param>
+        /// <param name="startIndex">The index to start rendering at.</param>
+        /// <param name="primitiveCount">The numbers of primitives to render.</param>
+        /// <param name="instanceCount">The number of instances to render.</param>
         public void DrawInstancedPrimitives(PrimitiveType primitiveType, int baseVertex, int startIndex,
             int primitiveCount, int instanceCount)
         {
             VertexBuffer.EnsureVao();
             VertexBuffer.Vao.Bind();
-            GL.DrawArraysInstanced((OpenTK.Graphics.OpenGL.PrimitiveType) primitiveType, startIndex,instanceCount,
-                primitiveCount * 3);
+            GL.DrawElementsInstancedBaseVertex((OpenTK.Graphics.OpenGL.PrimitiveType) primitiveType, primitiveCount * 3,
+                (OpenTK.Graphics.OpenGL.DrawElementsType)IndexBuffer.IndexElementSize, IntPtr.Zero, instanceCount,
+                baseVertex);
         }
 
+        /// <summary>
+        /// Sets the current render target.
+        /// </summary>
+        /// <param name="target">The render target to render to or <c>null</c> to use the default render target.</param>
         public void SetRenderTarget(RenderTarget2D target)
         {
             using (Execute.OnUiContext)
@@ -340,8 +430,14 @@ namespace engenious.Graphics
             CheckError();
         }
 
+        /// <summary>
+        /// Gets a collection of currently active textures.
+        /// </summary>
         public TextureCollection Textures { get; private set; }
 
+        /// <summary>
+        /// Gets or sets the current blend state state used for blending.
+        /// </summary>
         public BlendState BlendState
         {
             get { return _blendState; }
@@ -357,6 +453,9 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets the current depth stencil state.
+        /// </summary>
         public DepthStencilState DepthStencilState
         {
             get { return _depthStencilState; }
@@ -372,6 +471,9 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets the current rasterizer state.
+        /// </summary>
         public RasterizerState RasterizerState
         {
             get { return _rasterizerState; }
@@ -393,6 +495,9 @@ namespace engenious.Graphics
         //    internal set;
         //}
 
+        /// <summary>
+        /// Gets or sets the region outside of which rendering ought to be cropped to.
+        /// </summary>
         public Rectangle ScissorRectangle
         {
             get { return _scissorRectangle; }
@@ -412,10 +517,17 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets the currently active <see cref="engenious.Graphics.VertexBuffer"/>.
+        /// </summary>
         public VertexBuffer VertexBuffer { get; set; }
 
+        /// <summary>
+        /// Gets or sets the currently active <see cref="engenious.Graphics.IndexBuffer"/>.
+        /// </summary>
         public IndexBuffer IndexBuffer { get; set; }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             _context.Dispose();

@@ -4,12 +4,18 @@ using System.Globalization;
 
 namespace engenious
 {
+    /// <summary>
+    /// Provides a type converter to convert <see cref="Vector2"/> to and from various other representations.
+    /// </summary>
     public class Vector2Converter : ExpandableObjectConverter
     {
+        /// <inheritdoc />
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
             return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
         }
+
+        /// <inheritdoc />
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             var s = value as string;
@@ -28,13 +34,19 @@ namespace engenious
             return base.ConvertFrom(context, culture, value);
         }
     }
-    
+
+    /// <summary>
+    /// Provides a type converter to convert <see cref="Vector2d"/> to and from various other representations.
+    /// </summary>
     public class Vector2dConverter : ExpandableObjectConverter
     {
+        /// <inheritdoc />
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
             return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
         }
+
+        /// <inheritdoc />
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             var s = value as string;
@@ -54,13 +66,19 @@ namespace engenious
             return base.ConvertFrom(context, culture, value);
         }
     }
-    
+
+    /// <summary>
+    /// Provides a type converter to convert <see cref="Vector3"/> to and from various other representations.
+    /// </summary>
     public class Vector3Converter : ExpandableObjectConverter
     {
+        /// <inheritdoc />
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
             return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
         }
+
+        /// <inheritdoc />
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             var s = value as string;
@@ -78,13 +96,19 @@ namespace engenious
             return base.ConvertFrom(context, culture, value);
         }
     }
-    
+
+    /// <summary>
+    /// Provides a type converter to convert <see cref="Vector3d"/> to and from various other representations.
+    /// </summary>
     public class Vector3dConverter : ExpandableObjectConverter
     {
+        /// <inheritdoc />
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
             return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
         }
+
+        /// <inheritdoc />
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             var s = value as string;
@@ -104,13 +128,19 @@ namespace engenious
             return base.ConvertFrom(context, culture, value);
         }
     }
-    
+
+    /// <summary>
+    /// Provides a type converter to convert <see cref="Vector4"/> to and from various other representations.
+    /// </summary>
     public class Vector4Converter : ExpandableObjectConverter
     {
+        /// <inheritdoc />
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
             return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
         }
+
+        /// <inheritdoc />
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             var s = value as string;
@@ -128,13 +158,19 @@ namespace engenious
             return base.ConvertFrom(context, culture, value);
         }
     }
-    
+
+    /// <summary>
+    /// Provides a type converter to convert <see cref="Vector4d"/> to and from various other representations.
+    /// </summary>
     public class Vector4dConverter : ExpandableObjectConverter
     {
+        /// <inheritdoc />
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
             return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
         }
+
+        /// <inheritdoc />
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             var s = value as string;
@@ -152,9 +188,13 @@ namespace engenious
             return base.ConvertFrom(context, culture, value);
         }
     }
-    
+
+    /// <summary>
+    /// Provides a type converter to convert <see cref="Matrix"/> to and from various other representations.
+    /// </summary>
     public class MatrixConverter : ExpandableObjectConverter
     {
+        /// <inheritdoc />
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
             return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);

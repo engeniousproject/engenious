@@ -4,6 +4,9 @@ using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// Describes a parameter of an <see cref="EffectPass"/>.
+    /// </summary>
     public class EffectPassParameter
     {
         internal int Location;
@@ -18,67 +21,118 @@ namespace engenious.Graphics
             Type = type;
         }
 
+        /// <summary>
+        /// Gets the name of the parameter.
+        /// </summary>
         public string Name{ get; private set; }
-
+        
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(bool value)
         {
             Pass.Apply();
             GL.Uniform1(Location, value ? 1 : 0);
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(bool[] values)
         {
             Pass.Apply();
             GL.Uniform1(Location, values.Length, values.Cast<int>().ToArray());
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(int value)
         {
             Pass.Apply();
             GL.Uniform1(Location, value);
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(int[] values)
         {
             Pass.Apply();
             GL.Uniform1(Location, values.Length, values);
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(uint value)
         {
             GL.Uniform1(Location, value);
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(uint[] values)
         {
             GL.Uniform1(Location, values.Length, values);
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(float value)
         {
             GL.Uniform1(Location, value);
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(float[] values)
         {
             GL.Uniform1(Location, values.Length, values);
         }
-        
-        public void SetValue(double values)
+
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="value">The value to set the parameter to.</param>
+        public void SetValue(double value)
         {
-            GL.Uniform1(Location,values);
+            GL.Uniform1(Location,value);
         }
-        
+
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(double[] values)
         {
             GL.Uniform1(Location,values.Length,values);
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(string value)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(Texture value)
         {
             var dev = value.GraphicsDevice;
@@ -88,11 +142,19 @@ namespace engenious.Graphics
             GL.Uniform1(Location, val);
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="value">The value to set the parameter to.</param>
         public unsafe void SetValue(Vector2 value)
         {
             GL.Uniform2(Location, 1, (float*)&value);
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Vector2[] values)
         {
             unsafe
@@ -103,12 +165,20 @@ namespace engenious.Graphics
                 }
             }
         }
-        
+
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="value">The value to set the parameter to.</param>
         public unsafe void SetValue(Vector2d value)
         {
             GL.Uniform2(Location,1,(double*)&value);
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Vector2d[] values)
         {
             unsafe
@@ -120,11 +190,19 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="value">The value to set the parameter to.</param>
         public unsafe void SetValue(Vector3 value)
         {
             GL.Uniform3(Location, 1, (float*)&value);
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Vector3[] values)
         {
             unsafe
@@ -135,12 +213,20 @@ namespace engenious.Graphics
                 }
             }
         }
-        
+
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="value">The value to set the parameter to.</param>
         public unsafe void SetValue(Vector3d value)
         {
             GL.Uniform3(Location, 1, (double*)&value);
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Vector3d[] values)
         {
             unsafe
@@ -152,11 +238,19 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="value">The value to set the parameter to.</param>
         public unsafe void SetValue(Vector4 value)
         {
             GL.Uniform4(Location, 1, (float*)&value);
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="values">The value to set the parameter to.</param>
         public unsafe void SetValue(Vector4[] values)
         {
             fixed(Vector4* ptr = values)
@@ -165,11 +259,19 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="value">The value to set the parameter to.</param>
         public unsafe void SetValue(Vector4d value)
         {
             GL.Uniform4(Location, 1, (double*)&value);
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="values">The value to set the parameter to.</param>
         public unsafe void SetValue(Vector4d[] values)
         {
             fixed(Vector4d* ptr = values)
@@ -178,11 +280,19 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="value">The value to set the parameter to.</param>
         public unsafe void SetValue(Matrix value)
         {
             GL.UniformMatrix4(Location, 1, false, (float*)&value);
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="values">The value to set the parameter to.</param>
         public unsafe void SetValue(Matrix[] values)
         {
             fixed(Matrix* ptr = values)
@@ -191,11 +301,19 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="value">The value to set the parameter to.</param>
         public unsafe void SetValue(Quaternion value)
         {
             GL.Uniform4(Location, 1, (float*)&value);
         }
 
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Quaternion[] values)
         {
             unsafe
@@ -206,6 +324,11 @@ namespace engenious.Graphics
                 }
             }
         }
+
+        /// <summary>
+        /// Sets the value of this parameter.
+        /// </summary>
+        /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(ConstantBuffer value)
         {
             GL.UniformBlockBinding(Pass.Program,Location,value.Ubo);

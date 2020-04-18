@@ -3,6 +3,9 @@ using OpenTK.Graphics.OpenGL;
 
 namespace engenious
 {
+    /// <summary>
+    /// A collection of the <see cref="SamplerState"/> class.
+    /// </summary>
     public class SamplerStateCollection : GraphicsResource
     {
         private readonly SamplerState[] _samplerStates;
@@ -14,6 +17,10 @@ namespace engenious
             _samplerStates = new SamplerState[maxTextures];
         }
 
+        /// <summary>
+        /// Gets an element at the specified index.
+        /// </summary>
+        /// <param name="index">The index to get the element at.</param>
         public SamplerState this [int index]
         {
             get { return _samplerStates[index]; }

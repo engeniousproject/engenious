@@ -38,6 +38,11 @@ namespace engenious.Input
     public struct MouseScroll : IEquatable<MouseScroll>
     {
         #region Public Members
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MouseScroll"/> class.
+        /// </summary>
+        /// <param name="x">The scroll amount in horizontal direction.</param>
+        /// <param name="y">The scroll amount in vertical direction.</param>
         public MouseScroll(float x,float y)
         {
             X = x;

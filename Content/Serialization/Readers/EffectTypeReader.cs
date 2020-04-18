@@ -6,6 +6,9 @@ using engenious.Graphics;
 
 namespace engenious.Content.Serialization
 {
+    /// <summary>
+    /// Content type reader to load <see cref="Effect"/> instances.
+    /// </summary>
     [ContentTypeReader(typeof(Effect))]
     public class EffectTypeReader:ContentTypeReader<Effect>
     {
@@ -49,7 +52,7 @@ namespace engenious.Content.Serialization
                                     _effectTypes.Add(type.FullName ?? "", type);
                                 }
                             }
-                            catch (Exception ex)
+                            catch (Exception)
                             {
                                 
                             }
@@ -58,6 +61,8 @@ namespace engenious.Content.Serialization
                 }
             }
         }
+
+        /// <inheritdoc />
         public override Effect Read(ContentManager manager, ContentReader reader, Type customType = null)
         {
             var useCustomType = reader.ReadBoolean();
@@ -81,7 +86,7 @@ namespace engenious.Content.Serialization
                     //effectType = customType;
                     useCustomType = true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     
                 }
@@ -93,7 +98,7 @@ namespace engenious.Content.Serialization
                 {
                     effect = (Effect) Activator.CreateInstance(effectType, manager.GraphicsDevice);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
 
                 }
@@ -118,7 +123,7 @@ namespace engenious.Content.Serialization
                             techniqueType = _effectTypes[effectType.FullName + "+" + customTypeName];
                         technique = (EffectTechnique) Activator.CreateInstance(techniqueType,techniqueName);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         
                     }
@@ -139,7 +144,7 @@ namespace engenious.Content.Serialization
                             var passType = _effectTypes[customTypeName];
                             pass = (EffectPass) Activator.CreateInstance(passType,passName);
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                         
                         }

@@ -4,6 +4,9 @@ using engenious.Graphics;
 
 namespace engenious.Content.Serialization
 {
+    /// <summary>
+    /// Content type reader to load <see cref="ModelContent"/> instances.
+    /// </summary>
     [ContentTypeReader(typeof(ModelContent))]
     public class ModelContentTypeReader:ContentTypeReader<ModelContent>
     {
@@ -19,6 +22,7 @@ namespace engenious.Content.Serialization
             return node;
         }
 
+        /// <inheritdoc />
         public override ModelContent Read(ContentManager manager, ContentReader reader, Type customType = null)
         {
             var model = new ModelContent();
@@ -26,14 +30,16 @@ namespace engenious.Content.Serialization
             model.Meshes = new MeshContent[meshCount];
             for (var meshIndex = 0; meshIndex < meshCount; meshIndex++)
             {
-                var m = new MeshContent();
-                m.PrimitiveCount = reader.ReadInt32();
+                var primCount = reader.ReadInt32();
                 bool hasPositions = reader.ReadBoolean();
                 bool hasColors = reader.ReadBoolean();
                 bool hasNormals = reader.ReadBoolean();
                 bool hasTextureCoordinates = reader.ReadBoolean();
                 var vertexCount = reader.ReadInt32();
-                m.Vertices = new ConditionalVertexArray(vertexCount,hasPositions,hasColors,hasNormals,hasTextureCoordinates);
+                var verts = new ConditionalVertexArray(vertexCount,hasPositions,hasColors,hasNormals,hasTextureCoordinates);
+                var m = new MeshContent(primCount, verts);
+
+
 
 
                 Vector3 minVertex=new Vector3(float.MaxValue),maxVertex=new Vector3(float.MinValue);

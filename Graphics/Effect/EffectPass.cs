@@ -6,10 +6,17 @@ using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// Render pass of an <see cref="Effect"/>.
+    /// </summary>
     public class EffectPass :IDisposable
     {
-        internal int Program;
+        internal readonly int Program;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EffectPass"/> class.
+        /// </summary>
+        /// <param name="name">The name of the pass.</param>
         protected internal EffectPass(string name)//TODO: content loading
         {
             Name = name;
@@ -28,6 +35,9 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Caches the <see cref="EffectPass"/> parameter locations.
+        /// </summary>
         protected internal virtual void CacheParameters()
         {
             var total = -1;
@@ -113,14 +123,23 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets the parameters associated with this <see cref="EffectPass"/>.
+        /// </summary>
         protected internal EffectPassParameterCollection Parameters{ get; private set; }
 
+        /// <summary>
+        /// Gets the passes name.
+        /// </summary>
         public string Name
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Applies this render pass.
+        /// </summary>
         public void Apply()
         {
             using (Execute.OnUiContext)
@@ -129,7 +148,13 @@ namespace engenious.Graphics
             }
         }
 
-
+        /// <summary>
+        /// Execute this pass with specified number of groups.
+        /// </summary>
+        /// <remarks>Only works on compute shaders.</remarks>
+        /// <param name="x">The x count of groups.</param>
+        /// <param name="y">The y count of groups.</param>
+        /// <param name="z">The z count of groups.</param>
         public void Compute(int x,int y=1,int z=1)
         {
             using (Execute.OnUiContext)
@@ -139,6 +164,10 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Wait for compute shader execution completion.
+        /// </summary>
+        /// <remarks>Only works on compute shaders.</remarks>
         public void WaitForImageCompletion()
         {
             using (Execute.OnUiContext)
@@ -147,6 +176,7 @@ namespace engenious.Graphics
             }
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             using (Execute.OnUiContext)
@@ -155,11 +185,20 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets the <see cref="BlendState"/> associated with this pass.
+        /// </summary>
         public BlendState BlendState{ get; internal set; }
         //TODO: apply states
 
+        /// <summary>
+        /// Gets the <see cref="DepthStencilState"/> associated with this pass.
+        /// </summary>
         public DepthStencilState DepthStencilState{ get; internal set; }
 
+        /// <summary>
+        /// Gets the <see cref="RasterizerState"/> associated with this pass.
+        /// </summary>
         public RasterizerState RasterizerState{ get; internal set; }
     }
 }

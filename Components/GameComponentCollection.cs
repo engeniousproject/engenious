@@ -3,12 +3,18 @@ using System.Collections.Generic;
 
 namespace engenious
 {
+    /// <summary>
+    /// Defines a collection of game components.
+    /// </summary>
     public sealed class GameComponentCollection : ICollection<GameComponent>
     {
         private readonly UpdateComparer _updateComparer;
         private readonly DrawComparer _drawComparer;
         private readonly List<GameComponent> _components;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameComponentCollection"/> class.
+        /// </summary>
         public GameComponentCollection()
         {
             Drawables = new List<IDrawable>();
@@ -18,8 +24,14 @@ namespace engenious
             _drawComparer = new DrawComparer();
         }
 
+        /// <summary>
+        /// Gets the list of updateable components.
+        /// </summary>
         internal List<IUpdateable> Updatables { get; }
 
+        /// <summary>
+        /// Gets the list of drawable components.
+        /// </summary>
         internal List<IDrawable> Drawables { get; }
 
 
@@ -54,6 +66,7 @@ namespace engenious
 
         #region ICollection implementation
 
+        /// <inheritdoc />
         public void Add(GameComponent item)
         {
             var drawable = item as IDrawable;
@@ -65,6 +78,7 @@ namespace engenious
             _components.Add(item);
         }
 
+        /// <inheritdoc />
         public void Clear()
         {
             Drawables.Clear();
@@ -72,16 +86,19 @@ namespace engenious
             _components.Clear();
         }
 
+        /// <inheritdoc />
         public bool Contains(GameComponent item)
         {
             return _components.Contains(item);
         }
 
+        /// <inheritdoc />
         public void CopyTo(GameComponent[] array, int arrayIndex)
         {
             _components.CopyTo(array, arrayIndex);
         }
 
+        /// <inheritdoc />
         public bool Remove(GameComponent item)
         {
 
@@ -95,14 +112,17 @@ namespace engenious
             return _components.Remove(item);
         }
 
+        /// <inheritdoc />
         public int Count => _components.Count;
 
+        /// <inheritdoc />
         public bool IsReadOnly => false;
 
         #endregion
 
         #region IEnumerable implementation
 
+        /// <inheritdoc />
         public IEnumerator<GameComponent> GetEnumerator()
         {
             return _components.GetEnumerator();

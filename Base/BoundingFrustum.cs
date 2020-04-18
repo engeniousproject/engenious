@@ -1,9 +1,17 @@
 ﻿namespace engenious
 {
+    /// <summary>
+    /// Defines a Bounding frustum.
+    /// </summary>
     public class BoundingFrustum
     {
         private readonly Plane[] _planes = new Plane[6];
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BoundingFrustum"/> class using a matrix creating a frustum.
+        /// <remarks>Usually a matrix resulting from <c>View * Projection</c>.</remarks>
+        /// </summary>
+        /// <param name="matrix">The <see cref="Matrix"/> to create the frustum from.</param>
         public BoundingFrustum(Matrix matrix)
         {
             
@@ -24,7 +32,9 @@
             Matrix = matrix;
         }
 
-
+        /// <summary>
+        /// Gets the bottom plane of the frustum.
+        /// </summary>
         public Plane Bottom
         { 
             get{ return _planes[5]; }
@@ -34,6 +44,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the top plane of the frustum.
+        /// </summary>
         public Plane Top
         {
             get{ return _planes[4]; }
@@ -43,6 +56,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the far plane of the frustum.
+        /// </summary>
         public Plane Far
         {
             get{ return _planes[3]; }
@@ -52,6 +68,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the near plane of the frustum.
+        /// </summary>
         public Plane Near
         { 
             get{ return _planes[2]; }
@@ -61,6 +80,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the left plane of the frustum.
+        /// </summary>
         public Plane Left
         { 
             get{ return _planes[1]; }
@@ -70,6 +92,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the right plane of the frustum.
+        /// </summary>
         public Plane Right
         {
             get{ return _planes[0]; }
@@ -79,14 +104,10 @@
             }
         }
 
+        /// <summary>
+        /// Gets the matrix which constructed the <see cref="BoundingFrustum"/>.
+        /// </summary>
         public Matrix Matrix{ get; private set; }
-
-        public enum CollisionType
-        {
-            Outside,
-            Intersect,
-            Inside
-        }
 
         private static void PVertex(Vector3 normal, BoundingBox box, out Vector3 vn, out Vector3 vp)
         {
@@ -125,15 +146,20 @@
             vn = new Vector3(vNx, vNy, vNz);
         }
 
+        /// <summary>
+        /// Tests whether and in which way the <see cref="BoundingBox"/> collides with the <see cref="BoundingFrustum"/>.
+        /// </summary>
+        /// <param name="box">The <see cref="BoundingBox"/> to test the containment with.</param>
+        /// <param name="type">The resulting <see cref="CollisionType"/>.</param>
+        /// <returns><c>true</c> if the <see cref="BoundingBox"/> is contained in the <see cref="BoundingFrustum"/>;otherwise <c>false</c></returns>
         public bool Contains(BoundingBox box, out CollisionType type)
         {
             type = CollisionType.Outside;
             for (var i = 0; i < _planes.Length; i++)
             {
                 var d = _planes[i].D;
-                Vector3 vn, vp;
                 var n = _planes[i].Normal;
-                PVertex(n, box, out vn, out vp);
+                PVertex(n, box, out _, out var vp);
 
                 var a = vp.Dot(n) + d;
                 if (a < 0)//TODO: validate
@@ -147,12 +173,14 @@
             return true;
         }
 
+        /// <summary>
+        /// Tests whether the given <see cref="BoundingBox"/> intersects with the <see cref="BoundingFrustum"/>.
+        /// </summary>
+        /// <param name="box">The <see cref="BoundingBox"/> to test with.</param>
+        /// <returns><c>true</c> if the <see cref="BoundingBox"/> intersects with the <see cref="BoundingFrustum"/>;otherwise <c>false</c></returns>
         public bool Intersects(BoundingBox box)
         {
-            //return false;
-            //return true;
-            CollisionType tmp;
-            Contains(box, out tmp);
+            _ = Contains(box, out var tmp);
             return tmp != CollisionType.Outside;
         }
     }

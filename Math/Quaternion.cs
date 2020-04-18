@@ -4,20 +4,26 @@ using System.Runtime.InteropServices;
 
 namespace engenious
 {
+    /// <summary>
+    /// Defines a Quaternion.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct Quaternion
+    public struct Quaternion : IEquatable<Quaternion>
     {
+        /// <inheritdoc />
         public bool Equals(Quaternion other)
         {
             return X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z) && W.Equals(other.W);
         }
 
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             return obj is Quaternion && Equals((Quaternion) obj);
         }
 
+        /// <inheritdoc />
         public override int GetHashCode()
         {
             unchecked
@@ -30,11 +36,27 @@ namespace engenious
             }
         }
 
+        /// <summary>
+        /// The x-component.
+        /// </summary>
         public float X;
+        /// <summary>
+        /// The y-component.
+        /// </summary>
         public float Y;
+        /// <summary>
+        /// The z-component.
+        /// </summary>
         public float Z;
+        /// <summary>
+        /// The w-component.
+        /// </summary>
         public float W;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Quaternion"/> struct from a <see cref="Matrix"/>.
+        /// </summary>
+        /// <param name="matrix">Rotation <see cref="Matrix"/> to convert to a <see cref="Quaternion"/>.</param>
         public Quaternion(Matrix matrix)
         {
             //matrix.Transpose();
@@ -74,6 +96,13 @@ namespace engenious
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Quaternion"/> struct.
+        /// </summary>
+        /// <param name="x">The x-component.</param>
+        /// <param name="y">The y-component.</param>
+        /// <param name="z">The z-component.</param>
+        /// <param name="w">The w-component.</param>
         public Quaternion(float x, float y, float z, float w)
         {
             X = x;
@@ -82,6 +111,12 @@ namespace engenious
             W = w;
         }
 
+        /// <summary>
+        /// Adds two quaternions.
+        /// </summary>
+        /// <param name="val1">The first <see cref="Quaternion"/>.</param>
+        /// <param name="val2">The second <see cref="Quaternion"/>.</param>
+        /// <returns>The resulting <see cref="Quaternion"/>.</returns>
         public static Quaternion operator +(Quaternion val1, Quaternion val2)
         {
             val1.X += val2.X;
@@ -91,16 +126,35 @@ namespace engenious
             return val1;
         }
 
+        /// <summary>
+        /// Scales a <see cref="Quaternion"/>.
+        /// </summary>
+        /// <param name="val">The <see cref="Quaternion"/>.</param>
+        /// <param name="scale">The scalar to scale by.</param>
+        /// <returns>The resulting <see cref="Quaternion"/>.</returns>
         public static Quaternion operator*(Quaternion val, float scale)
         {
             return new Quaternion(val.X * scale, val.Y * scale, val.Z * scale, val.W * scale);
         }
 
+        /// <summary>
+        /// Multiplies two quaternions.
+        /// </summary>
+        /// <param name="val1">The first <see cref="Quaternion"/>.</param>
+        /// <param name="val2">The second <see cref="Quaternion"/>.</param>
+        /// <returns>The resulting <see cref="Quaternion"/>.</returns>
         public static Quaternion operator*(Quaternion val1, Quaternion val2)
         {
             return new Quaternion(val1.W * val2.X + val1.X * val2.W + val1.Y * val2.Z - val1.Z * val2.Y, val1.W * val2.Y + val1.Y * val2.W + val1.Z * val2.X - val1.X * val2.Z, val1.W * val2.Z + val1.Z * val2.W + val1.X * val2.Y - val1.Y * val2.X, val1.W * val2.W - val1.X * val2.X - val1.Y * val2.Y - val1.Z * val2.Z);
         }
 
+        /// <summary>
+        /// Lerps between two quaternions using a given <paramref name="amount"/>.
+        /// </summary>
+        /// <param name="quaternion1">The <see cref="Quaternion"/> to lerp from.</param>
+        /// <param name="quaternion2">The <see cref="Quaternion"/> to lerp to.</param>
+        /// <param name="amount">The amount to lerp by.</param>
+        /// <returns>The resulting interpolated <see cref="Quaternion"/>.</returns>
         public static Quaternion Lerp(Quaternion quaternion1, Quaternion quaternion2, float amount)//copied from MonoGame
         {
             var num = amount;
@@ -132,6 +186,10 @@ namespace engenious
             return quaternion;
         }
 
+        /// <summary>
+        /// Converts this <see cref="Quaternion"/> to a rotation <see cref="Matrix"/>.
+        /// </summary>
+        /// <returns>The created rotation <see cref="Matrix"/>.</returns>
         public Matrix ToMatrix()
         {
             var m=new Matrix();
@@ -165,21 +223,38 @@ namespace engenious
             return m;
         }
 
+        /// <inheritdoc />
         public override string ToString()
         {
             return
                 $"[{X.ToString(System.Globalization.NumberFormatInfo.InvariantInfo)}, {Y.ToString(System.Globalization.NumberFormatInfo.InvariantInfo)}, {Z.ToString(System.Globalization.NumberFormatInfo.InvariantInfo)}, {W.ToString(System.Globalization.NumberFormatInfo.InvariantInfo)}]";
         }
 
+        /// <summary>
+        /// Tests two <see cref="Quaternion"/> structs for equality.
+        /// </summary>
+        /// <param name="q1">The first <see cref="Quaternion"/> to test with.</param>
+        /// <param name="q2">The second <see cref="Quaternion"/> to test with.</param>
+        /// <returns><c>true</c> if the quaternions are equal; otherwise <c>false</c>.</returns>
         public static bool operator ==(Quaternion q1, Quaternion q2)
         {
             return q1.X == q2.X && q1.Y == q2.Y && q1.Z == q2.Z && q1.W == q2.W;
         }
+
+        /// <summary>
+        /// Tests two <see cref="Quaternion"/> structs for inequality.
+        /// </summary>
+        /// <param name="q1">The first <see cref="Quaternion"/> to test with.</param>
+        /// <param name="q2">The second <see cref="Quaternion"/> to test with.</param>
+        /// <returns><c>true</c> if the quaternions aren't equal; otherwise <c>false</c>.</returns>
         public static bool operator !=(Quaternion q1, Quaternion q2)
         {
             return q1.X != q2.X || q1.Y != q2.Y || q1.Z != q2.Z || q1.W != q2.W;
         }
 
+        /// <summary>
+        /// The identity <see cref="Quaternion"/>.
+        /// </summary>
         public static readonly Quaternion Identity = new Quaternion(0,0,0,1);
     }
 }

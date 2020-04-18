@@ -5,10 +5,22 @@ using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
-    public class Texture2DArray : Texture
+    /// <summary>
+    /// An array of 2D GPU textures.
+    /// </summary>
+    public class Texture2DArray : TextureArray
     {
         private readonly int _texture;
         private readonly PixelInternalFormat _internalFormat;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Texture2DArray"/> class.
+        /// </summary>
+        /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/>.</param>
+        /// <param name="levels">The number mip-map levels.</param>
+        /// <param name="width">The width of the contained textures.</param>
+        /// <param name="height">The height of the contained textures.</param>
+        /// <param name="layers">The number of layers for this texture array.</param>
         public Texture2DArray(GraphicsDevice graphicsDevice, int levels, int width, int height, int layers)
             : base(graphicsDevice)
         {
@@ -24,6 +36,15 @@ namespace engenious.Graphics
             Height = height;
             LayerCount = layers;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Texture2DArray"/> class.
+        /// </summary>
+        /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/>.</param>
+        /// <param name="levels">The number mip-map levels.</param>
+        /// <param name="width">The width of the contained textures.</param>
+        /// <param name="height">The height of the contained textures.</param>
+        /// <param name="textures">The 2D textures to copy to this texture array.</param>
         public Texture2DArray(GraphicsDevice graphicsDevice,int levels,int width,int height,Texture2D[] textures)
             :this(graphicsDevice,levels,width,height,textures.Length)
         {
@@ -56,9 +77,16 @@ namespace engenious.Graphics
             GL.TexParameter(Target,TextureParameterName.TextureMagFilter,(int)All.Linear);
             GL.TexParameter(Target,TextureParameterName.TextureMinFilter,(int)All.LinearMipmapLinear);
         }
+
+        /// <summary>
+        /// Gets the width of the contained textures.
+        /// </summary>
         public int Width { get; private set; }
+
+        /// <summary>
+        /// Gets the height of the contained textures.
+        /// </summary>
         public int Height { get; private set; }
-        public int LayerCount { get; private set; }
 
         internal override void Bind()
         {
@@ -66,12 +94,21 @@ namespace engenious.Graphics
         }
         internal override TextureTarget Target => TextureTarget.Texture2DArray;
 
+        /// <inheritdoc />
         public override void BindComputation(int unit = 0)
         {
             GL.BindImageTexture(unit, _texture, 0, false, 0, TextureAccess.WriteOnly,
                 (SizedInternalFormat) _internalFormat);
         }
 
+        
+        /// <summary>
+        /// Sets the textures pixel data.
+        /// </summary>
+        /// <param name="data">The array containing the pixel data to write.</param>
+        /// <param name="layer">The layer to write to.</param>
+        /// <param name="level">The mip-map level to write to.</param>
+        /// <typeparam name="T">The type to write pixel data as.</typeparam>
         public void SetData<T>(T[] data,int layer,int level=0)where T : struct
         {
             var handle = GCHandle.Alloc(data, GCHandleType.Pinned);
@@ -82,7 +119,7 @@ namespace engenious.Graphics
                 if (typeof(T) == typeof(Color))
                     pxType = PixelType.Float;
 
-                    GL.TexSubImage3D(Target, level, 0, 0,layer, Width, Height,1, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, pxType, handle.AddrOfPinnedObject());
+                GL.TexSubImage3D(Target, level, 0, 0,layer, Width, Height,1, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, pxType, handle.AddrOfPinnedObject());
             }
             handle.Free();
         }

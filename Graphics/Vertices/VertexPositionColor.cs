@@ -2,9 +2,15 @@
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// Describes a basic vertex type containing position and color information.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct VertexPositionColor:IPositionVertex,IColorVertex
     {
+        /// <summary>
+        /// Gets the <see cref="engenious.Graphics.VertexDeclaration"/> for this vertex type.
+        /// </summary>
         public static readonly VertexDeclaration VertexDeclaration;
 
         static VertexPositionColor()
@@ -16,16 +22,22 @@ namespace engenious.Graphics
 
         VertexDeclaration IVertexType.VertexDeclaration => VertexDeclaration;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VertexPositionColor"/> struct.
+        /// </summary>
+        /// <param name="position">The position of this vertex.</param>
+        /// <param name="color">The color of this vertex.</param>
         public VertexPositionColor(Vector3 position, Color color)
         {
             Color = color;
             Position = position;
         }
 
+        /// <inheritdoc />
         public Vector3 Position { get; set; }
+
+        /// <inheritdoc />
         public Color Color { get; set; }
-        //public Vector3 Position{ get; private set;}
-        //public Color Color{ get; private set;}
     }
 }
 

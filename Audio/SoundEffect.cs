@@ -5,10 +5,19 @@ using OpenTK.Audio.OpenAL;
 
 namespace engenious.Audio
 {
+    /// <summary>
+    /// Defines a <see cref="SoundEffect"/>.
+    /// </summary>
     public class SoundEffect : IDisposable
     {
+        /// <summary>
+        /// Gets or sets the speed of sound in the current medium.
+        /// </summary>
         public static float SpeedOfSound { get; set; }
 
+        /// <summary>
+        /// Gets or sets the master volume.
+        /// </summary>
         public static float MasterVolume { get; set; }
 
         static SoundEffect()
@@ -18,6 +27,11 @@ namespace engenious.Audio
         }
         //TODO dynamic sound
         internal int Buffer;
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SoundEffect"/> class.
+        /// </summary>
+        /// <param name="fileName">The file to load the <see cref="SoundEffect"/> from.</param>
         public SoundEffect(string fileName)
         {
             using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
@@ -26,16 +40,35 @@ namespace engenious.Audio
             }
         }
 
+        /// <summary>
+        /// Specifies available audio formats.
+        /// </summary>
         public enum AudioFormat
         {
+            /// <summary>
+            /// The ogg vorbis audio format.
+            /// </summary>
             Ogg,
+            /// <summary>
+            /// The wave audio format.
+            /// </summary>
             Wav
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SoundEffect"/> class.
+        /// </summary>
+        /// <param name="stream">The stream to load the <see cref="SoundEffect"/> from.</param>
+        /// <param name="format">The <see cref="AudioFormat"/> of the <paramref name="stream"/>.</param>
         public SoundEffect(Stream stream, AudioFormat format)
         {
             LoadStream(stream,format);
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SoundEffect"/> class.
+        /// </summary>
+        /// <param name="stream">The stream to load the <see cref="SoundEffect"/> from.</param>
         public SoundEffect(Stream stream)
         {
             LoadStream(stream);
@@ -209,19 +242,24 @@ namespace engenious.Audio
             return audioData;
         }
 
-        /*public System.IO.Stream OpenStream()
-        {
-            return null;
-        }*/
+        /// <summary>
+        /// Plays the <see cref="SoundEffect"/> using a <see cref="SoundEffectInstance"/> from the <see cref="SoundEffectInstancePool"/>.
+        /// </summary>
         public void Play()
         {
-            SoundEffectInstancePool.Instance.Aquire(this).Play();
+            SoundEffectInstancePool.Instance.Acquire(this).Play();
         }
+
+        /// <summary>
+        /// Creates a pooled <see cref="SoundEffectInstance"/> from the <see cref="SoundEffectInstancePool"/>.
+        /// </summary>
         public virtual SoundEffectInstance CreateInstance()
         {
-            return SoundEffectInstancePool.Instance.Aquire(this);
+            return SoundEffectInstancePool.Instance.Acquire(this);
         }
         #region IDisposable implementation
+
+        /// <inheritdoc />
         public void Dispose()
         {
             AL.DeleteBuffer(Buffer);

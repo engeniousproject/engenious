@@ -4,6 +4,9 @@ using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// A texture target to render to.
+    /// </summary>
     public class RenderTarget2D : Texture2D
     {
         private readonly int _fbo;
@@ -24,7 +27,13 @@ namespace engenious.Graphics
             }*/
         }
 
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RenderTarget2D"/> class.
+        /// </summary>
+        /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/>.</param>
+        /// <param name="width">The width of the render target.</param>
+        /// <param name="height">The height of the render target.</param>
+        /// <param name="surfaceFormat">The used pixel format of the render target.</param>
         public RenderTarget2D(GraphicsDevice graphicsDevice, int width, int height, PixelInternalFormat surfaceFormat)
             : base(graphicsDevice, width, height,1,surfaceFormat)
         {
@@ -106,6 +115,7 @@ namespace engenious.Graphics
             }
         }
 
+        /// <inheritdoc />
         public override void Dispose()
         {
             using (Execute.OnUiContext)

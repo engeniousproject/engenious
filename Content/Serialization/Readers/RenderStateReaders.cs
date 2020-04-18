@@ -4,11 +4,15 @@ using engenious.Graphics;
 
 namespace engenious.Content.Serialization
 {
+    /// <summary>
+    /// Content type reader to load <see cref="RasterizerState"/> instances.
+    /// </summary>
     [ContentTypeReader(typeof(RasterizerState))]
     public class RasterizerStateTypeReader : ContentTypeReader<RasterizerState>
     {
         #region implemented abstract members of ContentTypeReader
 
+        /// <inheritdoc />
         public override RasterizerState Read(ContentManager manager, ContentReader reader, Type customType = null)
         {
             if (reader.ReadBoolean())
@@ -27,11 +31,15 @@ namespace engenious.Content.Serialization
         #endregion
     }
 
+    /// <summary>
+    /// Content type reader to load <see cref="DepthStencilState"/> instances.
+    /// </summary>
     [ContentTypeReader(typeof(DepthStencilState))]
     public class DepthStencilStateTypeReader : ContentTypeReader<DepthStencilState>
     {
         #region implemented abstract members of ContentTypeReader
 
+        /// <inheritdoc />
         public override DepthStencilState Read(ContentManager manager, ContentReader reader, Type customType = null)
         {
             if (reader.ReadBoolean())
@@ -61,11 +69,15 @@ namespace engenious.Content.Serialization
         #endregion
     }
 
+    /// <summary>
+    /// Content type reader to load <see cref="BlendState"/> instances.
+    /// </summary>
     [ContentTypeReader(typeof(BlendState))]
     public class BlendStateTypeReader : ContentTypeReader<BlendState>
     {
         #region implemented abstract members of ContentTypeReader
 
+        /// <inheritdoc />
         public override BlendState Read(ContentManager manager, ContentReader reader, Type customType = null)
         {
             if (reader.ReadBoolean())

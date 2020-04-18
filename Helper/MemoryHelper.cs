@@ -3,6 +3,9 @@ using System.Reflection.Emit;
 
 namespace engenious.Helper
 {
+    /// <summary>
+    /// A helper class containing otherwise unavailable IL functionality.
+    /// </summary>
     public class MemoryHelper
     {
         static MemoryHelper()
@@ -23,7 +26,17 @@ namespace engenious.Helper
             gen.Emit(OpCodes.Ret);
             return (CopyBulkDelegate)dynamicMethod.CreateDelegate(typeof(CopyBulkDelegate));
         }
+        /// <summary>
+        /// Delegate for the IL Cpblk instruction wrapper.
+        /// </summary>
+        /// <param name="src">The source to copy from.</param>
+        /// <param name="dst">The destination to copy to.</param>
+        /// <param name="size">The byte count to copy.</param>
         public delegate void CopyBulkDelegate(IntPtr src, IntPtr dst, uint size);
+
+        /// <summary>
+        /// Gets a wrapper for the Cpblk instruction.
+        /// </summary>
         public static CopyBulkDelegate CopyBulk;
     }
 }

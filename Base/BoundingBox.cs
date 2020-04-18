@@ -3,14 +3,28 @@ using System.Collections.Generic;
 
 namespace engenious
 {
+    /// <summary>
+    /// Defines an axis-aligned 3D-box.
+    /// </summary>
     public struct BoundingBox
     {
+        /// <summary>
+        /// The corner of the bounding box which is maximal on all axes.
+        /// </summary>
         public Vector3 Max;
+        /// <summary>
+        /// The corner of the bounding box which is minimal on all axes.
+        /// </summary>
         public Vector3 Min;
         
         
         private Vector3[] _cornerPreAlloc;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BoundingBox"/> struct.
+        /// </summary>
+        /// <param name="min">The corner of the bounding box which is minimal on all axes.</param>
+        /// <param name="max">The corner of the bounding box which is maximal on all axes.</param>
         public BoundingBox(Vector3 min, Vector3 max)
         {
             Min = min;
@@ -18,6 +32,15 @@ namespace engenious
             _cornerPreAlloc = new Vector3[8];
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BoundingBox"/> struct.
+        /// </summary>
+        /// <param name="minX">The minimal value of all corners X-axis.</param>
+        /// <param name="minY">The minimal value of all corners Y-axis.</param>
+        /// <param name="minZ">The minimal value of all corners Z-axis.</param>
+        /// <param name="maxX">The maximal value of all corners X-axis.</param>
+        /// <param name="maxY">The maximal value of all corners Y-axis.</param>
+        /// <param name="maxZ">The maximal value of all corners Z-axis.</param>
         public BoundingBox(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
         {
             Min = new Vector3(minX, minY, minZ);
@@ -25,6 +48,12 @@ namespace engenious
             _cornerPreAlloc = new Vector3[8];
         }
 
+        /// <summary>
+        /// Tests whether the <see cref="BoundingBox"/> contains a point.
+        /// <remarks>This test is border inclusive.</remarks>
+        /// </summary>
+        /// <param name="vec">The point to test.</param>
+        /// <returns><c>true</c> if the point is contained by the <see cref="BoundingBox"/>;otherwise <c>false</c></returns>
         public bool Contains(Vector3 vec)
         {
             return vec.X >= Min.X && vec.X < Max.X &&
@@ -32,11 +61,23 @@ namespace engenious
             vec.Z >= Min.Z && vec.Z < Max.Z;
         }
 
+        /// <summary>
+        /// Tests whether the <see cref="BoundingBox"/> contains another <see cref="BoundingBox"/>.
+        /// <remarks>This test is border inclusive.</remarks>
+        /// </summary>
+        /// <param name="box">The <see cref="BoundingBox"/> to test with.</param>
+        /// <returns><c>true</c> if the <see cref="BoundingBox"/> is contained by the <see cref="BoundingBox"/>;otherwise <c>false</c></returns>
         public bool Contains(BoundingBox box)
         {
             return Contains(box.Min) && Contains(box.Max);
         }
 
+        /// <summary>
+        /// Tests whether the <see cref="BoundingBox"/> intersects with another <see cref="BoundingBox"/>.
+        /// <remarks>This test is border inclusive.</remarks>
+        /// </summary>
+        /// <param name="box">The <see cref="BoundingBox"/> to test with.</param>
+        /// <returns><c>true</c> if the <see cref="BoundingBox"/> intersects with the other <see cref="BoundingBox"/>;otherwise <c>false</c></returns>
         public bool Intersects(BoundingBox box)
         {
             if (Min.X > box.Max.X || box.Min.X > Max.X)
@@ -45,8 +86,14 @@ namespace engenious
             if (Min.Y > box.Max.Y || box.Min.Y > Max.Y)
                 return false;
 
-            return (Min.Z > box.Max.Z) && !(box.Min.Z > Max.Z);
+            return !(Min.Z > box.Max.Z) && !(box.Min.Z > Max.Z);
         }
+        
+        /// <summary>
+        /// Tests whether the <see cref="BoundingBox"/> intersects with a <see cref="Ray"/>.
+        /// </summary>
+        /// <param name="ray">The <see cref="Ray"/> to test with.</param>
+        /// <returns>The distance at which the intersection occurs, or <c>null</c> if the <see cref="Ray"/> does not intersect with the <see cref="BoundingBox"/>.</returns>
         public float? Intersects(Ray ray)
         {
             const float epsilon = 1e-6f;
@@ -136,6 +183,21 @@ namespace engenious
             return tMin;
         }
 
+        /// <summary>
+        /// Gets all corners of the <see cref="BoundingBox"/>.
+        /// </summary>
+        /// <returns>All corners of the <see cref="BoundingBox"/>.</returns>
+        /// <remarks>
+        /// Order of corners:
+        ///     - (Min.X, Max.Y, Max.Z)
+        ///     - Max
+        ///     - (Max.X, Min.Y, Max.Z)
+        ///     - (Min.X, Min.Y, Max.Z)
+        ///     - (Min.X, Max.Y, Min.Z)
+        ///     - (Max.X, Max.Y, Min.Z)
+        ///     - (Max.X, Min.Y, Min.Z)
+        ///     - Min
+        /// </remarks>
         public Vector3[] GetCorners()
         {
             if (_cornerPreAlloc == null)
@@ -145,13 +207,19 @@ namespace engenious
             _cornerPreAlloc[2] = new Vector3(Max.X, Min.Y, Max.Z);
             _cornerPreAlloc[3] = new Vector3(Min.X, Min.Y, Max.Z);
             _cornerPreAlloc[4] = new Vector3(Min.X, Max.Y, Min.Z);
-            _cornerPreAlloc[5] = Max;
+            _cornerPreAlloc[5] = new Vector3(Max.X, Max.Y, Min.Z);
             _cornerPreAlloc[6] = new Vector3(Max.X, Min.Y, Min.Z);
-            _cornerPreAlloc[7] = new Vector3(Min.X, Min.Y, Min.Z);
+            _cornerPreAlloc[7] = Min;
 
             return _cornerPreAlloc;
         }
 
+        /// <summary>
+        /// Creates the smallest possible  <see cref="BoundingBox"/> containing all the passed points.
+        /// <remarks>This is border inclusive.</remarks>
+        /// </summary>
+        /// <param name="points">The points to be contained by the created <see cref="BoundingBox"/>.</param>
+        /// <returns>The smallest possible <see cref="BoundingBox"/> containing all the <paramref name="points"/>.</returns>
         public static BoundingBox CreateFromPoints(IEnumerable<Vector3> points)
         {
             float minX = float.MaxValue, minY = float.MaxValue, minZ = float.MaxValue;
@@ -169,6 +237,13 @@ namespace engenious
             return new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
         }
 
+        /// <summary>
+        /// Creates the smallest possible <see cref="BoundingBox"/> containing an additional <see cref="BoundingBox"/>.
+        /// <remarks>This is border inclusive.</remarks>
+        /// </summary>
+        /// <param name="original">The first <see cref="BoundingBox"/> to combine with the <paramref name="additional"/> <see cref="BoundingBox"/>.</param>
+        /// <param name="additional">The <paramref name="additional"/> <see cref="BoundingBox"/> to combine with.</param>
+        /// <param name="result">The resulting combined <see cref="BoundingBox"/> created from <paramref name="original"/> and <paramref name="additional"/>.</param>
         public static void CreateMerged(ref BoundingBox original, ref BoundingBox additional, out BoundingBox result)
         {
             result = new BoundingBox(Math.Min(original.Min.X, additional.Min.X),
@@ -179,11 +254,23 @@ namespace engenious
                 Math.Max(original.Max.Z, additional.Max.Z));
         }
 
+        /// <summary>
+        /// Creates the smallest possible <see cref="BoundingBox"/> containing all the passed BoundingBoxes.
+        /// <remarks>This is border inclusive.</remarks>
+        /// </summary>
+        /// <param name="boundingBoxes">The BoundingBoxes to create the new <see cref="BoundingBox"/> from</param>
+        /// <returns>The smallest possible <see cref="BoundingBox"/> containing all the <paramref name="boundingBoxes"/>.</returns>
         public static BoundingBox CreateMerged(params BoundingBox[] boundingBoxes)
         {
             return CreateMerged((IEnumerable<BoundingBox>)boundingBoxes);
         }
 
+        /// <summary>
+        /// Creates the smallest possible <see cref="BoundingBox"/> containing all the passed BoundingBoxes.
+        /// <remarks>This is border inclusive.</remarks>
+        /// </summary>
+        /// <param name="boundingBoxes">The BoundingBoxes to create the new <see cref="BoundingBox"/> from</param>
+        /// <returns>The smallest possible <see cref="BoundingBox"/> containing all the <paramref name="boundingBoxes"/>.</returns>
         public static BoundingBox CreateMerged(IEnumerable<BoundingBox> boundingBoxes)
         {
             float minX = float.MaxValue, minY = float.MaxValue, minZ = float.MaxValue;

@@ -4,7 +4,10 @@ using engenious.Helper;
 
 namespace engenious.Graphics
 {
-    public class PrimitiveModels
+    /// <summary>
+    /// Helper class to create some primitive models.
+    /// </summary>
+    public static class PrimitiveModels
     {
         #region IcoSphere
         private static int AddVertex(Vector3 p,List<Vector3> vertices,ref int index)
@@ -42,6 +45,13 @@ namespace engenious.Graphics
             middlePointIndexCache.Add(key, i);
             return i;
         }
+
+        /// <summary>
+        /// Creates an icosphere(geodesic polyhedron).
+        /// </summary>
+        /// <param name="recursionLevel">The recursion level(more results in smoother sphere)</param>
+        /// <param name="vertices">A list to add the created vertices to.</param>
+        /// <param name="indices">A list to add the created indices to.</param>
         public static void CreateIcoSphere(int recursionLevel,ref List<Vector3> vertices,ref List<int> indices)
         {
             
@@ -123,6 +133,14 @@ namespace engenious.Graphics
         #endregion
         #region UVSphere
         // ReSharper disable once InconsistentNaming
+
+        /// <summary>
+        /// Creates an uv-sphere.
+        /// </summary>
+        /// <param name="vertices">A list to add the created vertices to.</param>
+        /// <param name="indices">A list to add the created indices to.</param>
+        /// <param name="nbLong">The subdivision along the horizontal axis.</param>
+        /// <param name="nbLat">The subdivision along the vertical axis.</param>
         public static void CreateUVSphere(out Vector3[] vertices,out int[] indices,int nbLong=24,int nbLat=16)
         {
             var radius = 1f;

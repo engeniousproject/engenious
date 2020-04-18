@@ -10,16 +10,40 @@ using OpenTK.Graphics.OpenGL;
 
 namespace engenious
 {
+    /// <inheritdoc />
     public delegate void KeyPressDelegate(object sender,char key);
+
+    /// <summary>
+    /// Provides basic logic for <see cref="GraphicsDevice"/> initialization, game content management and rendering.
+    /// </summary>
     public abstract class Game : GraphicsResource
     {
+        /// <summary>
+        /// Occurs when a key is pressed while the <see cref="Game"/> is in focus.
+        /// </summary>
         public event KeyPressDelegate KeyPress;
+
+        /// <summary>
+        /// Occurs when the <see cref="Game"/> is getting focus.
+        /// </summary>
         public event EventHandler Activated;
+
+        /// <summary>
+        /// Occurs when the <see cref="Game"/> is losing focus.
+        /// </summary>
         public event EventHandler Deactivated;
+
+        /// <summary>
+        /// Occurs when the <see cref="Game"/> is exiting.
+        /// </summary>
         public event EventHandler Exiting;
+
+        /// <summary>
+        /// Occurs when the <see cref="Game"/> game rendering view is being resized.
+        /// </summary>
         public event EventHandler Resized;
 
-        internal GraphicsContextFlags ContextFlags;
+        internal readonly GraphicsContextFlags ContextFlags;
         private IGraphicsContext _context;
         private readonly AudioDevice _audio;
         private void ConstructContext()
@@ -86,6 +110,9 @@ namespace engenious
             }
             _context.MakeCurrent(Window.BaseWindow.WindowInfo);
         }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Game"/> class.
+        /// </summary>
         public Game()
         {
             _audio = new AudioDevice();
@@ -145,7 +172,7 @@ namespace engenious
                 GL.Viewport(window.ClientRectangle);
 
                 Resized?.Invoke(sender,e);
-                OnResize(this, e);
+                OnResize(e);
             };
             window.Load += delegate
             {
@@ -154,7 +181,7 @@ namespace engenious
             };
             window.Closing += delegate
             {
-                OnExiting(this, EventArgs.Empty);
+                OnExiting(EventArgs.Empty);
             };
             window.KeyPress += delegate(object sender, KeyPressEventArgs e)
             {
@@ -177,6 +204,9 @@ namespace engenious
                 Deactivated?.Invoke(this, e);
         }
 
+        /// <summary>
+        /// Initializes game components and the rendering view.
+        /// </summary>
         protected virtual void Initialize()
         {
             Window.Visible = true;
@@ -192,29 +222,55 @@ namespace engenious
             }
         }
 
+        /// <summary>
+        /// Closes the rendering view.
+        /// </summary>
         public void Exit()
         {
             Window.Close();
         }
 
-        protected virtual void OnResize(object sender, EventArgs e)
+        /// <summary>
+        /// Raises the <see cref="Resized"/> event.
+        /// </summary>
+        /// <param name="e">An <see cref="EventArgs"/> that contains the event data.</param>
+        protected virtual void OnResize(EventArgs e)
         {
         }
 
-        protected virtual void OnExiting(object sender, EventArgs e)
+        /// <summary>
+        /// Raises the <see cref="Exiting"/> event.
+        /// </summary>
+        /// <param name="e">An <see cref="EventArgs"/> that contains the event data.</param>
+        protected virtual void OnExiting(EventArgs e)
         {
         }
 
+        /// <summary>
+        /// Gets a <see cref="ContentManager"/> for basic game content management.
+        /// </summary>
         public ContentManager Content{ get; private set; }
 
+        /// <summary>
+        /// Gets or sets an <see cref="Icon"/> associated with the rendering view.
+        /// <remarks>This sets or gets the window icon, if the rendering view is a <see cref="Window"/>.</remarks>
+        /// </summary>
         public Icon Icon { get { return Window.Icon; } set { Window.Icon = value; } }
-        
+
+        /// <summary>
+        /// Gets a Window(rendering view) associated with this <see cref="Game"/>.
+        /// </summary>
         public Window Window{ get; private set; }
 
-        //public MouseDevice Mouse{ get; private set; }
-
+        /// <summary>
+        /// Gets or sets a title associated with the rendering view.
+        /// <remarks>This sets or gets the window title, if the rendering view is a <see cref="Window"/>.</remarks>
+        /// </summary>
         public string Title{ get { return Window.Title; } set { Window.Title = value; } }
 
+        /// <summary>
+        /// Gets or sets whether the mouse cursor is visible while on the rendering view.
+        /// </summary>
         public bool IsMouseVisible
         {
             get
@@ -227,20 +283,37 @@ namespace engenious
             }
         }
 
+        /// <summary>
+        /// Gets whether the rendering view is currently in focus.
+        /// </summary>
         public bool IsActive => Window.Focused;
 
+        /// <summary>
+        /// Runs the rendering view's message loop, as well as update and rendering loop.
+        /// </summary>
         public void Run()
         {
             Window.BaseWindow.Run();
         }
 
+        /// <summary>
+        /// Runs the rendering view's message loop, as well as update and rendering loop within given parameters.
+        /// </summary>
+        /// <param name="updatesPerSec">The frequency at which the update loop should run.</param>
+        /// <param name="framesPerSec">The frequency at which the rendering loop should run.</param>
         public void Run(double updatesPerSec, double framesPerSec)
         {
             Window.BaseWindow.Run(updatesPerSec, framesPerSec);
         }
 
+        /// <summary>
+        /// Gets a collection of game components associated with this <see cref="Game"/>.
+        /// </summary>
         public GameComponentCollection Components{ get; private set; }
-
+        
+        /// <summary>
+        /// Called when <see cref="Game"/> related content should be loaded.
+        /// </summary>
         public virtual void LoadContent()
         {
             foreach (var component in Components)
@@ -249,6 +322,9 @@ namespace engenious
             }
         }
 
+        /// <summary>
+        ///Called when <see cref="Game"/> related content should be unloaded.
+        /// </summary>
         public virtual void UnloadContent()
         {
             foreach (var component in Components)
@@ -257,6 +333,10 @@ namespace engenious
             }
         }
 
+        /// <summary>
+        /// Executes a single update tick.
+        /// </summary>
+        /// <param name="gameTime">Contains the elapsed time since the last update, as well as total elapsed time.</param>
         public virtual void Update(GameTime gameTime)
         {
 
@@ -268,6 +348,10 @@ namespace engenious
             }
         }
 
+        /// <summary>
+        /// Executes a single frame render.
+        /// </summary>
+        /// <param name="gameTime">Contains the elapsed time since the last render, as well as total elapsed time.</param>
         public virtual void Draw(GameTime gameTime)
         {
             foreach (var component in Components.Drawables)
@@ -280,6 +364,7 @@ namespace engenious
 
         #region IDisposable
 
+        /// <inheritdoc />
         public override void Dispose()
         {
             Window.Dispose();

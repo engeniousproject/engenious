@@ -40,41 +40,49 @@ namespace engenious.Input
         ShiftLeft,
         /// <summary>The left shift key (equivalent to ShiftLeft).</summary>
         LShift = ShiftLeft,
+        /// <summary>The left shift key (equivalent to ShiftLeft).</summary>
         LeftShift = ShiftLeft,
         /// <summary>The right shift key.</summary>
         ShiftRight,
         /// <summary>The right shift key (equivalent to ShiftRight).</summary>
         RShift = ShiftRight,
+        /// <summary>The right shift key (equivalent to ShiftRight).</summary>
         RightShift = ShiftRight,
         /// <summary>The left control key.</summary>
         ControlLeft,
         /// <summary>The left control key (equivalent to ControlLeft).</summary>
         LControl = ControlLeft,
+        /// <summary>The left control key (equivalent to ControlLeft).</summary>
         LeftControl = ControlLeft,
         /// <summary>The right control key.</summary>
         ControlRight,
         /// <summary>The right control key (equivalent to ControlRight).</summary>
         RControl = ControlRight,
+        /// <summary>The right control key (equivalent to ControlRight).</summary>
         RightControl = ControlRight,
         /// <summary>The left alt key.</summary>
         AltLeft,
         /// <summary>The left alt key (equivalent to AltLeft.</summary>
         LAlt = AltLeft,
+        /// <summary>The left alt key (equivalent to AltLeft.</summary>
         LeftAlt = AltLeft,
         /// <summary>The right alt key.</summary>
         AltRight,
         /// <summary>The right alt key (equivalent to AltRight).</summary>
         RAlt = AltRight,
+        /// <summary>The right alt key (equivalent to AltRight).</summary>
         RightAlt = AltRight,
         /// <summary>The left win key.</summary>
         WinLeft,
         /// <summary>The left win key (equivalent to WinLeft).</summary>
         LWin = WinLeft,
+        /// <summary>The left win key (equivalent to WinLeft).</summary>
         LeftWin = WinLeft,
         /// <summary>The right win key.</summary>
         WinRight,
         /// <summary>The right win key (equivalent to WinRight).</summary>
         RWin = WinRight,
+        /// <summary>The right win key (equivalent to WinRight).</summary>
         RightWin = WinRight,
         /// <summary>The menu key.</summary>
         Menu,
@@ -350,6 +358,7 @@ namespace engenious.Input
         /// <summary>The number 9 key.</summary>
         Number9,
 
+        /// <summary>The number 0 key.</summary>
         D0 = Number0,
         /// <summary>The number 1 key.</summary>
         D1 = Number1,

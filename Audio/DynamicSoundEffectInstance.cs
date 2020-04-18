@@ -4,16 +4,29 @@ using OpenTK.Audio.OpenAL;
 
 namespace engenious.Audio
 {
+    /// <summary>
+    /// Defines a dynamic sound effect instance which is streamable.
+    /// </summary>
     public class DynamicSoundEffectInstance : SoundEffectInstance
     {
         private int _pendingBufferCount;
+        /// <summary>
+        /// Event for requesting new buffer data.
+        /// </summary>
         public event EventHandler BufferNeeded;
         private const int MinimumBufferCheck = 2;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DynamicSoundEffectInstance"/> class.
+        /// </summary>
+        /// <param name="effect">The effect to play.</param>
         public DynamicSoundEffectInstance(SoundEffect effect)
             :base(effect)
         {
             _pendingBufferCount = 0;
         }
+
+        /// <inheritdoc />
         public override void Play()
         {
             if (State != SoundState.Stopped)
@@ -26,6 +39,10 @@ namespace engenious.Audio
 
             base.Play();
         }
+
+        /// <summary>
+        /// Processes the sound buffers.
+        /// </summary>
         public void Update()
         {
             int processedBuffers;
@@ -44,8 +61,15 @@ namespace engenious.Audio
                 BufferNeeded(this,EventArgs.Empty);
             }
         }
-        public void SubmitBuffer(byte[] xy)
+        
+        /// <summary>
+        /// Submits a buffer to the <see cref="DynamicSoundEffectInstance"/>.
+        /// </summary>
+        /// <param name="buffer">The buffer to submit.</param>
+        /// <exception cref="NotImplementedException"></exception>
+        public void SubmitBuffer(byte[] buffer)
         {
+            throw new NotImplementedException();
         }
     }
 }

@@ -3,9 +3,13 @@ using engenious.Audio;
 
 namespace engenious.Content.Serialization
 {
+    /// <summary>
+    /// Content type reader to load <see cref="SoundEffect"/> instances.
+    /// </summary>
     [ContentTypeReaderAttribute(typeof(SoundEffect))]
     public class SoundEffectTypeReader:ContentTypeReader<SoundEffect>
     {
+        /// <inheritdoc />
         public override SoundEffect Read(ContentManager manager, ContentReader reader, Type customType = null)
         {
             var format = (SoundEffect.AudioFormat)reader.ReadByte();

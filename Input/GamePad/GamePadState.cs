@@ -2,6 +2,9 @@
 
 namespace engenious.Input
 {
+    /// <summary>
+    /// Defines a gamepad state.
+    /// </summary>
     public struct GamePadState : IEquatable<GamePadState>
     {
         private const float RangeMultiplier = 1.0f / (short.MaxValue + 1);
@@ -15,34 +18,50 @@ namespace engenious.Input
         private byte _leftTrigger;
         private byte _rightTrigger;
         private bool _isConnected;
-        //
-        // Properties
-        //
+
+        /// <summary>
+        /// Gets the gamepad buttons.
+        /// </summary>
         public GamePadButtons Buttons => new GamePadButtons(_buttons);
 
+        /// <summary>
+        /// Gets the gamepad D-Pad buttons.
+        /// </summary>
         public GamePadDPad DPad => new GamePadDPad(_buttons);
 
+        /// <summary>
+        /// Gets a value indicating whether the gamepad is connected.
+        /// </summary>
         public bool IsConnected => _isConnected;
 
+        /// <summary>
+        /// Gets the gamepad packet number.
+        /// </summary>
         public int PacketNumber => _packetNumber;
 
+        /// <summary>
+        /// Gets the gamepad thumbsticks.
+        /// </summary>
         public GamePadThumbSticks ThumbSticks => new GamePadThumbSticks(_leftStickX, _leftStickY, _rightStickX, _rightStickY);
 
+        /// <summary>
+        /// Gets the gamepad triggers.
+        /// </summary>
         public GamePadTriggers Triggers => new GamePadTriggers(_leftTrigger, _rightTrigger);
 
-        //
-        // Methods
-        //
+        /// <inheritdoc />
         public bool Equals(GamePadState other)
         {
             return ThumbSticks == other.ThumbSticks && Buttons == other.Buttons && DPad == other.DPad && IsConnected == other.IsConnected;
         }
 
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             return obj is GamePadState && Equals((GamePadState)obj);
         }
 
+        /// <inheritdoc />
         public override int GetHashCode()
         {
             return ThumbSticks.GetHashCode() ^ Buttons.GetHashCode() ^ DPad.GetHashCode() ^ IsConnected.GetHashCode();
@@ -112,6 +131,7 @@ namespace engenious.Input
             _rightTrigger = right;
         }
 
+        /// <inheritdoc />
         public override string ToString()
         {
             return $"{{Sticks: {ThumbSticks}; Buttons: {Buttons}; DPad: {DPad}; IsConnected: {IsConnected}}}";

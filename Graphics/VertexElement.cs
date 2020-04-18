@@ -3,9 +3,19 @@ using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// Describes a vertex element for a <see cref="VertexDeclaration"/>.
+    /// </summary>
     [Serializable]
     public struct VertexElement
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VertexElement"/> struct.
+        /// </summary>
+        /// <param name="offset">The offset of this vertex element inside a buffer.</param>
+        /// <param name="elementFormat">The vertex format of this element.</param>
+        /// <param name="elementUsage">The vertex usage of this element.</param>
+        /// <param name="usageIndex">A custom usage index for this element</param>
         public VertexElement(
             int offset,
             VertexElementFormat elementFormat,
@@ -19,12 +29,24 @@ namespace engenious.Graphics
             UsageIndex = usageIndex;
         }
 
+        /// <summary>
+        /// Gets or sets the offset this element is located at inside a buffer.
+        /// </summary>
         public int Offset { get; set; }
 
+        /// <summary>
+        /// Gets or sets the format of this vertex element.
+        /// </summary>
         public VertexElementFormat VertexElementFormat { get; set; }
 
+        /// <summary>
+        /// Gets or sets an index for custom vertex element usage.
+        /// </summary>
         public int UsageIndex { get; set; }
 
+        /// <summary>
+        /// Gets or sets what this vertex element is used for.
+        /// </summary>
         public VertexElementUsage VertexElementUsage { get; set; }
 
         internal bool IsNormalized
@@ -99,6 +121,10 @@ namespace engenious.Graphics
             throw new ArgumentOutOfRangeException();
         }
 
+        /// <summary>
+        /// Gets the number of bytes this vertex element uses.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown on unknown <see cref="VertexElementFormat"/>.</exception>
         public int ByteCount
         {
             get

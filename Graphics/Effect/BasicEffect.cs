@@ -2,6 +2,9 @@
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// A universal basic effect implementation.
+    /// </summary>
     public class BasicEffect : Effect,IModelEffect
     {
         private const string VertexShader =
@@ -75,6 +78,10 @@ void main(void)
 #endif
 ";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BasicEffect"/> class.
+        /// </summary>
+        /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/>.</param>
         public BasicEffect(GraphicsDevice graphicsDevice)
             : base(graphicsDevice)
         {
@@ -113,6 +120,7 @@ void main(void)
 
         private Matrix _world, _view, _projection;
 
+        /// <inheritdoc />
         public Matrix Projection
         {
             get
@@ -129,6 +137,7 @@ void main(void)
             }
         }
 
+        /// <inheritdoc />
         public Matrix View
         {
             get
@@ -145,6 +154,7 @@ void main(void)
             }
         }
 
+        /// <inheritdoc />
         public Matrix World
         {
             get
@@ -161,6 +171,7 @@ void main(void)
             }
         }
 
+        /// <inheritdoc />
         public Texture Texture
         {
 
@@ -171,6 +182,9 @@ void main(void)
             }
         }
 
+        /// <summary>
+        /// Sets whether texture rendering is enabled.
+        /// </summary>
         public bool TextureEnabled
         {
 
@@ -180,6 +194,9 @@ void main(void)
             }
         }
 
+        /// <summary>
+        /// Sets whether vertex coloring is enabled.
+        /// </summary>
         public bool VertexColorEnabled
         {
 

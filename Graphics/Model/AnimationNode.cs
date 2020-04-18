@@ -4,23 +4,52 @@ using System.Collections.Generic;
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// Animation node containing animation information for model nodes.
+    /// </summary>
     public class AnimationNode
     {
         private bool _sorted = false;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AnimationNode"/> class.
+        /// </summary>
+        public AnimationNode()
+        {
+            Frames = new List<AnimationFrame>();
+        }
+
+        /// <summary>
+        /// Gets or sets the model node, which is to be animated, for this animation node.
+        /// </summary>
         public Node Node{ get; set; }
 
-        public List<AnimationFrame> Frames{ get; set; }
+        /// <summary>
+        /// Gets the animation frames for this node.
+        /// </summary>
+        public List<AnimationFrame> Frames{ get; }
 
+        /// <summary>
+        /// Sorts animation frames by their timestamp.
+        /// </summary>
         public void Sort()
         {
             if (_sorted)
                 return;
             _sorted = true;
-            Frames = Frames.OrderBy(f => f.Frame).ToList();
+            Frames.Sort((a,b) => a.Frame.CompareTo(b.Frame));
         }
+
+        /// <summary>
+        /// Gets or sets whether the animation should be in repeat mode.
+        /// </summary>
         public bool Repeat{get;set;}=true;
 
+        /// <summary>
+        /// Applies the animation and sets the animation state of this node to a specific time.
+        /// </summary>
+        /// <param name="time">The current time the node should be set to.</param>
+        /// <param name="maxTime">The maximum time an animation takes.</param>
         public void ApplyAnimation(float time, float maxTime)
         {
             Sort();

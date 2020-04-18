@@ -4,10 +4,24 @@ using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// Describes a depth stencil state, for depth testing.
+    /// </summary>
     public class DepthStencilState : GraphicsResource
     {
+        /// <summary>
+        /// A default <see cref="DepthStencilState"/> where depth buffer and depth buffer writing is enabled.
+        /// </summary>
         public static readonly DepthStencilState Default;
+
+        /// <summary>
+        /// A <see cref="DepthStencilState"/> where depth buffer is enabled but depth buffer writing is disabled.
+        /// </summary>
         public static readonly DepthStencilState DepthRead;
+
+        /// <summary>
+        /// A <see cref="DepthStencilState"/> where depth buffer is disabled.
+        /// </summary>
         public static readonly DepthStencilState None;
         private bool _depthBufferEnable = true;
         private bool _depthBufferWriteEnable = true;
@@ -43,6 +57,9 @@ namespace engenious.Graphics
             None.InitPredefined();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DepthStencilState"/> class.
+        /// </summary>
         public DepthStencilState()
         {
             DepthBufferEnable = true;
@@ -60,6 +77,9 @@ namespace engenious.Graphics
                 throw new InvalidOperationException("you are not allowed to change a predefined depth stencil state");
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the depth buffer is enabled.
+        /// </summary>
         public bool DepthBufferEnable
         {
             get => _depthBufferEnable;
@@ -84,8 +104,10 @@ namespace engenious.Graphics
                     GL.Disable(EnableCap.DepthTest);
             }
         }
-
-
+        
+        /// <summary>
+        /// Gets or sets a value indicating whether writing to the depth buffer is enabled.
+        /// </summary>
         public bool DepthBufferWriteEnable
         {
             get => _depthBufferWriteEnable;
@@ -106,7 +128,9 @@ namespace engenious.Graphics
                 GL.DepthMask(_depthBufferWriteEnable);
         }
 
-
+        /// <summary>
+        /// Gets or sets the function used for depth testing.
+        /// </summary>
         public DepthFunction DepthBufferFunction
         {
             get => _depthBufferFunction;
@@ -127,6 +151,9 @@ namespace engenious.Graphics
                 GL.DepthFunc((OpenTK.Graphics.OpenGL.DepthFunction) _depthBufferFunction);
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the stencil buffer is enable.
+        /// </summary>
         public bool StencilEnable
         {
             get => _stencilEnable;
@@ -152,6 +179,9 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets the function used for stencil testing.
+        /// </summary>
         public StencilFunction StencilFunction
         {
             get => _stencilFunction;
@@ -166,6 +196,9 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether two sided stencil mode is enabled.
+        /// </summary>
         public bool TwoSidedStencilMode
         {
             get => _twoSidedStencilMode;
@@ -238,7 +271,9 @@ namespace engenious.Graphics
                                                                CounterClockwiseStencilPass));
         }
 
-
+        /// <summary>
+        /// Gets or sets the value the stencil test uses for comparison.
+        /// </summary>
         public int ReferenceStencil
         {
             get => _referenceStencil;
@@ -254,7 +289,9 @@ namespace engenious.Graphics
             }
         }
 
-
+        /// <summary>
+        /// Gets or sets the stencil operation for the counter clockwise stencil pass.
+        /// </summary>
         public StencilOp CounterClockwiseStencilPass
         {
             get => _counterClockwiseStencilPass;
@@ -270,6 +307,9 @@ namespace engenious.Graphics
         }
 
 
+        /// <summary>
+        /// Gets or sets the stencil operation for the counter clockwise stencil depth buffer fail.
+        /// </summary>
         public StencilOp CounterClockwiseStencilDepthBufferFail
         {
             get => _counterClockwiseStencilDepthBufferFail;
@@ -285,7 +325,9 @@ namespace engenious.Graphics
             }
         }
 
-
+        /// <summary>
+        /// Gets or sets the stencil operation for the counter clockwise stencil fail.
+        /// </summary>
         public StencilOp CounterClockwiseStencilFail
         {
             get => _counterClockwiseStencilFail;
@@ -300,6 +342,9 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets the counter clockwise stencil function.
+        /// </summary>
         public StencilFunction CounterClockwiseStencilFunction
         {
             get => _counterClockwiseStencilFunction;
@@ -314,7 +359,9 @@ namespace engenious.Graphics
             }
         }
 
-
+        /// <summary>
+        /// Gets or sets the stencil mask.
+        /// </summary>
         public int StencilMask
         {
             get => _stencilMask;
@@ -329,7 +376,9 @@ namespace engenious.Graphics
             }
         }
 
-
+        /// <summary>
+        /// Gets or sets the stencil operation for the depth buffer fail.
+        /// </summary>
         public StencilOp StencilDepthBufferFail
         {
             get => _stencilDepthBufferFail;
@@ -344,7 +393,9 @@ namespace engenious.Graphics
             }
         }
 
-
+        /// <summary>
+        /// Gets or sets the stencil operation for the stencil buffer fail.
+        /// </summary>
         public StencilOp StencilFail
         {
             get => _stencilFail;
@@ -359,7 +410,9 @@ namespace engenious.Graphics
             }
         }
 
-
+        /// <summary>
+        /// Gets or sets the stencil operation for the stencil buffer pass.
+        /// </summary>
         public StencilOp StencilPass
         {
             get { return _stencilPass; }

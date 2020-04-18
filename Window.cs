@@ -5,9 +5,12 @@ using OpenTK.Input;
 
 namespace engenious
 {
+    /// <summary>
+    /// Specifies a window as a game rendering view.
+    /// </summary>
     public class Window : IDisposable
     {
-        internal GameWindow BaseWindow;
+        internal readonly GameWindow BaseWindow;
         internal Window(GameWindow baseWindow)
         {
             BaseWindow = baseWindow;
@@ -21,15 +24,29 @@ namespace engenious
 
         }
 
+        /// <summary>
+        /// Calculates a <see cref="Point"/> in client coordinates to screen coordinates.
+        /// </summary>
+        /// <param name="pt">The <see cref="Point"/> in client coordinates.</param>
+        /// <returns>The <see cref="Point"/> translated into screen coordinates.</returns>
         public Point PointToScreen(Point pt)
         {
             return BaseWindow.PointToScreen(new System.Drawing.Point(pt.X,pt.Y));
         }
+
+        /// <summary>
+        /// Calculates a <see cref="Point"/> in screen coordinates to client coordinates.
+        /// </summary>
+        /// <param name="pt">The <see cref="Point"/> in screen coordinates.</param>
+        /// <returns>The <see cref="Point"/> translated into client coordinates.</returns>
         public Point PointToClient(Point pt)
         {
             return BaseWindow.PointToClient(new System.Drawing.Point(pt.X,pt.Y));
         }
-        
+
+        /// <summary>
+        /// Gets or sets a <see cref="Rectangle"/> for this windows client area.
+        /// </summary>
         public Rectangle ClientRectangle{
             get{
                 return new Rectangle(BaseWindow.ClientRectangle.X,BaseWindow.ClientRectangle.Y,BaseWindow.ClientRectangle.Width,BaseWindow.ClientRectangle.Height);
@@ -38,6 +55,10 @@ namespace engenious
                 BaseWindow.ClientRectangle = new System.Drawing.Rectangle(value.X,value.Y,value.Width,value.Height);
             }
         }
+
+        /// <summary>
+        /// Gets or sets the <see cref="Size"/> of this windows client area.
+        /// </summary>
         public Size ClientSize{
             get{
                 return new Size(BaseWindow.ClientSize.Width,BaseWindow.ClientSize.Height);
@@ -46,7 +67,15 @@ namespace engenious
                 BaseWindow.ClientSize = new System.Drawing.Size(value.Width,value.Height);
             }
         }
+
+        /// <summary>
+        /// Gets or sets the <see cref="Icon"/> of this <see cref="Window"/>.
+        /// </summary>
         public Icon Icon { get { return BaseWindow.Icon; } set { BaseWindow.Icon = value; } }
+
+        /// <summary>
+        /// Gets or sets whether the <see cref="Window"/> is visible.
+        /// </summary>
         public bool Visible{
             get{
                 return BaseWindow.Visible;
@@ -55,8 +84,15 @@ namespace engenious
                 BaseWindow.Visible = value;
             }
         }
-        public bool Focused => BaseWindow.Focused;
 
+        /// <summary>
+        /// Gets or sets whether the <see cref="Window"/> is in focus.
+        /// </summary>
+        public bool Focused => BaseWindow.Focused;
+        
+        /// <summary>
+        /// Gets or sets whether the mouse cursor is visible on this <see cref="Window"/>.
+        /// </summary>
         public bool CursorVisible{
             get{
                 return BaseWindow.CursorVisible;
@@ -65,6 +101,10 @@ namespace engenious
                 BaseWindow.CursorVisible = value;
             }
         }
+
+        /// <summary>
+        /// Gets or sets whether the <see cref="Window"/> is without a border.
+        /// </summary>
         public bool IsBorderless{
             get{
                 return BaseWindow.WindowBorder != WindowBorder.Hidden;
@@ -77,6 +117,10 @@ namespace engenious
             }
         }
         private bool _allowUserResizing;
+
+        /// <summary>
+        /// Gets or sets whether the user is able to resize this <see cref="Window"/>.
+        /// </summary>
         public bool AllowUserResizing{
             get{
                 return _allowUserResizing;
@@ -90,6 +134,10 @@ namespace engenious
         }
         private bool _fullscreen;
         private WindowState _oWindowState= WindowState.Normal;
+
+        /// <summary>
+        /// Gets or sets whether the <see cref="Window"/> is in fullscreen mode.
+        /// </summary>
         public bool Fullscreen{
             get{
                 return _fullscreen;
@@ -101,6 +149,10 @@ namespace engenious
                 BaseWindow.WindowState = _fullscreen ? WindowState.Fullscreen : _oWindowState;
             }
         }
+
+        /// <summary>
+        /// Gets or sets the <see cref="Window"/> title.
+        /// </summary>
         public string Title{
             get{
                 return BaseWindow.Title;
@@ -109,6 +161,10 @@ namespace engenious
                 BaseWindow.Title = value;
             }
         }
+
+        /// <summary>
+        /// Gets or sets the position of the <see cref="Window"/>.
+        /// </summary>
         public Point Position{
             get{
                 return new Point(BaseWindow.X,BaseWindow.Y);
@@ -118,6 +174,10 @@ namespace engenious
                 Y = value.Y;
             }
         }
+
+        /// <summary>
+        /// Gets or sets the horizontal position of the <see cref="Window"/>.
+        /// </summary>
         public int X{
             get{
                 return BaseWindow.X;
@@ -126,6 +186,10 @@ namespace engenious
                 BaseWindow.X = value;
             }
         }
+
+        /// <summary>
+        /// Gets or sets the vertical position of the <see cref="Window"/>.
+        /// </summary>
         public int Y{
             get{
                 return BaseWindow.Y;
@@ -135,8 +199,9 @@ namespace engenious
             }
         }
 
-
-
+        /// <summary>
+        /// Closes the <see cref="Window"/>.
+        /// </summary>
         public void Close()
         {
             BaseWindow.Close();
@@ -144,6 +209,7 @@ namespace engenious
 
         #region IDisposable implementation
 
+        /// <inheritdoc />
         public void Dispose()
         {
             BaseWindow.Dispose();

@@ -7,14 +7,22 @@ using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
-
+    /// <summary>
+    /// Describes the sampler state used for texture sampling.
+    /// </summary>
     public class SamplerState : GraphicsResource
     {
         
         private const TextureParameterName TextureParameterNameTextureMaxAnisotropy = (TextureParameterName) ExtTextureFilterAnisotropic.TextureMaxAnisotropyExt;
 
         private const TextureParameterName TextureParameterNameTextureMaxLevel = (TextureParameterName) All.TextureMaxLevel;
+        /// <summary>
+        /// A sampler state with linear filtering and clamp to edge.
+        /// </summary>
         public static readonly SamplerState LinearClamp;
+        /// <summary>
+        /// A sampler state with linear filtering and texture wrap.
+        /// </summary>
         public static readonly SamplerState LinearWrap;
 
         static SamplerState()
@@ -26,6 +34,9 @@ namespace engenious.Graphics
             LinearWrap.InitPredefined();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SamplerState"/> class.
+        /// </summary>
         public SamplerState()
         {
             //TODO: implement completly	
@@ -44,6 +55,9 @@ namespace engenious.Graphics
                 throw new InvalidOperationException("you are not allowed to change a predefined sampler state");
         }
 
+        /// <summary>
+        /// Gets or sets the texture wrap mode in horizontal direction.
+        /// </summary>
         public TextureWrapMode AddressU
         {
             get => _addressU;
@@ -72,6 +86,9 @@ namespace engenious.Graphics
             GL.TexParameter(_boundTexture.Target, TextureParameterName.TextureWrapS,(int)AddressU);
         }
 
+        /// <summary>
+        /// Gets or sets the texture wrap mode in vertical direction.
+        /// </summary>
         public TextureWrapMode AddressV
         {
             get => _addressV;
@@ -100,6 +117,9 @@ namespace engenious.Graphics
             GL.TexParameter(_boundTexture.Target, TextureParameterName.TextureWrapT,(int)AddressV);
         }
 
+        /// <summary>
+        /// Gets or sets the texture wrap mode in depth direction.
+        /// </summary>
         public TextureWrapMode AddressW
         {
             get => _addressW;
@@ -128,6 +148,9 @@ namespace engenious.Graphics
             GL.TexParameter(_boundTexture.Target, TextureParameterName.TextureWrapR,(int)AddressW);
         }
 
+        /// <summary>
+        /// Gets or sets the minification filter fot this sampler.
+        /// </summary>
         public MinFilter MinFilter
         {
             get => _minFilter;
@@ -156,6 +179,9 @@ namespace engenious.Graphics
             GL.TexParameter(_boundTexture.Target, TextureParameterName.TextureMinFilter,(int)MinFilter);
         }
 
+        /// <summary>
+        /// Gets or sets the magnification filter fot this sampler.
+        /// </summary>
         public MagFilter MagFilter
         {
             get => _magFilter;
@@ -185,7 +211,9 @@ namespace engenious.Graphics
             GL.TexParameter(_boundTexture.Target, TextureParameterName.TextureMagFilter,(int)MagFilter);
         }
 
-
+        /// <summary>
+        /// Gets or sets the maximum anisotropy.
+        /// </summary>
         public int MaxAnisotropy
         {
             get => _maxAnisotropy;
@@ -216,7 +244,9 @@ namespace engenious.Graphics
             GL.TexParameter(_boundTexture.Target, TextureParameterNameTextureMaxAnisotropy, MathHelper.Clamp(MaxAnisotropy, 1.0f, GraphicsDevice.Capabilities.MaxTextureAnisotropy));
         }
 
-        
+        /// <summary>
+        /// Gets or sets the maximum mip-map level.
+        /// </summary>
         public int MaxMipLevel
         {
             get => _maxMipLevel;
@@ -250,6 +280,9 @@ namespace engenious.Graphics
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterNameTextureMaxLevel,MaxMipLevel > 0 ? MaxMipLevel : 1000);
         }
 
+        /// <summary>
+        /// Gets or sets the level of detail bias for mip-mapping.
+        /// </summary>
         public float MipMapLevelOfDetailBias
         {
             get => _mipMapLevelOfDetailBias;

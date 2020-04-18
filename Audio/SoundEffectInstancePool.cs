@@ -3,34 +3,53 @@ using System.Collections.Generic;
 
 namespace engenious.Audio
 {
+    /// <summary>
+    /// Defines a pool for the <see cref="SoundEffectInstance"/> class.
+    /// </summary>
     public class SoundEffectInstancePool
     {
         private static SoundEffectInstancePool _instance;
+        /// <summary>
+        /// Gets the <see cref="SoundEffectInstancePool"/> singleton.
+        /// </summary>
         public static SoundEffectInstancePool Instance => _instance ?? (_instance = new SoundEffectInstancePool());
 
         private const int InstanceCount = 256;
         private readonly Stack<PooledSoundEffectInstance> _stack = new Stack<PooledSoundEffectInstance>(InstanceCount);
 
-        public SoundEffectInstancePool()
+        private SoundEffectInstancePool()
         {
             for (var i = 0; i < InstanceCount; i++)
             {
                 _stack.Push(new PooledSoundEffectInstance());
             }
         }
-        public SoundEffectInstance Aquire(SoundEffect effect)
+
+        /// <summary>
+        /// Acquires a <see cref="SoundEffectInstance"/> from this pool.
+        /// </summary>
+        /// <param name="effect">The effect to be played with the acquired <see cref="SoundEffectInstance"/>.</param>
+        /// <returns>The acquired <see cref="SoundEffectInstance"/>.</returns>
+        public SoundEffectInstance Acquire(SoundEffect effect)
         {
             var inst = _stack.Count == 0 ? new PooledSoundEffectInstance() : _stack.Pop();
             inst.Init(effect);
             return inst;
         }
 
+        /// <summary>
+        /// Releases the <see cref="PooledSoundEffectInstance"/> back into the pool.
+        /// </summary>
+        /// <param name="instance">The <see cref="PooledSoundEffectInstance"/> to release.</param>
         public void Release(PooledSoundEffectInstance instance)
         {
             _stack.Push(instance);
         }
     }
 
+    /// <summary>
+    /// A pooled <see cref="SoundEffectInstance"/>.
+    /// </summary>
     public class PooledSoundEffectInstance : SoundEffectInstance
     {
         internal PooledSoundEffectInstance()
@@ -51,6 +70,9 @@ namespace engenious.Audio
 
         private SoundState _state;
 
+        /// <summary>
+        /// Gets the <see cref="SoundState"/> of the current <see cref="SoundEffectInstance"/>.
+        /// </summary>
         public override SoundState State
         {
             get { return _state; }

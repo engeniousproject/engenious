@@ -5,12 +5,22 @@ using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
-
-    public class IndexBuffer :GraphicsResource
+    /// <summary>
+    /// A buffer to index vertex data.
+    /// </summary>
+    public class IndexBuffer : GraphicsResource
     {
         private int _ibo;
         //private byte[] buffer;
         private readonly int _elementSize;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IndexBuffer"/> class.
+        /// </summary>
+        /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> to be created on.</param>
+        /// <param name="indexType">The type of the indices.</param>
+        /// <param name="indexCount">The count of indices.</param>
+        /// <param name="usage">The usage of this <see cref="IndexBuffer"/>.</param>
         public IndexBuffer(GraphicsDevice graphicsDevice, Type indexType, int indexCount, BufferUsageHint usage = BufferUsageHint.StaticDraw)
             : base(graphicsDevice)
         {
@@ -40,6 +50,13 @@ namespace engenious.Graphics
             //buffer = new byte[indexCount * (int)IndexElementSize / 8];
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IndexBuffer"/> class.
+        /// </summary>
+        /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> to be created on.</param>
+        /// <param name="indexElementSize">The basic size of the indices.</param>
+        /// <param name="indexCount">The count of indices</param>
+        /// <param name="usage">The usage of this <see cref="IndexBuffer"/>.</param>
         public IndexBuffer(GraphicsDevice graphicsDevice, DrawElementsType indexElementSize, int indexCount, BufferUsageHint usage = BufferUsageHint.StaticDraw)
             : base(graphicsDevice)
         {
@@ -61,13 +78,29 @@ namespace engenious.Graphics
             //buffer = new byte[indexCount * (int)IndexElementSize / 8];
         }
 
+        /// <summary>
+        /// Gets the buffer usage.
+        /// </summary>
         public BufferUsageHint BufferUsage{ get; private set; }
 
+        /// <summary>
+        /// Gets the number of indices.
+        /// </summary>
         public int IndexCount{ get; private set; }
 
+        /// <summary>
+        /// Gets the basic size of a single index.
+        /// </summary>
         public DrawElementsType IndexElementSize{ get; private set; }
 
-
+        /// <summary>
+        /// Sets the <see cref="IndexBuffer"/> indices data.
+        /// </summary>
+        /// <param name="offsetInBytes">The offset destination to copy the indices to.</param>
+        /// <param name="data">The indices.</param>
+        /// <param name="startIndex">The offset to start copying indices from.</param>
+        /// <param name="elementCount">The count of indices to copy.</param>
+        /// <typeparam name="T">The index type.</typeparam>
         public void SetData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount) where T : struct //TODO: valuetype?
         {
             if (elementCount == 0 || data.Length == 0)
@@ -92,6 +125,13 @@ namespace engenious.Graphics
             //Buffer.BlockCopy (data, startIndex, buffer, offsetInBytes, elementCount);
         }
 
+        /// <summary>
+        /// Sets the <see cref="IndexBuffer"/> indices data.
+        /// </summary>
+        /// <param name="data">The indices.</param>
+        /// <param name="startIndex">The offset to start copying indices from.</param>
+        /// <param name="elementCount">The count of indices to copy.</param>
+        /// <typeparam name="T">The index type.</typeparam>
         public void SetData<T>(T[] data, int startIndex, int elementCount) where T : struct
         {
             if (elementCount == 0 || data.Length == 0)
@@ -117,6 +157,11 @@ namespace engenious.Graphics
             //Buffer.BlockCopy (data, startIndex, buffer, 0, elementCount);
         }
 
+        /// <summary>
+        /// Sets the <see cref="IndexBuffer"/> indices data.
+        /// </summary>
+        /// <param name="data">The indices.</param>
+        /// <typeparam name="T">The index type.</typeparam>
         public void SetData<T>(T[] data) where T : struct
         {
             if (data.Length == 0)
@@ -130,6 +175,12 @@ namespace engenious.Graphics
             GraphicsDevice.CheckError();
             //Buffer.BlockCopy (data, 0, buffer, 0, data.Length);
         }
+        /// <summary>
+        /// Resizes the <see cref="IndexBuffer"/> to a new size with optionally keeping its data.
+        /// </summary>
+        /// <param name="indexCount">The new count of indices needed.</param>
+        /// <param name="keepData">Whether to keep the old data or not.</param>
+        /// <exception cref="NotImplementedException"></exception>
         public void Resize(int indexCount, bool keepData = false)
         {
             
@@ -166,6 +217,7 @@ namespace engenious.Graphics
             GraphicsDevice.CheckError();
         }
 
+        /// <inheritdoc />
         public override void Dispose()
         {
             using (Execute.OnUiContext)

@@ -6,6 +6,9 @@ using System.Text;
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// Describes a sprite font for text rendering.
+    /// </summary>
     public sealed class SpriteFont : IDisposable
     {
         internal Dictionary<int,int> Kernings;
@@ -26,21 +29,48 @@ namespace engenious.Graphics
 
         private ReadOnlyCollection<char> _characters;
 
+        /// <summary>
+        /// Gets a list of supported characters.
+        /// </summary>
         public ReadOnlyCollection<char> Characters => _characters ?? (_characters = new ReadOnlyCollection<char>(CharacterMap.Keys.ToList()));
 
+        /// <summary>
+        /// Gets or sets the default character to render if a specific character cannot be depicted by this <see cref="SpriteFont"/>.
+        /// </summary>
         public char? DefaultCharacter { get; set; }
 
+        /// <summary>
+        /// Gets or sets the vertical spacing between lines.
+        /// </summary>
         public int LineSpacing { get; set; }
 
+        /// <summary>
+        /// Gets the base line position.
+        /// </summary>
         public int BaseLine{ get; internal set; }
 
+        /// <summary>
+        /// Gets or sets the horizontal spacing between characters.
+        /// </summary>
         public float Spacing { get; set; }
 
+        /// <summary>
+        /// Measures the dimensions needed to render a string with this <see cref="SpriteFont"/>.
+        /// </summary>
+        /// <remarks>Currently does not account for line breaks.</remarks>
+        /// <param name="text">The text to measure.</param>
+        /// <returns>The dimensions of the string when rendered with this <see cref="SpriteFont"/>.</returns>
         public Vector2 MeasureString(StringBuilder text)
         {
-            return MeasureString(text.ToString());
+            return MeasureString(text.ToString()); // TODO: can be optimized.
         }
 
+        /// <summary>
+        /// Measures the dimensions needed to render a string with this <see cref="SpriteFont"/>.
+        /// </summary>
+        /// <remarks>Currently does not account for line breaks.</remarks>
+        /// <param name="text">The text to measure.</param>
+        /// <returns>The dimensions of the string when rendered with this <see cref="SpriteFont"/>.</returns>
         public Vector2 MeasureString(string text)
         {
             var width = 0.0f;
@@ -69,6 +99,7 @@ namespace engenious.Graphics
             return new Vector2(width, LineSpacing);//TODO height?
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             Texture?.Dispose();

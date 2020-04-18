@@ -5,6 +5,9 @@ using engenious.Helper;
 
 namespace engenious.Graphics
 {
+	/// <summary>
+	/// A collection of <see cref="EffectPassParameter"/>.
+	/// </summary>
 	public sealed class EffectPassParameterCollection : IEnumerable<EffectPassParameter>
 	{
 		private readonly List<EffectPassParameter> _parameterList;
@@ -35,12 +38,20 @@ namespace engenious.Graphics
 		    return param;
 		}
 
+		/// <summary>
+		/// Gets an element in the collection by using an index value.
+		/// </summary>
+		/// <param name="index">The element index.</param>
 		public EffectPassParameter this [int index] { 
 			get {
 				return _parameterList [index];
 			} 
 		}
 
+		/// <summary>
+		/// Gets an element in the collection by using a name.
+		/// </summary>
+		/// <param name="name">The name to search for.</param>
 		public EffectPassParameter this [string name] { 
 			get {
 				EffectPassParameter val;
@@ -62,6 +73,7 @@ namespace engenious.Graphics
             return _parameterList.GetEnumerator();
         }
 
+        /// <inheritdoc cref="IEnumerable.GetEnumerator"/>
         public List<EffectPassParameter>.Enumerator GetEnumerator()
         {
             return _parameterList.GetEnumerator();

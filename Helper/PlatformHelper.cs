@@ -9,7 +9,7 @@ namespace engenious.Helper
         Linux,
         Mac
     }
-    internal class PlatformHelper
+    internal static class PlatformHelper
     {
 
         public static Platform RunningPlatform()

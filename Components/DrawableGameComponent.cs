@@ -2,8 +2,15 @@
 
 namespace engenious
 {
+    /// <summary>
+    /// Defines a drawable game component.
+    /// </summary>
     public abstract class DrawableGameComponent : GameComponent, IDrawable
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DrawableGameComponent"/> class.
+        /// </summary>
+        /// <param name="game">The <see cref="Game"/> to create the component for.</param>
         protected DrawableGameComponent(Game game)
             : base(game)
         {
@@ -11,20 +18,26 @@ namespace engenious
             Visible = true;
         }
 
+        /// <summary>
+        /// Gets the <see cref="GraphicsDevice"/>.
+        /// </summary>
         public GraphicsDevice GraphicsDevice{ get; private set; }
 
         #region IDrawable implementation
 
+        /// <inheritdoc />
         public virtual void Draw(GameTime gameTime)
         {
         }
 
+        /// <inheritdoc />
         public bool Visible
         {
             get;
             set;
         }
 
+        /// <inheritdoc />
         public int DrawOrder
         {
             get;
@@ -34,11 +47,13 @@ namespace engenious
 
         #endregion
 
+        /// <inheritdoc />
         protected override void LoadContent()
         {
            
         }
 
+        /// <inheritdoc />
         protected override void UnloadContent()
         {
 

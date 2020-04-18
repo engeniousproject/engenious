@@ -2,8 +2,13 @@
 
 namespace engenious.Content.Serialization
 {
+	/// <summary>
+	/// Abstract content type reader base class
+	/// </summary>
+	/// <typeparam name="T">The type the content type reader is able to read.</typeparam>
 	public abstract class ContentTypeReader<T> : IContentTypeReader
 	{
+		/// <inheritdoc cref="IContentTypeReader.Read"/>
 	    public abstract T Read (ContentManager manager, ContentReader reader,Type customType = null);
 
 		object IContentTypeReader.Read (ContentManager manager, ContentReader reader,Type customType)

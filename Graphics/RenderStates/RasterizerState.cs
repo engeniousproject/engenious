@@ -5,10 +5,24 @@ using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// Describes a rasterizer state used for rasterization.
+    /// </summary>
     public class RasterizerState : GraphicsResource
     {
+        /// <summary>
+        /// A rasterizer state which does no culling.
+        /// </summary>
         public static readonly RasterizerState CullNone;
+
+        /// <summary>
+        /// A rasterizer state which culls clockwise polygons.
+        /// </summary>
         public static readonly RasterizerState CullClockwise;
+
+        /// <summary>
+        /// A rasterizer state which culls counter-clockwise polygons.
+        /// </summary>
         public static readonly RasterizerState CullCounterClockwise;
         private CullMode _cullMode = CullMode.CounterClockwise;
         private PolygonMode _fillMode = PolygonMode.Fill;
@@ -36,6 +50,9 @@ namespace engenious.Graphics
 
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RasterizerState"/> class.
+        /// </summary>
         public RasterizerState()
         {
             CullMode = CullMode.None;
@@ -53,6 +70,9 @@ namespace engenious.Graphics
                 throw new InvalidOperationException("you are not allowed to change a predefined rasterizer state");
         }
 
+        /// <summary>
+        /// Gets or sets the cull mode for rendering primitives.
+        /// </summary>
         public CullMode CullMode
         {
             get => _cullMode;
@@ -67,6 +87,9 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets the fill mode for rendering primitives.
+        /// </summary>
         public PolygonMode FillMode
         {
             get => _fillMode;
@@ -104,6 +127,10 @@ namespace engenious.Graphics
                     (OpenTK.Graphics.OpenGL.PolygonMode) FillMode);
             }
         }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether multi sample anti aliasing is enabled.
+        /// </summary>
         public bool MultiSampleAntiAlias
         {
             get => _multiSampleAntiAlias;
@@ -129,6 +156,9 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether scissor testing is enabled.
+        /// </summary>
         public bool ScissorTestEnable
         {
             get => _scissorTestEnable;
@@ -154,6 +184,9 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets a bias value that takes into account the slope of a polygon.
+        /// </summary>
         public float SlopeScaleDepthBias
         {
             get => _slopeScaleDepthBias;
@@ -168,6 +201,10 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets the depth bias for polygons,
+        /// which is the amount of bias to apply to the depth of a primitive to alleviate depth testing problems for primitives of similar depth.
+        /// </summary>
         public float DepthBias
         {
             get => _depthBias;

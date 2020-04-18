@@ -2,8 +2,15 @@
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// Describes a drawable model.
+    /// </summary>
     public class Model : GraphicsResource
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Model"/> class.
+        /// </summary>
+        /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/>.</param>
         public Model(GraphicsDevice graphicsDevice)
             : base(graphicsDevice)
         {
@@ -11,18 +18,34 @@ namespace engenious.Graphics
             Transform = Matrix.Identity;
         }
 
+        /// <summary>
+        /// Gets or sets the meshes this <see cref="Model"/> consists of.
+        /// </summary>
         public IMesh[] Meshes{ get; set; }
 
         internal Node RootNode{ get; set; }
 
         internal List<Node> Nodes{ get; set; }
 
+        /// <summary>
+        /// Gets or sets the animations available for this model.
+        /// </summary>
         public List<Animation> Animations{ get; set; }
 
+        /// <summary>
+        /// Gets or sets the current animation to animate.
+        /// </summary>
         public Animation CurrentAnimation{get;set;}
 
+        /// <summary>
+        /// Gets or sets the transform of this model.
+        /// </summary>
         public Matrix Transform{get;set;}
 
+        /// <summary>
+        /// Advances the animation by a given amount.
+        /// </summary>
+        /// <param name="elapsed">The amount to advance the animation by.</param>
         public void UpdateAnimation(float elapsed)
         {
             CurrentAnimation.Update(elapsed);
@@ -44,6 +67,9 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Renders the model.
+        /// </summary>
         public void Draw()
         {
             foreach (var item in Meshes)
@@ -52,6 +78,11 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Renders the model using a given custom model effect, as well as a texture.
+        /// </summary>
+        /// <param name="effect">The model effect to use for rendering.</param>
+        /// <param name="text">The texture to use for rendering.</param>
         public void Draw(IModelEffect effect, Texture2D text)
         {
             DrawNode(RootNode, effect, text);

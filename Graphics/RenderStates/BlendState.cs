@@ -4,12 +4,31 @@ using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// Describes a blend state used for blending between different rendered objects.
+    /// </summary>
     public class BlendState : GraphicsResource
     {
+        /// <summary>
+        /// A <see cref="BlendState"/> for alpha blending.
+        /// </summary>
         public static readonly BlendState AlphaBlend;
+
+        /// <summary>
+        /// A <see cref="BlendState"/> for additive blending.
+        /// </summary>
         public static readonly BlendState Additive;
+
+        /// <summary>
+        /// A <see cref="BlendState"/> for non premultiplied blending.
+        /// </summary>
         public static readonly BlendState NonPremultiplied;
+
+        /// <summary>
+        /// A <see cref="BlendState"/> for opaque blending.
+        /// </summary>
         public static readonly BlendState Opaque;
+
         private BlendingFactorSrc _colorSourceBlend = BlendingFactorSrc.One;
         private BlendingFactorSrc _alphaSourceBlend = BlendingFactorSrc.One;
         private BlendingFactorDest _colorDestinationBlend = BlendingFactorDest.One;
@@ -51,6 +70,9 @@ namespace engenious.Graphics
             //GL.BlendEquationSeparate(
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BlendState"/> class.
+        /// </summary>
         public BlendState()
         {
             //GL.BlendFunc(BlendingFactorSrc.One,#
@@ -79,6 +101,9 @@ namespace engenious.Graphics
                 throw new InvalidOperationException("you are not allowed to change a predefined blend state");
         }
 
+        /// <summary>
+        /// Gets or sets blending factor for the source color.
+        /// </summary>
         public BlendingFactorSrc ColorSourceBlend
         {
             get => _colorSourceBlend;
@@ -93,6 +118,9 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets blending factor for the source alpha.
+        /// </summary>
         public BlendingFactorSrc AlphaSourceBlend
         {
             get => _alphaSourceBlend;
@@ -107,6 +135,9 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets blending factor for the destination color.
+        /// </summary>
         public BlendingFactorDest ColorDestinationBlend
         {
             get => _colorDestinationBlend;
@@ -121,6 +152,9 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets blending factor for the destination alpha.
+        /// </summary>
         public BlendingFactorDest AlphaDestinationBlend
         {
             get => _alphaDestinationBlend;
@@ -135,6 +169,9 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets the function to use for blending alpha values.
+        /// </summary>
         public BlendEquationMode AlphaBlendFunction
         {
             get => _alphaBlendFunction;
@@ -149,6 +186,9 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets or sets the function to use for blending color.
+        /// </summary>
         public BlendEquationMode ColorBlendFunction
         {
             get => _colorBlendFunction;
@@ -162,9 +202,11 @@ namespace engenious.Graphics
                     ApplyBlendFuncs();   
             }
         }
-
-
-
+        
+        /// <summary>
+        /// Gets or sets which color channels are writable for all draw buffers during color blending.
+        /// </summary>
+        /// <remarks>Default value is <see cref="engenious.Graphics.ColorWriteChannels.None"/>.</remarks>
         public ColorWriteChannels ColorWriteChannels
         {
             get => _colorWriteChannels;
@@ -202,7 +244,11 @@ namespace engenious.Graphics
                     (colorWriteChannels & ColorWriteChannels.Alpha) != 0);
             }
         }
-
+        
+        /// <summary>
+        /// Gets or sets which color channels are writable for the first draw buffer during color blending.
+        /// </summary>
+        /// <remarks>Default value is <see cref="engenious.Graphics.ColorWriteChannels.None"/>.</remarks>
         public ColorWriteChannels ColorWriteChannels1
         {
             get => _colorWriteChannels1;
@@ -213,11 +259,15 @@ namespace engenious.Graphics
                     return;
                 _colorWriteChannels1 = value;
                 if (GraphicsDevice != null)
-                    ApplyColorWriteChannels(1);
+                    ApplyColorWriteChannels(0);
                 
             }
         }
-
+        
+        /// <summary>
+        /// Gets or sets which color channels are writable for the second draw buffer during color blending.
+        /// </summary>
+        /// <remarks>Default value is <see cref="engenious.Graphics.ColorWriteChannels.None"/>.</remarks>
         public ColorWriteChannels ColorWriteChannels2
         {
             get => _colorWriteChannels2;
@@ -228,10 +278,14 @@ namespace engenious.Graphics
                     return;
                 _colorWriteChannels2 = value;
                 if (GraphicsDevice != null)
-                    ApplyColorWriteChannels(2);
+                    ApplyColorWriteChannels(1);
             }
         }
-
+        
+        /// <summary>
+        /// Gets or sets which color channels are writable for the third draw buffer during color blending.
+        /// </summary>
+        /// <remarks>Default value is <see cref="engenious.Graphics.ColorWriteChannels.None"/>.</remarks>
         public ColorWriteChannels ColorWriteChannels3
         {
             get => _colorWriteChannels3;
@@ -242,14 +296,23 @@ namespace engenious.Graphics
                     return;
                 _colorWriteChannels3 = value; 
                 if (GraphicsDevice != null)
-                    ApplyColorWriteChannels(3);
+                    ApplyColorWriteChannels(2);
             }
         }
+
+        /// <summary>
+        /// Gets or sets the blend factor used for alpha blending.
+        /// </summary>
         public Color BlendFactor
         {
             get => throw new NotImplementedException();
             set => throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// Gets or sets a bitmask defining which samples can be written to during multisampling.
+        /// </summary>
+        /// <remarks>Default value is <c>0xFFFFFFFF</c>.</remarks>
         public int MultiSampleMask
         {
             get => throw new NotImplementedException();

@@ -30,6 +30,9 @@ using System.Runtime.InteropServices;
 
 namespace engenious.Input
 {
+    /// <summary>
+    /// Defines a keyboard state.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential,Pack=1)]
     public struct KeyboardState: IEquatable<KeyboardState>
     {

@@ -1,12 +1,21 @@
 ﻿namespace engenious.Graphics
 {
-    public class MeshIndexed : BaseMesh
+    /// <summary>
+    /// A simple mesh class with indexed vertices.
+    /// </summary>
+    public class MeshIndexed : Mesh
     {
+        /// <inheritdoc />
         public MeshIndexed(GraphicsDevice graphicsDevice) : base(graphicsDevice)
         {
         }
-        public VertexBuffer VB{ get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="IndexBuffer"/>.
+        /// </summary>
         public IndexBuffer IB{ get; set; }
+
+        /// <inheritdoc />
         public override void Draw()
         {
             GraphicsDevice.VertexBuffer = VB;

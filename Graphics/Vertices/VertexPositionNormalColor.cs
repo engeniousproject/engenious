@@ -2,9 +2,15 @@
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// Describes a basic vertex type containing position information, colors and normals.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct VertexPositionNormalColor:IPositionVertex,INormalVertex,IColorVertex
     {
+        /// <summary>
+        /// Gets the <see cref="engenious.Graphics.VertexDeclaration"/> for this vertex type.
+        /// </summary>
         public static readonly VertexDeclaration VertexDeclaration;
 
         static VertexPositionNormalColor()
@@ -16,17 +22,26 @@ namespace engenious.Graphics
 
         VertexDeclaration IVertexType.VertexDeclaration => VertexDeclaration;
 
-        public VertexPositionNormalColor(Vector3 position, Vector3 normal,Color color)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="VertexPosition"/> struct.
+        /// </summary>
+        /// <param name="position">The position of this vertex.</param>
+        /// <param name="normal">The normal direction of this vertex.</param>
+        /// <param name="color">The color of this vertex.</param>
+        public VertexPositionNormalColor(Vector3 position, Vector3 normal, Color color)
         {
             Normal = normal;
             Position = position;
             Color = color;
         }
 
+        /// <inheritdoc />
         public Vector3 Position { get; set; }
+
+        /// <inheritdoc />
         public Vector3 Normal { get; set; }
+
+        /// <inheritdoc />
         public Color Color { get; set; }
-        //public Vector3 Position{ get; private set;}
-        //public Color Color{ get; private set;}
     }
 }

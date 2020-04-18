@@ -7,11 +7,23 @@ using System.Runtime.InteropServices;
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// Describes a dynamic vertex array, which can optionally contain positions, colors, normals and texture coordinates.
+    /// </summary>
     public class ConditionalVertexArray
     {
         private Array _shit;
         private Type _type;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConditionalVertexArray"/> class.
+        /// </summary>
+        /// <param name="size">The size of this array.</param>
+        /// <param name="hasPositions">Whether the vertex array ought to have position information.</param>
+        /// <param name="hasColors">Whether the vertex array ought to have color information.</param>
+        /// <param name="hasNormals">Whether the vertex array ought to have normals.</param>
+        /// <param name="hasTextureCoordinates">Whether the vertex array ought to have texture coordinates.</param>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="hasPositions"/> is set to <c>false</c>.</exception>
         public ConditionalVertexArray(int size, bool hasPositions, bool hasColors, bool hasNormals,
             bool hasTextureCoordinates)
         {
@@ -69,21 +81,41 @@ namespace engenious.Graphics
             }
         }
 
+        /// <summary>
+        /// Gets the underlying array as a generic type.
+        /// </summary>
+        /// <typeparam name="T">The type to get the array as.</typeparam>
+        /// <returns>The underlying array.</returns>
         public T[] GetVertices<T>() where T : struct, IVertexType
         {
             return (T[]) _shit;
         }
 
+        /// <summary>
+        /// Gets the underlying array.
+        /// </summary>
+        /// <returns>The underlying array.</returns>
         public Array GetVertices()
         {
             return _shit;
         }
 
+        /// <summary>
+        /// Sets this arrays vertices to a new vertex array.
+        /// </summary>
+        /// <param name="vertices">The vertices to set the this array to.</param>
+        /// <typeparam name="T">The type of the input vertex array.</typeparam>
         public void SetVertices<T>(T[] vertices) where T : struct, IVertexType
         {
             SetVertices(vertices,vertices.Length > 0 ? vertices[0].VertexDeclaration : (VertexDeclaration)typeof(T).GetField("VertexDeclaration", BindingFlags.Public | BindingFlags.Static)?.GetValue(null));
         }
 
+        /// <summary>
+        /// Sets this arrays vertices to a new vertex array.
+        /// </summary>
+        /// <param name="vertices">The vertices to set the this array to.</param>
+        /// <param name="vertexDeclaration">The <see cref="VertexDeclaration"/> of the given vertex array.</param>
+        /// <typeparam name="T">The type of the input vertex array.</typeparam>
         public void SetVertices<T>(T[] vertices, VertexDeclaration vertexDeclaration) where T : struct, IVertexType
         {
             _shit = vertices;
@@ -105,28 +137,85 @@ namespace engenious.Graphics
             AsNormal = HasNormals ? new GenericIndexer<T,INormalVertex,Vector3>(vertices) : null;
             AsTextureCoordinate = HasTextureCoordinates ? new GenericIndexer<T,ITextureCoordinatesVertex,Vector2>(vertices) : null;
         }
+
+        /// <summary>
+        /// Gets the associated <see cref="VertexDeclaration"/>.
+        /// </summary>
         public VertexDeclaration VertexDeclaration { get; private set; }
+
+        /// <summary>
+        /// Gets the length of the vertex array.
+        /// </summary>
         public int Length => _shit.Length;
 
+        /// <summary>
+        /// Gets whether this vertex array has position information.
+        /// </summary>
         public bool HasPositions { get; private set; }
+
+        /// <summary>
+        /// Gets whether this vertex array has color information.
+        /// </summary>
         public bool HasColors { get; private set; }
+
+        /// <summary>
+        /// Gets whether this vertex array has normals.
+        /// </summary>
         public bool HasNormals { get; private set; }
+
+        /// <summary>
+        /// Gets whether this vertex array has texture coordinates.
+        /// </summary>
         public bool HasTextureCoordinates { get; private set; }
 
+        /// <summary>
+        /// Gets an indexer which is able to read position information from this array.
+        /// </summary>
         public IGenericIndexer<Vector3> AsPosition { get; private set; }
+
+        /// <summary>
+        /// Gets an indexer which is able to read color information from this array.
+        /// </summary>
         public IGenericIndexer<Color> AsColor { get; private set; }
+
+        /// <summary>
+        /// Gets an indexer which is able to read normals from this array.
+        /// </summary>
         public IGenericIndexer<Vector3> AsNormal { get; private set; }
+
+        /// <summary>
+        /// Gets an indexer which is able to read texture coordinates from this array.
+        /// </summary>
         public IGenericIndexer<Vector2> AsTextureCoordinate { get; private set; }
     }
 
+    /// <summary>
+    /// Interface for a generic indexer.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public interface IGenericIndexer<T>
     {
+        /// <summary>
+        /// Gets an element at a given index.
+        /// </summary>
+        /// <param name="index">The element index to read from.</param>
         T this[int index] { get; set; }
     }
+
+    /// <summary>
+    /// Generic indexer implementation for reading <see cref="ConditionalVertexArray"/> information.
+    /// </summary>
+    /// <typeparam name="T">The base type to read from.</typeparam>
+    /// <typeparam name="TU">The vertex interface type to read.</typeparam>
+    /// <typeparam name="TUu">The type of the vertex information to read.</typeparam>
     public class GenericIndexer<T,TU,TUu> : IGenericIndexer<TUu>
     {
         private readonly T[] _array;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GenericIndexer{T,TU,TUu}"/> class.
+        /// </summary>
+        /// <param name="array">The base array to read from.</param>
         public GenericIndexer(T[] array)
         {
             _array = array;
@@ -167,6 +256,7 @@ namespace engenious.Graphics
         private static readonly Func<T[],int,TUu> GetValue;
         private static readonly Action<T[],int,TUu> SetValue;
 
+        /// <inheritdoc />
         public TUu this[int index]
         {
             get => GetValue(_array,index);

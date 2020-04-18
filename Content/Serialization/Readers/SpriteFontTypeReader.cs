@@ -3,9 +3,13 @@ using engenious.Graphics;
 
 namespace engenious.Content.Serialization
 {
+    /// <summary>
+    /// Content type reader to load <see cref="SpriteFont"/> instances.
+    /// </summary>
     [ContentTypeReaderAttribute(typeof(SpriteFont))]
     public class SpriteFontTypeReader:ContentTypeReader<SpriteFont>
     {
+        /// <inheritdoc />
         public override SpriteFont Read(ContentManager manager, ContentReader reader, Type customType = null)
         {
             var texture = reader.Read<Texture2D>(manager);

@@ -6,6 +6,9 @@ using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Content.Serialization
 {
+    /// <summary>
+    /// Content type reader to load <see cref="Model"/> instances.
+    /// </summary>
     [ContentTypeReader(typeof(Model))]
     public class ModelTypeReader:ContentTypeReader<Model>
     {
@@ -21,6 +24,7 @@ namespace engenious.Content.Serialization
             return node;
         }
 
+        /// <inheritdoc />
         public override Model Read(ContentManager manager, ContentReader reader, Type customType = null)
         {
             var model = new Model(manager.GraphicsDevice);
@@ -106,12 +110,10 @@ namespace engenious.Content.Serialization
                 var anim = new Animation();
                 anim.MaxTime = reader.ReadSingle();
                 var channelCount = reader.ReadInt32();
-                anim.Channels = new List<AnimationNode>();
                 for (var channel = 0; channel < channelCount; channel++)
                 {
                     var node = new AnimationNode();
                     node.Node = model.Nodes[reader.ReadInt32()];
-                    node.Frames = new List<AnimationFrame>();
                     var frameCount = reader.ReadInt32();
                     for (var i = 0; i < frameCount; i++)
                     {

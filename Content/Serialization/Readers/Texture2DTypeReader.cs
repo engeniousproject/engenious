@@ -5,9 +5,13 @@ using engenious.Graphics;
 
 namespace engenious.Content.Serialization
 {
+    /// <summary>
+    /// Content type reader to load <see cref="Texture2D"/> instances.
+    /// </summary>
     [ContentTypeReader(typeof(Texture2D))]
     public class Texture2DTypeReader:ContentTypeReader<Texture2D>
     {
+        /// <inheritdoc />
         public override Texture2D Read(ContentManager manager, ContentReader reader, Type customType = null)
         {
             var genMipMaps = reader.ReadBoolean();

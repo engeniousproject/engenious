@@ -3,34 +3,74 @@ using OpenTK.Audio.OpenAL;
 
 namespace engenious.Audio
 {
+    /// <summary>
+    /// Defines a <see cref="SoundEffectInstance"/> for playing audio.
+    /// </summary>
     public class SoundEffectInstance : AudioResource
     {
         internal int Sid;
+        /// <summary>
+        /// A value indicating whether the <see cref="SoundEffectInstance"/> is to be looped.
+        /// </summary>
         protected bool _isLooped;
-        protected float _volume=1f,_pitch=1f,_pan;
+
+        /// <summary>
+        /// A value indicating the volume.
+        /// </summary>
+        protected float _volume = 1f;
+
+        /// <summary>
+        /// A value indicating the pitch.
+        /// </summary>
+        protected float _pitch = 1f;
+
+        /// <summary>
+        /// A value indicating the pan.
+        /// </summary>
+        protected float _pan;
+        /// <summary>
+        /// The underlying <see cref="SoundEffect"/> instance.
+        /// </summary>
         protected SoundEffect _effect;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SoundEffectInstance"/>.
+        /// </summary>
         public SoundEffectInstance()
             :this(null)
         {
 
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SoundEffectInstance"/>.
+        /// </summary>
+        /// <param name="effect">The <see cref="SoundEffect"/> to use.</param>
         public SoundEffectInstance(SoundEffect effect)
             : this(effect,TimeSpan.Zero)
         {
 
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SoundEffectInstance"/>.
+        /// </summary>
+        /// <param name="effect">The <see cref="SoundEffect"/> to use.</param>
+        /// <param name="duration">The duration of the <see cref="SoundEffect"/>.</param>
         public SoundEffectInstance(SoundEffect effect, TimeSpan duration)
         {
             _effect = effect;
             Duration = duration;
         }
 
-
-
+        /// <summary>
+        /// Gets the duration of the 
+        /// </summary>
         public TimeSpan Duration { get; protected set; }
 
-
+        /// <summary>
+        /// Gets or sets whether the sound should be looped.
+        /// </summary>
         public bool IsLooped
         { 
             get { return _isLooped; }
@@ -44,6 +84,9 @@ namespace engenious.Audio
             }
         }
 
+        /// <summary>
+        /// Gets or sets the volume of the sound.
+        /// </summary>
         public float Volume{
             get{return _volume;}
             set
@@ -58,6 +101,9 @@ namespace engenious.Audio
             
         }
 
+        /// <summary>
+        /// Gets or sets the pitch of the sound.
+        /// </summary>
         public float Pitch{
             get{return _pitch;}
             set
@@ -71,6 +117,9 @@ namespace engenious.Audio
             }
         }
 
+        /// <summary>
+        /// Gets or sets the pan of the sound.
+        /// </summary>
         public float Pan{
             get{return _pan;}
             set
@@ -84,13 +133,23 @@ namespace engenious.Audio
             }
         }
 
+        /// <summary>
+        /// Gets the <see cref="SoundState"/> of the sound.
+        /// </summary>
         public virtual SoundState State { get; internal set; }
 
+        /// <summary>
+        /// Applies
+        /// </summary>
+        /// <param name="listeners">The listeners hearing the sound.</param>
+        /// <param name="emitter">The properties of the object the sound is coming from.</param>
+        /// <exception cref="NotSupportedException">Just one listener supported for now.</exception>
         public void Apply3D(AudioListener[] listeners, AudioEmitter emitter)
         {
-            throw new NotSupportedException("Just one listener is supported!");
-            //foreach(var l in listeners)
-            //    Apply3D(l,emitter);
+            if (listeners.Length > 1)
+                throw new NotSupportedException("Just one listener is supported!");
+            foreach(var l in listeners)
+                Apply3D(l,emitter);
         }
 
         private void Apply3D(AudioListener listener,AudioEmitter emitter)
@@ -129,7 +188,9 @@ namespace engenious.Audio
             AL.Source(Sid, ALSource3f.Velocity, finalVel.X, finalVel.Y, finalVel.Z);
         }
 
-
+        /// <summary>
+        /// Starts playing the sound.
+        /// </summary>
         public virtual void Play()
         {
             if (Sid==0)
@@ -151,6 +212,9 @@ namespace engenious.Audio
             SoundSourceManager.Instance.PlaySound(this);
         }
 
+        /// <summary>
+        /// Pauses the sound.
+        /// </summary>
         public void Pause()
         {
             State = SoundState.Paused;
@@ -158,29 +222,35 @@ namespace engenious.Audio
             AL.SourcePause(Sid);
         }
 
+        /// <summary>
+        /// Resumes the sound where it was previously paused.
+        /// </summary>
         public void Resume()
         {
             Play();
         }
 
-        //private bool stopped = false;
-
+        /// <summary>
+        /// Stops a sound from looping, or stops it immediately.
+        /// </summary>
+        /// <param name="immediate">Whether to stop the sound immediately.</param>
         public void Stop(bool immediate = true)
         {
-            //if (immediate)
+            if (immediate)
             {
                 AL.SourceStop(Sid);
                 AL.Source(Sid, ALSourcei.Buffer, 0);
                 SoundSourceManager.Instance.FreeSource(this);
             }
-            //else
-            //{
-            //    stopped = true;//TODO: dunno?
-            //}
+            else
+            {
+                IsLooped = false;
+            }
         }
 
         #region IDisposable implementation
 
+        /// <inheritdoc />
         public override void Dispose()
         {
             SoundSourceManager.Instance.FreeSource(this);
