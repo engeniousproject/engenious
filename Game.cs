@@ -343,7 +343,7 @@ namespace engenious
             foreach (var component in Components.Updatables)
             {
                 if (!component.Enabled)
-                    break;
+                    continue;
                 component.Update(gameTime);
             }
         }
@@ -357,7 +357,7 @@ namespace engenious
             foreach (var component in Components.Drawables)
             {
                 if (!component.Visible)
-                    break;
+                    continue;
                 component.Draw(gameTime);
             }
         }
