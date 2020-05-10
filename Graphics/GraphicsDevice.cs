@@ -20,7 +20,7 @@ namespace engenious.Graphics
         private RasterizerState _rasterizerState;
         private Rectangle _scissorRectangle;
         private Viewport _viewport;
-        private readonly IGraphicsContext _context;
+        internal readonly IGraphicsContext _context;
 
 
         DebugProc DebugCallbackInstance;
@@ -31,7 +31,7 @@ namespace engenious.Graphics
             Console.WriteLine("[GL] {0}; {1}; {2}; ", id, severity, message);
         }
 
-        internal Game Game;
+        internal IGame Game;
         internal readonly HashSet<string> Extensions = new HashSet<string>();
         internal string DriverVendor;
         internal Version DriverVersion;
@@ -42,7 +42,7 @@ namespace engenious.Graphics
         /// </summary>
         /// <param name="game">The base game this <see cref="GraphicsDevice"/> is used for.</param>
         /// <param name="context">The graphics context of this device.</param>
-        public GraphicsDevice(Game game, IGraphicsContext context)
+        public GraphicsDevice(IGame game, IGraphicsContext context)
         {
             _context = context;
             Game = game;
@@ -417,7 +417,7 @@ namespace engenious.Graphics
                 if (target == null)
                 {
                     GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-                    Viewport = new Viewport(Game.Window.ClientRectangle);
+                    Viewport = new Viewport(Game.RenderingSurface.ClientRectangle);
                 }
                 else
                 {

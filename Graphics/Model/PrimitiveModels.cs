@@ -134,6 +134,14 @@ namespace engenious.Graphics
         #region UVSphere
         // ReSharper disable once InconsistentNaming
 
+        private static Vector2 SphereUVMapping(Vector3 dir)
+        {
+            return new Vector2
+            (
+                MathF.Asin(dir.X) / MathF.PI + 0.5f,
+                MathF.Asin(dir.Y) / MathF.PI + 0.5f
+            );;
+        }
         /// <summary>
         /// Creates an uv-sphere.
         /// </summary>
@@ -141,15 +149,15 @@ namespace engenious.Graphics
         /// <param name="indices">A list to add the created indices to.</param>
         /// <param name="nbLong">The subdivision along the horizontal axis.</param>
         /// <param name="nbLat">The subdivision along the vertical axis.</param>
-        public static void CreateUVSphere(out Vector3[] vertices,out int[] indices,int nbLong=24,int nbLat=16)
+        public static void CreateUVSphere(out VertexPositionNormalTexture[] vertices,out int[] indices,int nbLong=24,int nbLat=16)
         {
             var radius = 1f;
 
-            vertices = new Vector3[(nbLong+1) * nbLat + 2];
+            vertices = new VertexPositionNormalTexture[(nbLong+1) * nbLat + 2];
             var _pi = (float)Math.PI;
             var _2pi = MathHelper.TwoPi;
 
-            vertices[0] = Vector3.UnitZ * radius;
+            vertices[0] = new VertexPositionNormalTexture(Vector3.UnitZ * radius, Vector3.UnitZ, SphereUVMapping(Vector3.UnitZ));
             for( var lat = 0; lat < nbLat; lat++ )
             {
                 var a1 = _pi * (lat+1) / (nbLat+1);
@@ -161,11 +169,14 @@ namespace engenious.Graphics
                     var a2 = _2pi * (lon == nbLong ? 0 : lon) / nbLong;
                     var sin2 = (float)Math.Sin(a2);
                     var cos2 = (float)Math.Cos(a2);
-
-                    vertices[ lon + lat * (nbLong + 1) + 1] = new Vector3( sin1 * cos2, cos1, sin1 * sin2 ) * radius;
+                    var dir = new Vector3(sin1 * cos2, cos1, sin1 * sin2);
+                    vertices[lon + lat * (nbLong + 1) + 1] = new VertexPositionNormalTexture
+                    (
+                        dir * radius,dir, SphereUVMapping(dir)
+                    );
                 }
             }
-            vertices[vertices.Length-1] = Vector3.UnitZ * -radius;
+            vertices[vertices.Length-1] = new VertexPositionNormalTexture(-Vector3.UnitZ * radius, -Vector3.UnitZ, SphereUVMapping(-Vector3.UnitZ));
 
             var nbFaces = vertices.Length;
             var nbTriangles = nbFaces * 2;

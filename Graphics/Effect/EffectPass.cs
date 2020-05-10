@@ -46,11 +46,9 @@ namespace engenious.Graphics
                 GL.GetProgram(Program, GetProgramParameterName.ActiveUniforms, out total);
                 for (var i = 0; i < total; ++i)
                 {
-                    int size;
-                    ActiveUniformType type;
-                    var name = GL.GetActiveUniform(Program, i, out size, out type);
+                    var name = GL.GetActiveUniform(Program, i, out _, out var type);
                     var location = GetUniformLocation(name);
-                    Parameters.Add(new EffectPassParameter(this, name, location,type));
+                    Parameters.Add(new EffectPassParameter(this, name, location, (EffectParameterType)type));
                 }
                 GL.GetProgram(Program, GetProgramParameterName.ActiveUniformBlocks, out total);
                 for (var i = 0; i < total; ++i)
@@ -61,7 +59,7 @@ namespace engenious.Graphics
                     GL.GetActiveUniformBlockName(Program, i, 512, out size, out name);
                     //var name = sb.ToString();
                     var location = GL.GetUniformBlockIndex(Program, name);
-                    Parameters.Add(new EffectPassParameter(this, name, location,(ActiveUniformType)0x7FFFFFFF));//TODO: 
+                    Parameters.Add(new EffectPassParameter(this, name, location));//TODO: 
                 }
                 //TODO: ssbos?
 

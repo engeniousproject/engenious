@@ -1,14 +1,16 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using OpenTK;
 using OpenTK.Input;
+using OpenTK.Platform;
 
 namespace engenious
 {
     /// <summary>
     /// Specifies a window as a game rendering view.
     /// </summary>
-    public class Window : IDisposable
+    public class Window : IRenderingSurface
     {
         internal readonly GameWindow BaseWindow;
         internal Window(GameWindow baseWindow)
@@ -24,29 +26,19 @@ namespace engenious
 
         }
 
-        /// <summary>
-        /// Calculates a <see cref="Point"/> in client coordinates to screen coordinates.
-        /// </summary>
-        /// <param name="pt">The <see cref="Point"/> in client coordinates.</param>
-        /// <returns>The <see cref="Point"/> translated into screen coordinates.</returns>
+        /// <inheritdoc />
         public Point PointToScreen(Point pt)
         {
             return BaseWindow.PointToScreen(new System.Drawing.Point(pt.X,pt.Y));
         }
 
-        /// <summary>
-        /// Calculates a <see cref="Point"/> in screen coordinates to client coordinates.
-        /// </summary>
-        /// <param name="pt">The <see cref="Point"/> in screen coordinates.</param>
-        /// <returns>The <see cref="Point"/> translated into client coordinates.</returns>
+        /// <inheritdoc />
         public Point PointToClient(Point pt)
         {
             return BaseWindow.PointToClient(new System.Drawing.Point(pt.X,pt.Y));
         }
 
-        /// <summary>
-        /// Gets or sets a <see cref="Rectangle"/> for this windows client area.
-        /// </summary>
+        /// <inheritdoc />
         public Rectangle ClientRectangle{
             get{
                 return new Rectangle(BaseWindow.ClientRectangle.X,BaseWindow.ClientRectangle.Y,BaseWindow.ClientRectangle.Width,BaseWindow.ClientRectangle.Height);
@@ -56,9 +48,7 @@ namespace engenious
             }
         }
 
-        /// <summary>
-        /// Gets or sets the <see cref="Size"/> of this windows client area.
-        /// </summary>
+        /// <inheritdoc />
         public Size ClientSize{
             get{
                 return new Size(BaseWindow.ClientSize.Width,BaseWindow.ClientSize.Height);
@@ -84,6 +74,12 @@ namespace engenious
                 BaseWindow.Visible = value;
             }
         }
+
+        /// <inheritdoc />
+        public IntPtr Handle => WindowInfo.Handle;
+
+        /// <inheritdoc />
+        public IWindowInfo WindowInfo => BaseWindow.WindowInfo;
 
         /// <summary>
         /// Gets or sets whether the <see cref="Window"/> is in focus.
@@ -216,6 +212,54 @@ namespace engenious
         }
 
         #endregion
+
+        event EventHandler<FrameEventArgs> IControlInternals.RenderFrame
+        {
+            add => BaseWindow.RenderFrame += value;
+            remove => BaseWindow.RenderFrame -= value;
+        }
+
+        event EventHandler<FrameEventArgs> IControlInternals.UpdateFrame
+        {
+            add => BaseWindow.UpdateFrame += value;
+            remove => BaseWindow.UpdateFrame -= value;
+        }
+
+        event EventHandler<CancelEventArgs> IControlInternals.Closing
+        {
+            add => BaseWindow.Closing += value;
+            remove => BaseWindow.Closing -= value;
+        }
+
+        event EventHandler<EventArgs> IControlInternals.FocusedChanged
+        {
+            add => BaseWindow.FocusedChanged += value;
+            remove => BaseWindow.FocusedChanged -= value;
+        }
+        
+        event EventHandler<EventArgs> IControlInternals.Resize
+        {
+            add => BaseWindow.Resize += value;
+            remove => BaseWindow.Resize -= value;
+        }
+        
+        event EventHandler<EventArgs> IControlInternals.Load
+        {
+            add => BaseWindow.Load += value;
+            remove => BaseWindow.Load -= value;
+        }
+        
+        event EventHandler<KeyPressEventArgs> IControlInternals.KeyPress
+        {
+            add => BaseWindow.KeyPress += value;
+            remove => BaseWindow.KeyPress -= value;
+        }
+                
+        event EventHandler<MouseWheelEventArgs> IControlInternals.MouseWheel
+        {
+            add => BaseWindow.MouseWheel += value;
+            remove => BaseWindow.MouseWheel -= value;
+        }
     }
 }
 

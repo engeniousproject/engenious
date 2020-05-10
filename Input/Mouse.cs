@@ -12,7 +12,7 @@ namespace engenious.Input
     public static class Mouse
     {
 
-        private static GameWindow _window;
+        private static IRenderingSurface _window;
         private static float _deltaPrecise;
         static Mouse()
         {
@@ -20,7 +20,8 @@ namespace engenious.Input
                 throw new Exception("test");
         }
 
-        internal static void UpdateWindow(GameWindow window)
+        internal static void UpdateWindow<TControl>(TControl window)
+            where TControl : class, IRenderingSurface
         {
             _window = window;
             window.MouseWheel += delegate(object sender, MouseWheelEventArgs e)
