@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -7,6 +8,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using engenious.Content.Serialization;
 using engenious.Graphics;
+using engenious.Helper;
 
 namespace engenious.Content
 {
@@ -175,7 +177,7 @@ namespace engenious.Content
             foreach(var file in ListContent(path)){
                 using (var fs = new FileStream(file, FileMode.Open, FileAccess.Read))
                 {
-                    var res = _formatter.Deserialize(fs) as ContentFile;
+                    var res = ReadContentFileHead(fs, false);
                     if (res == null)
                         continue;
                     Console.WriteLine(res.FileType);
@@ -195,12 +197,97 @@ namespace engenious.Content
         {
             using (var fs = new FileStream(Path.Combine(RootDirectory, assetName + ".ego"), FileMode.Open, FileAccess.Read))
             {
-                var res = _formatter.Deserialize(fs) as ContentFile;
-                if (res == null)
-                    throw new Exception("Could not load non content file");
+                var res = ReadContentFileHead(fs);
+
                 return (T)res.Load(this, fs,typeof(T));
             }
             //return default(T);
+        }
+        private ContentFile ReadContentFileHead(FileStream fs, bool throwsOnError = true)
+        {
+            ContentFile res;
+            var magic = ReadMagic(fs);
+            if (magic == ContentFile.MAGIC)
+            {
+                res = ReadNewContentFile(fs, throwsOnError);
+                if (res == null)
+                {
+                    if (!throwsOnError)
+                        return null;
+                    throw new Exception("Could not load content file");
+                }
+            }
+            else
+            {
+                fs.Position -= 4;
+                res = ReadDeprecatedContentFile(fs, throwsOnError);
+                if (res == null)
+                {
+                    if (!throwsOnError)
+                        return null;
+                    throw new Exception("Could not load legacy content file");
+                }
+            }
+            return res;
+        }
+        private ContentFile ReadContentFileV1(Stream stream, bool throwsOnError = true)
+        {
+            var contentTypeLen = ReadUIntLE(stream);
+            var buffer = new byte[contentTypeLen];
+            if (contentTypeLen < stream.Read(buffer, 0, buffer.Length))
+            {
+                if (!throwsOnError)
+                    return null;
+                throw new Exception("Could not load content file: Out of data");
+            }
+            string contentType = System.Text.Encoding.UTF8.GetString(buffer);
+            return new ContentFile(contentType);
+        }
+
+        public const byte ReaderVersion = 1;
+        private ContentFile ReadNewContentFile(Stream stream, bool throwsOnError = true)
+        {
+            var version = stream.ReadByte();
+
+            switch(version)
+            {
+                case ReaderVersion:
+                    return ReadContentFileV1(stream, throwsOnError);
+                default:
+                    if (throwsOnError)
+                        throw new Exception($"Content file version {version} not supported");
+                    return null;
+            }
+        }
+
+        private unsafe uint ReadUInt(Stream str)
+        {
+            var uintBytes = new byte[4];
+            str.Read(uintBytes, 0, uintBytes.Length);
+            return BitConverter.ToUInt32(uintBytes, 0);
+        }
+        private unsafe uint ReadUIntLE(Stream str)
+        {
+            var val = ReadUInt(str);
+            return BitHelper.BitConverterToLittleEndian(val);
+        }
+        private unsafe uint ReadMagic(Stream str) // Big Endian
+        {
+            var val = ReadUInt(str);
+            return BitHelper.BitConverterToBigEndian(val);
+        }
+        private ContentFile ReadDeprecatedContentFile(Stream stream, bool throwsOnError = true)
+        {
+            try
+            {
+                return _formatter.Deserialize(stream) as ContentFile;
+            }
+            catch
+            {
+                if (throwsOnError)
+                    throw;
+                return null;
+            }
         }
     }
 }

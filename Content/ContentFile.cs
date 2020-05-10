@@ -5,18 +5,10 @@ using engenious.Content.Serialization;
 namespace engenious.Content
 {
     [Serializable]
-    internal class ContentFile<T> : ContentFile
+    internal sealed class ContentFile
     {
-        public ContentFile()
-            : base(typeof(T).Namespace + "." + typeof(T).Name)
-        {
-        }
-			
-    }
+        public const uint MAGIC = 0x45474f43;
 
-    [Serializable]
-    internal class ContentFile
-    {
         internal ContentFile(string type)
         {
             FileType = type;
