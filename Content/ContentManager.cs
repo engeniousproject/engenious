@@ -21,12 +21,19 @@ namespace engenious.Content
         private readonly IFormatter _formatter;
         internal GraphicsDevice GraphicsDevice;
 
+        private static string GetDefaultDirectory()
+        {
+            var entryAssembly = Assembly.GetEntryAssembly();
+            var dirName = entryAssembly == null ? null : Path.GetDirectoryName(entryAssembly.Location);
+            return dirName == null ? Path.GetFullPath("Content") : Path.Combine(dirName, "Content");
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ContentManager"/> class.
         /// </summary>
         /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> to use.</param>
         public ContentManager(GraphicsDevice graphicsDevice)
-            : this(graphicsDevice, Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Content"))
+            : this(graphicsDevice, GetDefaultDirectory())
         {
 			
         }
