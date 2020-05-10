@@ -11,7 +11,7 @@ namespace engenious
         /// Initializes a new instance of the <see cref="GameComponent"/> class.
         /// </summary>
         /// <param name="game">The <see cref="Game"/> to create the component for</param>
-        protected GameComponent(Game game)
+        protected GameComponent(IGame game)
         {
             Game = game;
             Enabled = true;
@@ -39,9 +39,9 @@ namespace engenious
         }
 
         /// <summary>
-        /// The <see cref="Game"/> the component is part of.
+        /// The <see cref="IGame"/> the component is part of.
         /// </summary>
-        public Game Game { get; private set; }
+        public IGame Game { get; private set; }
 
         #endregion
 

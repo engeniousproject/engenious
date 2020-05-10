@@ -11,7 +11,7 @@ namespace engenious
         /// Initializes a new instance of the <see cref="DrawableGameComponent"/> class.
         /// </summary>
         /// <param name="game">The <see cref="Game"/> to create the component for.</param>
-        protected DrawableGameComponent(Game game)
+        protected DrawableGameComponent(IGame game)
             : base(game)
         {
             GraphicsDevice = game.GraphicsDevice;
