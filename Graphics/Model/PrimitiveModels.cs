@@ -138,8 +138,8 @@ namespace engenious.Graphics
         {
             return new Vector2
             (
-                MathF.Asin(dir.X) / MathF.PI + 0.5f,
-                MathF.Asin(dir.Y) / MathF.PI + 0.5f
+                (float)(Math.Asin(dir.X) / Math.PI + 0.5),
+                (float)(Math.Asin(dir.Y) / Math.PI + 0.5)
             );;
         }
         /// <summary>
