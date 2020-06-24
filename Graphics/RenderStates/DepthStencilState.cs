@@ -175,7 +175,7 @@ namespace engenious.Graphics
                 if (_stencilEnable)
                     GL.Enable(EnableCap.StencilTest);
                 else
-                    GL.Enable(EnableCap.StencilTest);
+                    GL.Disable(EnableCap.StencilTest);
             }
         }
 
