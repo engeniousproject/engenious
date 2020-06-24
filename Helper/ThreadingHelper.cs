@@ -13,7 +13,7 @@ namespace engenious.Helper
         internal struct UiExecutor : IDisposable
         {
             internal bool WasOnUiThread;
-
+            internal bool LockAcquired;
             public void Dispose()
             {
                 if (WasOnUiThread) return;
@@ -32,7 +32,8 @@ namespace engenious.Helper
                 }
                 finally
                 {
-                    Monitor.Exit(ThreadingHelper.Context);
+                    if (LockAcquired)
+                        Monitor.Exit(ThreadingHelper.Context);
                 }
             }
         }
@@ -51,7 +52,7 @@ namespace engenious.Helper
 
                 ex.WasOnUiThread = false;
                 
-                Monitor.Enter(ThreadingHelper.Context);
+                Monitor.Enter(ThreadingHelper.Context, ref ex.LockAcquired);
 
                 try
                 {
