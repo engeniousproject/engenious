@@ -142,6 +142,40 @@ namespace engenious.Graphics
             return new Vector2(width, LineSpacing);//TODO height?
         }
 
+        /// <summary>
+        /// Measures the dimensions needed to render a string with this <see cref="SpriteFont"/>.
+        /// </summary>
+        /// <remarks>Currently does not account for line breaks.</remarks>
+        /// <param name="text">The text to measure.</param>
+        /// <param name="startIndex">The index to start measuring from.</param>
+        /// <param name="length">The length to measure.</param>
+        /// <returns>The dimensions of the string when rendered with this <see cref="SpriteFont"/>.</returns>
+        public Vector2 MeasureString(ReadOnlySpan<char> text)
+        {
+            var width = 0.0f;
+            for (var i = 0; i < text.Length; i++)
+            {
+                var c = text[i];
+                if (!CharacterMap.TryGetValue(c, out var fontChar))
+                {
+                    if (!DefaultCharacter.HasValue || !CharacterMap.TryGetValue(DefaultCharacter.Value, out fontChar))
+                    {
+                        continue;
+                    }
+                }
+
+                if (fontChar == null)
+                    continue;
+                width += fontChar.Advance;
+                if (i < text.Length - 1)
+                {
+                    if (Kernings.TryGetValue(GetKerningKey(c, text[i + 1]), out var kerning))
+                        width += kerning;
+                }
+            }
+            return new Vector2(width, LineSpacing);//TODO height?
+        }
+
         /// <inheritdoc />
         public void Dispose()
         {

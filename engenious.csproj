@@ -15,6 +15,7 @@
 
         <PackageReference Include="LitGit" Version="0.2.0.11-alpha" PrivateAssets="all" />
         <PackageReference Include="NVorbis" Version="0.8.6" Exclude="compile" PrivateAssets="compile" />
+        <PackageReference Include="System.Memory" Version="4.5.2" />
         <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" PrivateAssets="compile" />
     </ItemGroup>
     <ItemGroup>
@@ -33,4 +34,15 @@
 
     </ItemGroup>
     <Import Project="engenious.Nuget.props" Condition="Exists('engenious.Nuget.props')" />
+    <!-- Fix adapted from https://jaylee.org/archive/2019/03/31/using-span-of-t-in-xamarin-cross-targeted-projects.html
+  Remove System.Memory/System.Buffers if mono is installed at default location
+-->
+    <Target Name="VS16_RemoveSystemMemory" BeforeTargets="FindReferenceAssembliesForReferences" Condition="$(Path.Contains('/usr/lib/mono')) Or $(FrameworkPathOverride.Contains('/usr/lib/mono'))">
+        <ItemGroup>
+            <_ReferencePathToRemove Include="@(ReferencePath)" Condition="'%(ReferencePath.NuGetPackageId)'=='System.Memory'" />
+            <_ReferencePathToRemove Include="@(ReferencePath)" Condition="'%(ReferencePath.NuGetPackageId)'=='System.Buffers'" />
+            <ReferencePath Remove="@(_ReferencePathToRemove)" />
+        </ItemGroup>
+        <Message Text="Removing System.Memory for mono compatibility" Importance="high" />
+    </Target>
 </Project>
