@@ -319,7 +319,54 @@ namespace engenious.Graphics
         /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
         public void DrawString(SpriteFont spriteFont, StringBuilder text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
         {
-            DrawString(spriteFont, text.ToString(), position, color, rotation, origin, scale, effects, layerDepth);
+            var offset = new Vector2(0.0f, 0.0f);
+            for (var i = 0; i < text.Length; i++)
+            {
+
+                var c = text[i];
+                if (!spriteFont.CharacterMap.TryGetValue(c, out var fontChar))
+                {
+                    if (c == '\n')
+                    {
+                        offset.X = 0;
+                        offset.Y += spriteFont.LineSpacing;
+                        continue;
+                    }
+                    if (!spriteFont.DefaultCharacter.HasValue || !spriteFont.CharacterMap.TryGetValue(spriteFont.DefaultCharacter.Value, out fontChar))
+                    {
+                        continue;
+                    }
+                }
+                if (fontChar == null)
+                    continue;
+                
+                Draw(spriteFont.Texture, position + offset + fontChar.Offset, fontChar.TextureRegion, color, rotation, origin - offset, 1.0f, SpriteEffects.None, layerDepth);
+                offset.X += fontChar.Advance;
+                if (i < text.Length - 1)
+                {
+                    if (spriteFont.Kernings.TryGetValue(SpriteFont.GetKerningKey(c, text[i + 1]), out var kerning))
+                        offset.X += kerning;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Draws text using a given <see cref="SpriteFont"/>.
+        /// </summary>
+        /// <param name="spriteFont">The sprite font to use to draw the characters.</param>
+        /// <param name="text">The text to draw.</param>
+        /// <param name="startIndex">The index to start drawing the text from.</param>
+        /// <param name="length">The length of characters to draw from the text.</param>
+        /// <param name="position">The position to draw the text at.</param>
+        /// <param name="color">The color to draw the text with.</param>
+        /// <param name="rotation">The rotation of the text in radians.</param>
+        /// <param name="origin">The origin point to rotate the text at.</param>
+        /// <param name="scale">The scale to draw the text with.</param>
+        /// <param name="effects">The sprite effects to be applied to the sprite.</param>
+        /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
+        public void DrawString(SpriteFont spriteFont, string text, int startIndex, int length, Vector2 position, Color color, float rotation = 0.0f, Vector2 origin = new Vector2(), float scale = 1.0f, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
+        {
+            DrawString(spriteFont, text, startIndex, length, position, color, rotation, origin, new Vector2(scale, scale), effects, layerDepth);
         }
 
         /// <summary>
@@ -353,8 +400,27 @@ namespace engenious.Graphics
         /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
         public void DrawString(SpriteFont spriteFont, string text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
         {
+            DrawString(spriteFont, text, 0, text.Length, position, color, rotation, origin, scale, effects, layerDepth);
+        }
+
+        /// <summary>
+        /// Draws text using a given <see cref="SpriteFont"/>.
+        /// </summary>
+        /// <param name="spriteFont">The sprite font to use to draw the characters.</param>
+        /// <param name="text">The text to draw.</param>
+        /// <param name="startIndex">The index to start drawing the text from.</param>
+        /// <param name="length">The length of characters to draw from the text.</param>
+        /// <param name="position">The position to draw the text at.</param>
+        /// <param name="color">The color to draw the text with.</param>
+        /// <param name="rotation">The rotation of the text in radians.</param>
+        /// <param name="origin">The origin point to rotate the text at.</param>
+        /// <param name="scale">The scale to draw the text with.</param>
+        /// <param name="effects">The sprite effects to be applied to the sprite.</param>
+        /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
+        public void DrawString(SpriteFont spriteFont, string text, int startIndex, int length, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
+        {
             var offset = new Vector2(0.0f, 0.0f);
-            for (var i = 0; i < text.Length; i++)
+            for (var i = startIndex; i < length; i++)
             {
 
                 var c = text[i];
