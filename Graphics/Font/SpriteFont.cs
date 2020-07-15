@@ -62,23 +62,11 @@ namespace engenious.Graphics
         /// <returns>The dimensions of the string when rendered with this <see cref="SpriteFont"/>.</returns>
         public Vector2 MeasureString(StringBuilder text)
         {
-            return MeasureString(text.ToString()); // TODO: can be optimized.
-        }
-
-        /// <summary>
-        /// Measures the dimensions needed to render a string with this <see cref="SpriteFont"/>.
-        /// </summary>
-        /// <remarks>Currently does not account for line breaks.</remarks>
-        /// <param name="text">The text to measure.</param>
-        /// <returns>The dimensions of the string when rendered with this <see cref="SpriteFont"/>.</returns>
-        public Vector2 MeasureString(string text)
-        {
             var width = 0.0f;
             for (var i = 0; i < text.Length; i++)
             {
                 var c = text[i];
-                FontCharacter fontChar;
-                if (!CharacterMap.TryGetValue(c, out fontChar))
+                if (!CharacterMap.TryGetValue(c, out var fontChar))
                 {
                     if (!DefaultCharacter.HasValue || !CharacterMap.TryGetValue(DefaultCharacter.Value, out fontChar))
                     {
@@ -91,8 +79,63 @@ namespace engenious.Graphics
                 width += fontChar.Advance;
                 if (i < text.Length - 1)
                 {
-                    int kerning;
-                    if (Kernings.TryGetValue(GetKerningKey(c, text[i + 1]), out kerning))
+                    if (Kernings.TryGetValue(GetKerningKey(c, text[i + 1]), out var kerning))
+                        width += kerning;
+                }
+            }
+            return new Vector2(width, LineSpacing);//TODO height?
+        }
+
+        /// <summary>
+        /// Measures the dimensions needed to render a string with this <see cref="SpriteFont"/>.
+        /// </summary>
+        /// <remarks>Currently does not account for line breaks.</remarks>
+        /// <param name="text">The text to measure.</param>
+        /// <returns>The dimensions of the string when rendered with this <see cref="SpriteFont"/>.</returns>
+        public Vector2 MeasureString(string text)
+        {
+            return MeasureString(text, 0, text.Length);
+        }
+
+        /// <summary>
+        /// Measures the dimensions needed to render a string with this <see cref="SpriteFont"/>.
+        /// </summary>
+        /// <remarks>Currently does not account for line breaks.</remarks>
+        /// <param name="text">The text to measure.</param>
+        /// <param name="startIndex">The index to start measuring from.</param>
+        /// <returns>The dimensions of the string when rendered with this <see cref="SpriteFont"/>.</returns>
+        public Vector2 MeasureString(string text, int startIndex)
+        {
+            return MeasureString(text, startIndex, text.Length - startIndex);
+        }
+        /// <summary>
+        /// Measures the dimensions needed to render a string with this <see cref="SpriteFont"/>.
+        /// </summary>
+        /// <remarks>Currently does not account for line breaks.</remarks>
+        /// <param name="text">The text to measure.</param>
+        /// <param name="startIndex">The index to start measuring from.</param>
+        /// <param name="length">The length to measure.</param>
+        /// <returns>The dimensions of the string when rendered with this <see cref="SpriteFont"/>.</returns>
+        public Vector2 MeasureString(string text, int startIndex, int length)
+        {
+            var width = 0.0f;
+            for (var i = startIndex; i < length; i++)
+            {
+                var c = text[i];
+                if (!CharacterMap.TryGetValue(c, out var fontChar))
+                {
+                    if (!DefaultCharacter.HasValue || !CharacterMap.TryGetValue(DefaultCharacter.Value, out fontChar))
+                    {
+                        continue;
+                    }
+                }
+
+                if (fontChar == null)
+                    continue;
+                width += fontChar.Advance;
+                if (i < text.Length - 1)
+                {
+                    if (Kernings.TryGetValue(GetKerningKey(c, text[i + 1]), out var kerning))
                         width += kerning;
                 }
             }
