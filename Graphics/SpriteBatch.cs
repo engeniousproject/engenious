@@ -420,7 +420,7 @@ namespace engenious.Graphics
         public void DrawString(SpriteFont spriteFont, string text, int startIndex, int length, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
         {
             var offset = new Vector2(0.0f, 0.0f);
-            for (var i = startIndex; i < length; i++)
+            for (var i = startIndex; i < startIndex + length; i++)
             {
 
                 var c = text[i];

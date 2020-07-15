@@ -119,7 +119,7 @@ namespace engenious.Graphics
         public Vector2 MeasureString(string text, int startIndex, int length)
         {
             var width = 0.0f;
-            for (var i = startIndex; i < length; i++)
+            for (var i = startIndex; i < startIndex + length; i++)
             {
                 var c = text[i];
                 if (!CharacterMap.TryGetValue(c, out var fontChar))
