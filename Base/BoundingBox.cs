@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 
 namespace engenious
@@ -16,9 +17,6 @@ namespace engenious
         /// The corner of the bounding box which is minimal on all axes.
         /// </summary>
         public Vector3 Min;
-        
-        
-        private Vector3[] _cornerPreAlloc;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BoundingBox"/> struct.
@@ -29,7 +27,6 @@ namespace engenious
         {
             Min = min;
             Max = max;
-            _cornerPreAlloc = new Vector3[8];
         }
 
         /// <summary>
@@ -42,10 +39,8 @@ namespace engenious
         /// <param name="maxY">The maximal value of all corners Y-axis.</param>
         /// <param name="maxZ">The maximal value of all corners Z-axis.</param>
         public BoundingBox(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
+            : this(new Vector3(minX, minY, minZ), new Vector3(maxX, maxY, maxZ))
         {
-            Min = new Vector3(minX, minY, minZ);
-            Max = new Vector3(maxX, maxY, maxZ);
-            _cornerPreAlloc = new Vector3[8];
         }
 
         /// <summary>
@@ -186,7 +181,8 @@ namespace engenious
         /// <summary>
         /// Gets all corners of the <see cref="BoundingBox"/>.
         /// </summary>
-        /// <returns>All corners of the <see cref="BoundingBox"/>.</returns>
+        /// <param name="corners">The array to write all 8 corners of the <see cref="BoundingBox"/> to.</param>
+        /// <param name="startIndex">The index into <paramref name="corners"/> to start writing the 8 corners to.</param>
         /// <remarks>
         /// Order of corners:
         ///     - (Min.X, Max.Y, Max.Z)
@@ -198,20 +194,16 @@ namespace engenious
         ///     - (Max.X, Min.Y, Min.Z)
         ///     - Min
         /// </remarks>
-        public Vector3[] GetCorners()
+        public void GetCorners(Vector3[] corners, int startIndex)
         {
-            if (_cornerPreAlloc == null)
-                _cornerPreAlloc = new Vector3[8];
-            _cornerPreAlloc[0] = new Vector3(Min.X, Max.Y, Max.Z);
-            _cornerPreAlloc[1] = Max;
-            _cornerPreAlloc[2] = new Vector3(Max.X, Min.Y, Max.Z);
-            _cornerPreAlloc[3] = new Vector3(Min.X, Min.Y, Max.Z);
-            _cornerPreAlloc[4] = new Vector3(Min.X, Max.Y, Min.Z);
-            _cornerPreAlloc[5] = new Vector3(Max.X, Max.Y, Min.Z);
-            _cornerPreAlloc[6] = new Vector3(Max.X, Min.Y, Min.Z);
-            _cornerPreAlloc[7] = Min;
-
-            return _cornerPreAlloc;
+            corners[startIndex + 0] = new Vector3(Min.X, Max.Y, Max.Z);
+            corners[startIndex + 1] = Max;
+            corners[startIndex + 2] = new Vector3(Max.X, Min.Y, Max.Z);
+            corners[startIndex + 3] = new Vector3(Min.X, Min.Y, Max.Z);
+            corners[startIndex + 4] = new Vector3(Min.X, Max.Y, Min.Z);
+            corners[startIndex + 5] = new Vector3(Max.X, Max.Y, Min.Z);
+            corners[startIndex + 6] = new Vector3(Max.X, Min.Y, Min.Z);
+            corners[startIndex + 7] = Min;
         }
 
         /// <summary>
