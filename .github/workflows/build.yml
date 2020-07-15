@@ -1,6 +1,8 @@
 name: engenious Build
 
 on:
+  workflow_dispatch:
+    inputs:
   push:
     branches:
       - master
