@@ -61,7 +61,11 @@ namespace engenious.Helper
                 }
                 catch (Exception)
                 {
-                    Monitor.Exit(ThreadingHelper.Context);
+                    if (ex.LockAcquired)
+                    {
+                        Monitor.Exit(ThreadingHelper.Context);
+                        ex.LockAcquired = false;
+                    }
                 }
 
                 return ex;
