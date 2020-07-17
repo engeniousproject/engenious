@@ -44,7 +44,7 @@ namespace engenious.Helper
             {
                 var ex = new UiExecutor();
 
-                if (ThreadingHelper.UiThreadId == Thread.CurrentThread.ManagedThreadId || ThreadingHelper.Context.IsCurrent)
+                if (ThreadingHelper.UiThreadId == Thread.CurrentThread.ManagedThreadId)
                 {
                     ex.WasOnUiThread = true;
                     return ex;
@@ -56,7 +56,8 @@ namespace engenious.Helper
 
                 try
                 {
-                    ThreadingHelper.Context.MakeCurrent(ThreadingHelper.WindowInfo);
+                    if(!ThreadingHelper.Context.IsCurrent)
+                        ThreadingHelper.Context.MakeCurrent(ThreadingHelper.WindowInfo);
                 }
                 catch (Exception)
                 {
