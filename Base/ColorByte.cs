@@ -79,7 +79,7 @@ namespace engenious
         /// <inheritdoc />
         public override int GetHashCode()
         {
-            return A << 24 | R << 16 | G << 8 | B;//TODO?
+            return A << 24 | R << 16 | G << 8 | B;
         }
 
         /// <summary>

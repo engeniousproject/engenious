@@ -20,7 +20,7 @@
         {
             GraphicsDevice.VertexBuffer = VB;
             GraphicsDevice.IndexBuffer = IB;
-            GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.Triangles, 0,0, VB.VertexCount,0,PrimitiveCount);
+            GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.Triangles, 0,0, (int)VB.VertexCount,0,PrimitiveCount);
         }
     }
 }

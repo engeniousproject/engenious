@@ -1,5 +1,5 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace engenious.Helper
@@ -8,12 +8,14 @@ namespace engenious.Helper
     {
         private Thread _currentThread;
 
-        private class CallbackState
+        private struct CallbackState
         {
-            public CallbackState()
+            public CallbackState(bool doWait)
             {
                 WaitHandle = new AutoResetEvent(false);
                 DoWait = false;
+                Callback = default;
+                UserState = default;
             }
             public SendOrPostCallback Callback;
             public object UserState;
@@ -22,18 +24,18 @@ namespace engenious.Helper
         }
 
         private readonly object _syncRoot = new object();
-        
-        private int _count,_head,_tail;
+
+        private int _count, _head, _tail;
         private readonly List<CallbackState> _array = new List<CallbackState>();
 
         public GlSynchronizationContext()
         {
             for (int i = 0; i < 128; i++)
             {
-                _array.Add(new CallbackState());
+                _array.Add(new CallbackState(false));
             }
         }
-        
+
         public override void Send(SendOrPostCallback callback, object state)
         {
             if (Thread.CurrentThread == _currentThread)
@@ -42,7 +44,7 @@ namespace engenious.Helper
             }
             else
             {
-                Add(callback,state,true).WaitOne();
+                Add(callback, state, true).WaitOne();
             }
         }
         public override void Post(SendOrPostCallback callback, object state)
@@ -50,27 +52,30 @@ namespace engenious.Helper
             Add(callback, state);
         }
 
-        private AutoResetEvent Add(SendOrPostCallback callback, object state,bool wait=false)
+        private AutoResetEvent Add(SendOrPostCallback callback, object state, bool wait = false)
         {
             lock (_syncRoot)
             {
-                if (_count == _array.Count) {
+                if (_count == _array.Count)
+                {
                     int newcapacity = (int)((long)_array.Count * 2);
-                    if (newcapacity < _array.Count + 4) {
+                    if (newcapacity < _array.Count + 4)
+                    {
                         newcapacity = _array.Count + 4;
                     }
 
                     int added = newcapacity - _array.Capacity;
                     _array.Capacity = newcapacity;
-                    for (int i = 0; i < added; i++)
-                    {
-                        _array.Add(new CallbackState());
-                    }
+                    _array.InsertRange(_head, Enumerable.Repeat(new CallbackState(false), newcapacity / 2));
+         
+                    _tail = _head; // 178, 
+                    _head += newcapacity / 2;
                 }
                 var item = _array[_tail];
                 item.Callback = callback;
                 item.UserState = state;
                 item.DoWait = wait;
+                _array[_tail] = item;
                 _tail = (_tail + 1) % _array.Count;
                 _count++;
 
@@ -101,7 +106,7 @@ namespace engenious.Helper
                 var callbackState = workItem;
 
                 callbackState.Callback(callbackState.UserState);
-                if(callbackState.DoWait)
+                if (callbackState.DoWait)
                     callbackState.WaitHandle.Set();
             }
 

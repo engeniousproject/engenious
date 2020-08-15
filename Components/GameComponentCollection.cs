@@ -69,13 +69,13 @@ namespace engenious
         /// <inheritdoc />
         public void Add(GameComponent item)
         {
-            var drawable = item as IDrawable;
-            if (drawable != null)
+            if (item is IDrawable drawable)
                 Drawables.Add(drawable);
             IUpdateable updateable = item;
             if (updateable != null)
                 Updatables.Add(updateable);
             _components.Add(item);
+            Sort();
         }
 
         /// <inheritdoc />
@@ -120,10 +120,17 @@ namespace engenious
 
         #endregion
 
+        
+        /// <inheritdoc cref="IEnumerable{T}.GetEnumerator"/>
+        public List<GameComponent>.Enumerator GetEnumerator()
+        {
+            return _components.GetEnumerator();
+        }
+
         #region IEnumerable implementation
 
         /// <inheritdoc />
-        public IEnumerator<GameComponent> GetEnumerator()
+        IEnumerator<GameComponent> IEnumerable<GameComponent>.GetEnumerator()
         {
             return _components.GetEnumerator();
         }

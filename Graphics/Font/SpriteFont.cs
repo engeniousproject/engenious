@@ -24,7 +24,7 @@ namespace engenious.Graphics
 
         internal static int GetKerningKey(char first, char second)
         {
-            return first << 16 | second;
+            return (first << 16) | second;
         }
 
         private ReadOnlyCollection<char> _characters;

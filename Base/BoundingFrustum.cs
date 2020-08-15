@@ -6,6 +6,7 @@
     public class BoundingFrustum
     {
         private readonly Plane[] _planes = new Plane[6];
+        private Matrix _matrix;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BoundingFrustum"/> class using a matrix creating a frustum.
@@ -14,13 +15,6 @@
         /// <param name="matrix">The <see cref="Matrix"/> to create the frustum from.</param>
         public BoundingFrustum(Matrix matrix)
         {
-            Right = new Plane(matrix.M41 - matrix.M11, matrix.M42 - matrix.M12, matrix.M43 - matrix.M13, matrix.M44 - matrix.M14);
-            Left = new Plane(matrix.M41 + matrix.M11, matrix.M42 + matrix.M12, matrix.M43 + matrix.M13, matrix.M44 + matrix.M14);
-            Bottom = new Plane(matrix.M41 + matrix.M21, matrix.M42 + matrix.M22, matrix.M43 + matrix.M23, matrix.M44 + matrix.M24);
-            Top = new Plane(matrix.M41 - matrix.M21, matrix.M42 - matrix.M22, matrix.M43 - matrix.M23, matrix.M44 - matrix.M24);
-            Far = new Plane(matrix.M41 - matrix.M31, matrix.M42 - matrix.M32, matrix.M43 - matrix.M33, matrix.M44 - matrix.M34);
-            Near = new Plane(matrix.M41 + matrix.M31, matrix.M42 + matrix.M32, matrix.M43 + matrix.M33, matrix.M44 + matrix.M34);
-
             Matrix = matrix;
         }
 
@@ -28,8 +22,8 @@
         /// Gets the bottom plane of the frustum.
         /// </summary>
         public Plane Bottom
-        { 
-            get{ return _planes[5]; }
+        {
+            get { return _planes[5]; }
             private set
             {
                 _planes[5] = value;
@@ -41,7 +35,7 @@
         /// </summary>
         public Plane Top
         {
-            get{ return _planes[4]; }
+            get { return _planes[4]; }
             private set
             {
                 _planes[4] = value;
@@ -53,7 +47,7 @@
         /// </summary>
         public Plane Far
         {
-            get{ return _planes[3]; }
+            get { return _planes[3]; }
             private set
             {
                 _planes[3] = value;
@@ -64,8 +58,8 @@
         /// Gets the near plane of the frustum.
         /// </summary>
         public Plane Near
-        { 
-            get{ return _planes[2]; }
+        {
+            get { return _planes[2]; }
             private set
             {
                 _planes[2] = value;
@@ -76,8 +70,8 @@
         /// Gets the left plane of the frustum.
         /// </summary>
         public Plane Left
-        { 
-            get{ return _planes[1]; }
+        {
+            get { return _planes[1]; }
             private set
             {
                 _planes[1] = value;
@@ -89,7 +83,7 @@
         /// </summary>
         public Plane Right
         {
-            get{ return _planes[0]; }
+            get { return _planes[0]; }
             private set
             {
                 _planes[0] = value;
@@ -99,11 +93,23 @@
         /// <summary>
         /// Gets the matrix which constructed the <see cref="BoundingFrustum"/>.
         /// </summary>
-        public Matrix Matrix{ get; private set; }
+        public Matrix Matrix
+        {
+            get => _matrix; set
+            {
+                _matrix = value;
+                Right = new Plane(_matrix.M14 - _matrix.M11, _matrix.M24 - _matrix.M21, _matrix.M34 - _matrix.M31, _matrix.M44 - _matrix.M41);
+                Left = new Plane(_matrix.M14 + _matrix.M11, _matrix.M24 + _matrix.M21, _matrix.M34 + _matrix.M31, _matrix.M44 + _matrix.M41);
+                Bottom = new Plane(_matrix.M14 + _matrix.M12, _matrix.M24 + _matrix.M22, _matrix.M34 + _matrix.M32, _matrix.M44 + _matrix.M42);
+                Top = new Plane(_matrix.M14 - _matrix.M12, _matrix.M24 - _matrix.M22, _matrix.M34 - _matrix.M32, _matrix.M44 - _matrix.M42);
+                Far = new Plane(_matrix.M14 - _matrix.M13, _matrix.M24 - _matrix.M23, _matrix.M34 - _matrix.M33, _matrix.M44 - _matrix.M43);
+                Near = new Plane(_matrix.M14 + _matrix.M13, _matrix.M24 + _matrix.M23, _matrix.M34 + _matrix.M33, _matrix.M44 + _matrix.M43);
+            }
+        }
 
         private static void PVertex(Vector3 normal, BoundingBox box, out Vector3 vn, out Vector3 vp)
         {
-            float vNx, vNy,vNz,vPx,vPy,vPz;
+            float vNx, vNy, vNz, vPx, vPy, vPz;
             if (normal.X >= 0)
             {
                 vPx = box.Max.X;
@@ -177,4 +183,3 @@
         }
     }
 }
-

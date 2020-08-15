@@ -131,8 +131,6 @@ namespace engenious
 
             Control.UpdateFrame += delegate(FrameEventArgs e)
             {
-                Components.Sort();
-
                 gameTime.Update(e.Time);
 
                 Update(gameTime);

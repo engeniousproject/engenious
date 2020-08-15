@@ -14,7 +14,7 @@ namespace engenious.Graphics
         internal int TempVbo = -1;
         internal VertexAttributes Vao;
 
-        private VertexBuffer(GraphicsDevice graphicsDevice, int vertexCount, BufferUsageHint usage = BufferUsageHint.StaticDraw)
+        private VertexBuffer(GraphicsDevice graphicsDevice, long vertexCount, BufferUsageHint usage = BufferUsageHint.StaticDraw)
             : base(graphicsDevice)
         {
             VertexCount = vertexCount;
@@ -40,7 +40,7 @@ namespace engenious.Graphics
         /// <param name="vertexCount">The count of vertices.</param>
         /// <param name="usage">The usage of this <see cref="VertexBuffer"/>.</param>
         /// <exception cref="ArgumentException"></exception>
-        public VertexBuffer(GraphicsDevice graphicsDevice, Type vertexType, int vertexCount, BufferUsageHint usage = BufferUsageHint.StaticDraw)
+        public VertexBuffer(GraphicsDevice graphicsDevice, Type vertexType, long vertexCount, BufferUsageHint usage = BufferUsageHint.StaticDraw)
             : this(graphicsDevice, vertexCount, usage)
         {
             var tp = Activator.CreateInstance(vertexType) as IVertexType;
@@ -145,7 +145,7 @@ namespace engenious.Graphics
         /// <summary>
         /// Gets the number of vertices.
         /// </summary>
-        public int VertexCount{ get; private set; }
+        public long VertexCount{ get; private set; }
 
         /// <summary>
         /// Gets the vertex declaration describing this vertex buffer.
@@ -175,7 +175,7 @@ namespace engenious.Graphics
         /// </summary>
         /// <param name="ptr">Pointer to copy data from.</param>
         /// <param name="sizeInBytes">The number of bytes to copy from the source pointer.</param>
-        public void SetData(IntPtr ptr, int sizeInBytes)
+        public void SetData(IntPtr ptr, long sizeInBytes)
         {
             SetData(ptr, 0, sizeInBytes);
         }
@@ -187,7 +187,7 @@ namespace engenious.Graphics
         /// <param name="ptr">Pointer to copy data from.</param>
         /// <param name="offsetInBytes">The offset destination to copy the vertices to.</param>
         /// <param name="sizeInBytes">The number of bytes to copy from the source pointer.</param>
-        public void SetData(IntPtr ptr,int offsetInBytes,int sizeInBytes)
+        public void SetData(IntPtr ptr,long offsetInBytes,long sizeInBytes)
         {
             GraphicsDevice.ValidateGraphicsThread();
             

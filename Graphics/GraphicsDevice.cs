@@ -25,6 +25,9 @@ namespace engenious.Graphics
 
         private readonly Thread _graphicsThread;
         
+        private VertexBuffer _vertexBuffer;
+        private IndexBuffer _indexBuffer;
+        
 
 
         DebugProc DebugCallbackInstance;
@@ -439,6 +442,23 @@ namespace engenious.Graphics
         }
 
         /// <summary>
+        /// Renders primitives using the <see cref="VertexBuffer"/> for vertices and <see cref="IndexBuffer"/> for indices.
+        /// </summary>
+        /// <param name="primitiveType">The <see cref="PrimitiveType"/> to use for rendering.</param>
+        /// <param name="baseVertex">The base vertex offset to start indexing at.</param>
+        /// <param name="startIndex">The index to start rendering at.</param>
+        /// <param name="primitiveCount">The numbers of primitives to render.</param>
+        public void MultiDrawElementsBaseVertex(PrimitiveType primitiveType, int[] baseVertex, int startIndex,
+            int[] primitiveCount)
+        {
+            VertexBuffer.EnsureVao();
+            VertexBuffer.Vao.Bind();
+            GL.MultiDrawElementsBaseVertex((OpenToolkit.Graphics.OpenGL.PrimitiveType)primitiveType, primitiveCount,
+                (OpenToolkit.Graphics.OpenGL.DrawElementsType)IndexBuffer.IndexElementSize, IntPtr.Zero, primitiveCount.Length,
+                baseVertex);
+        }
+
+        /// <summary>
         /// Sets the current render target.
         /// </summary>
         /// <param name="target">The render target to render to or <c>null</c> to use the default render target.</param>
@@ -544,16 +564,33 @@ namespace engenious.Graphics
                 }
             }
         }
-
         /// <summary>
         /// Gets or sets the currently active <see cref="engenious.Graphics.VertexBuffer"/>.
         /// </summary>
-        public VertexBuffer VertexBuffer { get; set; }
+        public VertexBuffer VertexBuffer
+        {
+            get => _vertexBuffer;
+            set
+            {
+                if (_vertexBuffer == value) return;
+                _vertexBuffer = value;
+                value?.Bind();
+            }
+        }
 
         /// <summary>
         /// Gets or sets the currently active <see cref="engenious.Graphics.IndexBuffer"/>.
         /// </summary>
-        public IndexBuffer IndexBuffer { get; set; }
+        public IndexBuffer IndexBuffer
+        {
+            get => _indexBuffer;
+            set
+            {
+                if (_indexBuffer == value) return;
+                _indexBuffer = value;
+                value?.Bind();
+            }
+        }
 
         /// <inheritdoc />
         public void Dispose()

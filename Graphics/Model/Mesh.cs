@@ -20,7 +20,7 @@
         public override void Draw()
         {
             GraphicsDevice.VertexBuffer = VB;
-            GraphicsDevice.DrawPrimitives(PrimitiveType.Triangles, 0, VB.VertexCount);
+            GraphicsDevice.DrawPrimitives(PrimitiveType.Triangles, 0, (int)VB.VertexCount);
         }
     }
 }
