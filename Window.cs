@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
-using OpenTK;
-using OpenTK.Input;
-using OpenTK.Platform;
+using OpenToolkit.Mathematics;
+using OpenToolkit.Windowing.Common;
+using OpenToolkit.Windowing.Common.Input;
+using OpenToolkit.Windowing.Desktop;
 
 namespace engenious
 {
@@ -13,10 +14,11 @@ namespace engenious
     public class Window : IRenderingSurface
     {
         internal readonly GameWindow BaseWindow;
-        internal Window(GameWindow baseWindow)
+
+        public Window(GameWindow baseWindow)
         {
             BaseWindow = baseWindow;
-            baseWindow.KeyDown += delegate(object sender, KeyboardKeyEventArgs e)
+            baseWindow.KeyDown += delegate(KeyboardKeyEventArgs e)
             {
                 if (e.Key == Key.F4 && e.Alt)
                 {
@@ -29,62 +31,78 @@ namespace engenious
         /// <inheritdoc />
         public Point PointToScreen(Point pt)
         {
-            return BaseWindow.PointToScreen(new System.Drawing.Point(pt.X,pt.Y));
+            return BaseWindow.PointToScreen(new Vector2i(pt.X, pt.Y));
         }
 
         /// <inheritdoc />
         public Point PointToClient(Point pt)
         {
-            return BaseWindow.PointToClient(new System.Drawing.Point(pt.X,pt.Y));
+            return BaseWindow.PointToClient(new Vector2i(pt.X, pt.Y));
+        }
+
+        /// <inheritdoc />
+        public Vector2 Vector2ToScreen(Vector2 pt)
+        {
+            var integerPart = new Point((int) pt.X, (int) pt.Y);
+            var tmp = PointToScreen(integerPart);
+            return  tmp.ToVector2() + pt - integerPart.ToVector2();
+        }
+
+        /// <inheritdoc />
+        public Vector2 Vector2ToClient(Vector2 pt)
+        {
+            var integerPart = new Point((int) pt.X, (int) pt.Y);
+            var tmp = PointToClient(integerPart);
+            return  tmp.ToVector2() + pt - integerPart.ToVector2();
         }
 
         /// <inheritdoc />
         public Rectangle ClientRectangle{
             get{
-                return new Rectangle(BaseWindow.ClientRectangle.X,BaseWindow.ClientRectangle.Y,BaseWindow.ClientRectangle.Width,BaseWindow.ClientRectangle.Height);
+                return Rectangle.FromLTRB(BaseWindow.ClientRectangle.Min.X,BaseWindow.ClientRectangle.Min.Y,BaseWindow.ClientRectangle.Max.X,BaseWindow.ClientRectangle.Max.Y);
             }
             set{
-                BaseWindow.ClientRectangle = new System.Drawing.Rectangle(value.X,value.Y,value.Width,value.Height);
+                BaseWindow.ClientRectangle = new Box2i(value.Left,value.Top,value.Right,value.Bottom);
             }
         }
 
         /// <inheritdoc />
         public Size ClientSize{
             get{
-                return new Size(BaseWindow.ClientSize.Width,BaseWindow.ClientSize.Height);
+                return new Size(BaseWindow.ClientSize.X,BaseWindow.ClientSize.Y);
             }
             set{
-                BaseWindow.ClientSize = new System.Drawing.Size(value.Width,value.Height);
+                BaseWindow.Size = new Vector2i(value.Width,value.Height);
             }
         }
 
         /// <summary>
         /// Gets or sets the <see cref="Icon"/> of this <see cref="Window"/>.
         /// </summary>
-        public Icon Icon { get { return BaseWindow.Icon; } set { BaseWindow.Icon = value; } }
+        public WindowIcon Icon { get { return BaseWindow.Icon; } set { BaseWindow.Icon = value; } }
 
         /// <summary>
         /// Gets or sets whether the <see cref="Window"/> is visible.
         /// </summary>
         public bool Visible{
             get{
-                return BaseWindow.Visible;
+                return BaseWindow.IsVisible;
             }
             set{
-                BaseWindow.Visible = value;
+                BaseWindow.IsVisible = value;
             }
         }
 
         /// <inheritdoc />
-        public IntPtr Handle => WindowInfo.Handle;
+        public IntPtr Handle => throw new NotSupportedException();
 
         /// <inheritdoc />
-        public IWindowInfo WindowInfo => BaseWindow.WindowInfo;
+        public INativeWindow WindowInfo => BaseWindow;
 
         /// <summary>
         /// Gets or sets whether the <see cref="Window"/> is in focus.
         /// </summary>
-        public bool Focused => BaseWindow.Focused;
+        public bool Focused => BaseWindow.IsFocused;
         
         /// <summary>
         /// Gets or sets whether the mouse cursor is visible on this <see cref="Window"/>.
@@ -96,6 +114,15 @@ namespace engenious
             set{
                 BaseWindow.CursorVisible = value;
             }
+        }
+
+        /// <summary>
+        /// Gets or sets whether the mouse cursor is grabbed on this <see cref="Window"/>.
+        /// </summary>
+        public bool CursorGrabbed
+        {
+            get => BaseWindow.CursorGrabbed;
+            set => BaseWindow.CursorGrabbed = value;
         }
 
         /// <summary>
@@ -163,7 +190,7 @@ namespace engenious
         /// </summary>
         public Point Position{
             get{
-                return new Point(BaseWindow.X,BaseWindow.Y);
+                return new Point(BaseWindow.Location.X,BaseWindow.Location.Y);
             }
             set{
                 X = value.X;
@@ -176,10 +203,10 @@ namespace engenious
         /// </summary>
         public int X{
             get{
-                return BaseWindow.X;
+                return BaseWindow.Location.X;
             }
             set{
-                BaseWindow.X = value;
+                BaseWindow.Location = new Vector2i(value, BaseWindow.Location.Y);
             }
         }
 
@@ -188,10 +215,10 @@ namespace engenious
         /// </summary>
         public int Y{
             get{
-                return BaseWindow.Y;
+                return BaseWindow.Location.Y;
             }
             set{
-                BaseWindow.Y = value;
+                BaseWindow.Location = new Vector2i(BaseWindow.Location.X, value);
             }
         }
 
@@ -213,49 +240,49 @@ namespace engenious
 
         #endregion
 
-        event EventHandler<FrameEventArgs> IControlInternals.RenderFrame
+        event Action<FrameEventArgs> IControlInternals.RenderFrame
         {
             add => BaseWindow.RenderFrame += value;
             remove => BaseWindow.RenderFrame -= value;
         }
 
-        event EventHandler<FrameEventArgs> IControlInternals.UpdateFrame
+        event Action<FrameEventArgs> IControlInternals.UpdateFrame
         {
             add => BaseWindow.UpdateFrame += value;
             remove => BaseWindow.UpdateFrame -= value;
         }
 
-        event EventHandler<CancelEventArgs> IControlInternals.Closing
+        event Action<CancelEventArgs> IControlInternals.Closing
         {
             add => BaseWindow.Closing += value;
             remove => BaseWindow.Closing -= value;
         }
 
-        event EventHandler<EventArgs> IControlInternals.FocusedChanged
+        event Action<FocusedChangedEventArgs> IControlInternals.FocusedChanged
         {
             add => BaseWindow.FocusedChanged += value;
             remove => BaseWindow.FocusedChanged -= value;
         }
         
-        event EventHandler<EventArgs> IControlInternals.Resize
+        event Action<ResizeEventArgs> IControlInternals.Resize
         {
             add => BaseWindow.Resize += value;
             remove => BaseWindow.Resize -= value;
         }
         
-        event EventHandler<EventArgs> IControlInternals.Load
+        event Action IControlInternals.Load
         {
             add => BaseWindow.Load += value;
             remove => BaseWindow.Load -= value;
         }
         
-        event EventHandler<KeyPressEventArgs> IControlInternals.KeyPress
+        event Action<TextInputEventArgs> IControlInternals.KeyPress
         {
-            add => BaseWindow.KeyPress += value;
-            remove => BaseWindow.KeyPress -= value;
+            add => BaseWindow.TextInput += value;
+            remove => BaseWindow.TextInput -= value;
         }
                 
-        event EventHandler<MouseWheelEventArgs> IControlInternals.MouseWheel
+        event Action<MouseWheelEventArgs> IControlInternals.MouseWheel
         {
             add => BaseWindow.MouseWheel += value;
             remove => BaseWindow.MouseWheel -= value;

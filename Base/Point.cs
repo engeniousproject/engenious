@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using OpenToolkit.Mathematics;
 
 namespace engenious
 {
@@ -131,7 +132,7 @@ namespace engenious
         /// </summary>
         /// <param name="col">The <see cref="System.Drawing.Point"/>.</param>
         /// <returns>The resulting <see cref="Point"/>.</returns>
-        public static implicit operator Point(System.Drawing.Point col)
+        public static implicit operator Point(Vector2i col)
         {
             return new Point(col.X, col.Y);
         }

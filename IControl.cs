@@ -1,5 +1,6 @@
 using System;
-using OpenTK.Platform;
+using OpenToolkit.Mathematics;
+using OpenToolkit.Windowing.Common;
 
 namespace engenious
 {
@@ -18,6 +19,20 @@ namespace engenious
         /// <param name="pt">The <see cref="Point"/> in screen coordinates.</param>
         /// <returns>The <see cref="Point"/> translated into client coordinates.</returns>
         Point PointToClient(Point pt);
+
+        /// <summary>
+        /// Calculates a <see cref="Vector2"/> in client coordinates to screen coordinates.
+        /// </summary>
+        /// <param name="pt">The <see cref="Vector2"/> in client coordinates.</param>
+        /// <returns>The <see cref="Vector2"/> translated into screen coordinates.</returns>
+        Vector2 Vector2ToScreen(Vector2 pt);
+
+        /// <summary>
+        /// Calculates a <see cref="Vector2"/> in screen coordinates to client coordinates.
+        /// </summary>
+        /// <param name="pt">The <see cref="Vector2"/> in screen coordinates.</param>
+        /// <returns>The <see cref="Vector2"/> translated into client coordinates.</returns>
+        Vector2 Vector2ToClient(Vector2 pt);
         
         /// <summary>
         /// Gets or sets a <see cref="Rectangle"/> for this control client area.
@@ -38,6 +53,11 @@ namespace engenious
         /// Gets or sets whether the mouse cursor is visible on this <see cref="IRenderingSurface"/>.
         /// </summary>
         bool CursorVisible { get; set; }
+        
+        /// <summary>
+        /// Gets or sets whether the mouse cursor is grabbed on this <see cref="IRenderingSurface"/>.
+        /// </summary>
+        bool CursorGrabbed { get; set; }
 
         /// <summary>
         /// Gets or sets whether the <see cref="IRenderingSurface"/> is visible.
@@ -52,6 +72,6 @@ namespace engenious
         /// <summary>
         /// Gets a representation of native surface handle for this <see cref="IRenderingSurface"/>.
         /// </summary>
-        IWindowInfo WindowInfo { get; }
+        INativeWindow WindowInfo { get; }
     }
 }

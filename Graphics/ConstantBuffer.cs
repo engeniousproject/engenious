@@ -1,5 +1,5 @@
 ﻿using System;
-using OpenTK.Graphics.OpenGL;
+using OpenToolkit.Graphics.OpenGL;
 using System.Runtime.InteropServices;
 using engenious.Helper;
 
@@ -8,22 +8,23 @@ namespace engenious.Graphics
     /// <summary>
     /// A constant buffer for sending data to the GPU.
     /// </summary>
-    public class ConstantBuffer
+    public class ConstantBuffer : GraphicsResource
     {
         internal int Ubo;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstantBuffer"/> class.
         /// </summary>
+        /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> the resource is allocated on.</param>
         /// <param name="size">The size of the <see cref="ConstantBuffer"/>.</param>
-        public ConstantBuffer(int size)
+        public ConstantBuffer(GraphicsDevice graphicsDevice, int size)
+            : base(graphicsDevice)
         {
-            using (Execute.OnUiContext)
-            {
-                Ubo = GL.GenBuffer();
-                GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
-                GL.BufferData(BufferTarget.UniformBuffer, new IntPtr(size), IntPtr.Zero, OpenTK.Graphics.OpenGL.BufferUsageHint.DynamicDraw);
-            }
+            GraphicsDevice = graphicsDevice;
+            GraphicsDevice.ValidateGraphicsThread();
+            Ubo = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
+            GL.BufferData(BufferTarget.UniformBuffer, new IntPtr(size), IntPtr.Zero, OpenToolkit.Graphics.OpenGL.BufferUsageHint.DynamicDraw);
         }
 
         /// <summary>
@@ -33,15 +34,13 @@ namespace engenious.Graphics
         /// <param name="size">The size to copy to the <see cref="ConstantBuffer"/>.</param>
         public unsafe void Update(IntPtr data, uint size)
         {
-            using (Execute.OnUiContext)
-            {
-                GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
-                var ptr = GL.MapBuffer(BufferTarget.UniformBuffer, BufferAccess.WriteOnly);
+            GraphicsDevice.ValidateGraphicsThread();
+            GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
+            var ptr = GL.MapBuffer(BufferTarget.UniformBuffer, BufferAccess.WriteOnly);
 
-                System.Runtime.CompilerServices.Unsafe.CopyBlock((void*) ptr, (void*) data, size);
-                //Buffer.BlockCopy(
-                GL.UnmapBuffer(BufferTarget.UniformBuffer);
-            }
+            System.Runtime.CompilerServices.Unsafe.CopyBlock((void*) ptr, (void*) data, size);
+            //Buffer.BlockCopy(
+            GL.UnmapBuffer(BufferTarget.UniformBuffer);
         }
 
         /// <summary>
@@ -51,15 +50,13 @@ namespace engenious.Graphics
         /// <typeparam name="T">The data type.</typeparam>
         public unsafe void Update<T>(T data) where T : struct
         {
-            using (Execute.OnUiContext)
-            {
-                GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
-                var ptr = GL.MapBuffer(BufferTarget.UniformBuffer, BufferAccess.WriteOnly);
+            GraphicsDevice.ValidateGraphicsThread();
+            GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
+            var ptr = GL.MapBuffer(BufferTarget.UniformBuffer, BufferAccess.WriteOnly);
 
-                System.Runtime.CompilerServices.Unsafe.Write((void*) ptr, data);
+            System.Runtime.CompilerServices.Unsafe.Write((void*) ptr, data);
 
-                GL.UnmapBuffer(BufferTarget.UniformBuffer);
-            }
+            GL.UnmapBuffer(BufferTarget.UniformBuffer);
         }
 
         /// <summary>
@@ -69,15 +66,13 @@ namespace engenious.Graphics
         /// <typeparam name="T">The data type.</typeparam>
         public unsafe void Update<T>(T[] data) where T : struct
         {
-            using (Execute.OnUiContext)
-            {
-                GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
-                var ptr = GL.MapBuffer(BufferTarget.UniformBuffer, BufferAccess.WriteOnly);
+            GraphicsDevice.ValidateGraphicsThread();
+            GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
+            var ptr = GL.MapBuffer(BufferTarget.UniformBuffer, BufferAccess.WriteOnly);
 
-                System.Runtime.CompilerServices.Unsafe.Write((void*) ptr, data);
+            System.Runtime.CompilerServices.Unsafe.Write((void*) ptr, data);
 
-                GL.UnmapBuffer(BufferTarget.UniformBuffer);
-            }
+            GL.UnmapBuffer(BufferTarget.UniformBuffer);
         }
     }
 }

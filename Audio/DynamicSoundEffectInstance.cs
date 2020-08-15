@@ -1,5 +1,5 @@
 ﻿using System;
-using OpenTK.Audio.OpenAL;
+using OpenToolkit.Audio.OpenAL;
 
 
 namespace engenious.Audio
@@ -46,7 +46,8 @@ namespace engenious.Audio
         public void Update()
         {
             int processedBuffers;
-            AL.GetSource(Sid,ALGetSourcei.BuffersProcessed,out processedBuffers);
+            
+            AL.GetSource(Sid, ALGetSourcei.BuffersProcessed, out processedBuffers);
             if (processedBuffers==0)
                 return;
 

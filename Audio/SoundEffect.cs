@@ -1,7 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.CompilerServices;
-using OpenTK.Audio.OpenAL;
+using OpenToolkit.Audio.OpenAL;
+using OpenToolkit.OpenAL;
 
 namespace engenious.Audio
 {
@@ -82,7 +83,7 @@ namespace engenious.Audio
         private void LoadStream(Stream stream, AudioFormat format)
         {
             //TODO: dynamic sound - buffer encapsulated
-            AL.GenBuffers(1, out Buffer);
+            AL.GenBuffers(1, ref Buffer);
             switch (format)
             {
                 case AudioFormat.Wav:
@@ -95,7 +96,8 @@ namespace engenious.Audio
                     }
                     break;
                 case AudioFormat.Ogg:
-                    using (var ogg = new OggStream(stream))
+                    using (var offsetedStream = new OffsetedStream(stream))
+                    using (var ogg = new OggStream(offsetedStream))
                     {
                         var bitsPerSample = 16;
                         var alFormat = GetSoundFormat(ogg.Reader.Channels, bitsPerSample);

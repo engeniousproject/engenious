@@ -86,6 +86,8 @@ namespace engenious.Input
         RightWin = WinRight,
         /// <summary>The menu key.</summary>
         Menu,
+        /// <summary>The command key.</summary>
+        Command,
 
         // Function keys (hopefully enough for most keyboards - mine has 26)
         // <keysymdef.h> on X11 reports up to 35 function keys.

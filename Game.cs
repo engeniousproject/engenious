@@ -1,10 +1,7 @@
-using System;
-using System.Drawing;
-using engenious.Graphics;
-using engenious.Helper;
-using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL4;
+using OpenToolkit.Mathematics;
+using OpenToolkit.Windowing.Common.Input;
+using OpenToolkit.Windowing.Desktop;
+using OpenToolkit.Windowing.GraphicsLibraryFramework;
 
 namespace engenious
 {
@@ -13,15 +10,17 @@ namespace engenious
     {
         private void CreateWindow()
         {
-            var baseWindow = new GameWindow(1280, 720,GraphicsMode.Default,"engenious Game Window",GameWindowFlags.Default,DisplayDevice.Default,0,0,ContextFlags);
-            GraphicsContext.ShareContexts = true;
+            var nativeWindowSettings = new NativeWindowSettings();
+            nativeWindowSettings.Flags = ContextFlags;
+            nativeWindowSettings.Size = new Vector2i(1024, 768);
+            var baseWindow = new GameWindow(GameWindowSettings.Default, nativeWindowSettings);
+            //GraphicsContext.ShareContexts = true;
             Window = new Window(baseWindow);
-            ConstructContext(baseWindow.WindowInfo, baseWindow.Context);
+            ConstructContext(baseWindow, baseWindow.Context);
 
-            CreateSharedContext(baseWindow.WindowInfo);
-            
-            baseWindow.Context.MakeCurrent(baseWindow.WindowInfo);
-            baseWindow.Context.LoadAll();
+            CreateSharedContext(baseWindow);
+
+            baseWindow.Context.MakeCurrent();
 
         }
 
@@ -42,7 +41,7 @@ namespace engenious
         /// Gets or sets an <see cref="Icon"/> associated with the rendering view.
         /// <remarks>This sets or gets the window icon, if the rendering view is a <see cref="Window"/>.</remarks>
         /// </summary>
-        public Icon Icon { get { return Window.Icon; } set { Window.Icon = value; } }
+        public WindowIcon Icon { get { return Window.Icon; } set { Window.Icon = value; } }
 
         /// <summary>
         /// Gets or sets a title associated with the rendering view.
@@ -65,7 +64,7 @@ namespace engenious
         /// <param name="framesPerSec">The frequency at which the rendering loop should run.</param>
         public void Run(double updatesPerSec, double framesPerSec)
         {
-            Window.BaseWindow.Run(updatesPerSec, framesPerSec);
+            Window.BaseWindow.Run();
         }
         
         /// <summary>

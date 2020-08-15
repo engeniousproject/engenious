@@ -547,38 +547,31 @@ namespace engenious
         /// Transforms multiple vectors by a given <see cref="Matrix"/>.
         /// </summary>
         /// <param name="count">The count of vectors to transform.</param>
-        /// <param name="positions">A pointer to the vectors to transform.</param>
         /// <param name="matrix">The <see cref="Matrix"/> to transform by.</param>
+        /// <param name="positions">A pointer to the vectors to transform.</param>
         /// <param name="output">A pointer to write the resulting vectors to.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void Transform(int count, Vector4d* positions, ref Matrix matrix, Vector4d* output)
+        public static unsafe void Transform(int count, ref Matrix matrix, Vector4d* positions, Vector4d* output)
         {
             for (var i = 0; i < count; i++, positions++, output++)
             {
-                *output = new Vector4d(
-                    (*positions).X * matrix.M11 + (*positions).Y * matrix.M12 + (*positions).Z * matrix.M13 + (*positions).W * matrix.M14,
-                    (*positions).X * matrix.M21 + (*positions).Y * matrix.M22 + (*positions).Z * matrix.M23 + (*positions).W * matrix.M24,
-                    (*positions).X * matrix.M31 + (*positions).Y * matrix.M32 + (*positions).Z * matrix.M33 + (*positions).W * matrix.M34,
-                    (*positions).X * matrix.M41 + (*positions).Y * matrix.M42 + (*positions).Z * matrix.M43 + (*positions).W * matrix.M44);//TODO: SIMD
+                *output = Transform(matrix, *positions);
             }
         }
 
         /// <summary>
         /// Transforms multiple vectors by a given <see cref="Matrix"/>.
         /// </summary>
-        /// <param name="positions">The vectors to transform.</param>
         /// <param name="matrix">The <see cref="Matrix"/> to transform by.</param>
+        /// <param name="positions">The vectors to transform.</param>
         /// <param name="output">An array to write the resulting vectors to.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Transform(Vector4d[] positions, ref Matrix matrix, Vector4d[] output)
+        public static void Transform(ref Matrix matrix, Vector4d[] positions, Vector4d[] output)
         {
             var index = 0;
-            foreach (var position in positions)//TODO: SIMD
+            foreach (var position in positions)
             {
-                output[index++] = new Vector4d(position.X * matrix.M11 + position.Y * matrix.M12 + position.Z * matrix.M13 + position.W * matrix.M14,
-                    position.X * matrix.M21 + position.Y * matrix.M22 + position.Z * matrix.M23 + position.W * matrix.M24,
-                    position.X * matrix.M31 + position.Y * matrix.M32 + position.Z * matrix.M33 + position.W * matrix.M34,
-                    position.X * matrix.M41 + position.Y * matrix.M42 + position.Z * matrix.M43 + position.W * matrix.M44);
+                output[index++] = Transform(matrix, position);
             }
         }
 
@@ -591,19 +584,18 @@ namespace engenious
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector4d Transform(Vector4d position, Quaternion quaternion)
         {
-            return Transform(position, Matrix.CreateFromQuaternion(quaternion));
+            return Transform(Matrix.CreateFromQuaternion(quaternion), position); //TODO: directly transform
         }
 
         /// <summary>
         /// Transforms a <see cref="Vector4d"/> by a given <see cref="Matrix"/>.
         /// </summary>
-        /// <param name="position">The <see cref="Vector4d"/> to transform.</param>
         /// <param name="matrix">The <see cref="Matrix"/> to transform by.</param>
+        /// <param name="position">The <see cref="Vector4d"/> to transform.</param>
         /// <returns>The transformed <see cref="Vector4d"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector4d Transform(Vector4d position, Matrix matrix)
+        public static Vector4d Transform(Matrix matrix, Vector4d position)
         {
-
             return new Vector4d(position.X * matrix.M11 + position.Y * matrix.M12 + position.Z * matrix.M13 + position.W * matrix.M14,
                 position.X * matrix.M21 + position.Y * matrix.M22 + position.Z * matrix.M23 + position.W * matrix.M24,
                 position.X * matrix.M31 + position.Y * matrix.M32 + position.Z * matrix.M33 + position.W * matrix.M34,
@@ -658,7 +650,7 @@ namespace engenious
         public override string ToString()
         {
             return
-                $"[{X.ToString(System.Globalization.NumberFormatInfo.InvariantInfo)}, {Y.ToString(System.Globalization.NumberFormatInfo.InvariantInfo)}, {Z.ToString(System.Globalization.NumberFormatInfo.InvariantInfo)}]";
+                $"[{X.ToString(System.Globalization.NumberFormatInfo.InvariantInfo)}, {Y.ToString(System.Globalization.NumberFormatInfo.InvariantInfo)}, {Z.ToString(System.Globalization.NumberFormatInfo.InvariantInfo)}, {W.ToString(System.Globalization.NumberFormatInfo.InvariantInfo)}]";
         }
 
     }

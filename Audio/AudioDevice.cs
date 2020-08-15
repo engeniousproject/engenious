@@ -1,4 +1,5 @@
-﻿using OpenTK.Audio;
+﻿using OpenToolkit.Audio.OpenAL;
+using OpenToolkit.OpenAL;
 
 namespace engenious.Audio
 {
@@ -7,21 +8,24 @@ namespace engenious.Audio
     /// </summary>
     public class AudioDevice : AudioResource
     {
-        internal AudioContext Context;
+        internal ALDevice Device;
+        internal ALContext Context;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AudioDevice"/> class.
         /// </summary>
         public AudioDevice()
         {
-            Context = new AudioContext();
-            Context.MakeCurrent();
+            Device = ALC.OpenDevice(null);
+            Context = ALC.CreateContext(Device, new ALContextAttributes(44100, 1, 2, null, null));
+            ALC.MakeContextCurrent(Context);
         }
 
         /// <inheritdoc />
         public override void Dispose()
         {
-            Context.Dispose();
+            ALC.DestroyContext(Context);
+            ALC.CloseDevice(Device);
             base.Dispose();
         }
     }

@@ -120,7 +120,7 @@ namespace engenious
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector2 Transform(Matrix matrix)
         {
-            return new Vector2((X * matrix.M11) + (Y * matrix.M21) + matrix.M41, (X * matrix.M12) + (Y * matrix.M22) + matrix.M42);
+            return new Vector2((X * matrix.M11) + (Y * matrix.M12) + matrix.M14, (X * matrix.M21) + (Y * matrix.M22) + matrix.M24);
         }
 
         /// <inheritdoc />
@@ -480,11 +480,11 @@ namespace engenious
         /// <summary>
         /// Transforms a <see cref="Vector2"/> by a given <see cref="Matrix"/>.
         /// </summary>
-        /// <param name="position">The <see cref="Vector2"/> to transform.</param>
         /// <param name="matrix">The <see cref="Matrix"/> to transform by.</param>
+        /// <param name="position">The <see cref="Vector2"/> to transform.</param>
         /// <returns>The transformed <see cref="Vector2"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2 Transform(Vector2 position, Matrix matrix)
+        public static Vector2 Transform(Matrix matrix, Vector2 position)
         {
             //{v1*x1+v2*y1+w1,v1*x2+v2*y2+w2,v1*x3+v2*y3+w3,v1*x4+v2*y4+w4}
             //{v1*x1+v2*x2+x4,v1*y1+v2*y2+y4,v1*z1+v2*z2+z4,v1*w1+v2*w2+w4}
@@ -495,33 +495,31 @@ namespace engenious
         /// Transforms multiple vectors by a given <see cref="Matrix"/>.
         /// </summary>
         /// <param name="count">The count of vectors to transform.</param>
-        /// <param name="positions">A pointer to the vectors to transform.</param>
         /// <param name="matrix">The <see cref="Matrix"/> to transform by.</param>
+        /// <param name="positions">A pointer to the vectors to transform.</param>
         /// <param name="output">A pointer to write the resulting vectors to.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void Transform(int count, Vector2* positions, ref Matrix matrix, Vector2* output)
+        public static unsafe void Transform(int count, ref Matrix matrix, Vector2* positions, Vector2* output)
         {
             for (var i = 0; i < count; i++, positions++, output++)
             {
-                *output = new Vector2(
-                    (float)((*positions).X * (double)matrix.M11 + (*positions).Y * (double)matrix.M21) + matrix.M41,
-                    (float)((*positions).X * (double)matrix.M12 + (*positions).Y * (double)matrix.M22) + matrix.M42);//TODO: SIMD
+                *output = Transform(matrix, *positions);//TODO: SIMD
             }
         }
 
         /// <summary>
         /// Transforms multiple vectors by a given <see cref="Matrix"/>.
         /// </summary>
-        /// <param name="positions">The vectors to transform.</param>
         /// <param name="matrix">The <see cref="Matrix"/> to transform by.</param>
+        /// <param name="positions">The vectors to transform.</param>
         /// <param name="output">An array to write the resulting vectors to.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Transform(Vector2[] positions, ref Matrix matrix, Vector2[] output)
+        public static void Transform(ref Matrix matrix, Vector2[] positions, Vector2[] output)
         {
             var index = 0;
             foreach (var position in positions)//TODO: SIMD
             {
-                output[index++] = new Vector2(position.X * matrix.M11 + position.Y * matrix.M21 + matrix.M41, position.X * matrix.M12 + position.Y * matrix.M22 + matrix.M42);
+                output[index++] = Transform(matrix, position);
             }
         }
 

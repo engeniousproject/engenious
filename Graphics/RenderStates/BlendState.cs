@@ -1,6 +1,6 @@
 ﻿using System;
 using engenious.Helper;
-using OpenTK.Graphics.OpenGL;
+using OpenToolkit.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
@@ -223,26 +223,24 @@ namespace engenious.Graphics
 
         private void ApplyColorWriteChannels()
         {
-            using (Execute.OnUiContext)
-            {
-                GL.ColorMask(
-                    (ColorWriteChannels & ColorWriteChannels.Red) != 0,
-                    (ColorWriteChannels & ColorWriteChannels.Green) != 0,
-                    (ColorWriteChannels & ColorWriteChannels.Blue) != 0,
-                    (ColorWriteChannels & ColorWriteChannels.Alpha) != 0);
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+
+            GL.ColorMask(
+                (ColorWriteChannels & ColorWriteChannels.Red) != 0,
+                (ColorWriteChannels & ColorWriteChannels.Green) != 0,
+                (ColorWriteChannels & ColorWriteChannels.Blue) != 0,
+                (ColorWriteChannels & ColorWriteChannels.Alpha) != 0);
         }
         private void ApplyColorWriteChannels(uint index)
         {
-            using (Execute.OnUiContext)
-            {
-                var colorWriteChannels = _colorWriteChannelList[index];
-                GL.ColorMask(index,
-                    (colorWriteChannels & ColorWriteChannels.Red) != 0,
-                    (colorWriteChannels & ColorWriteChannels.Green) != 0,
-                    (colorWriteChannels & ColorWriteChannels.Blue) != 0,
-                    (colorWriteChannels & ColorWriteChannels.Alpha) != 0);
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+
+            var colorWriteChannels = _colorWriteChannelList[index];
+            GL.ColorMask(index,
+                (colorWriteChannels & ColorWriteChannels.Red) != 0,
+                (colorWriteChannels & ColorWriteChannels.Green) != 0,
+                (colorWriteChannels & ColorWriteChannels.Blue) != 0,
+                (colorWriteChannels & ColorWriteChannels.Alpha) != 0);
         }
         
         /// <summary>
@@ -321,24 +319,22 @@ namespace engenious.Graphics
 
         private void ApplyBlends()
         {
-            using (Execute.OnUiContext)
-            {
-                GL.BlendFuncSeparate(
-                    (OpenTK.Graphics.OpenGL.BlendingFactorSrc) ColorSourceBlend,
-                    (OpenTK.Graphics.OpenGL.BlendingFactorDest) ColorDestinationBlend,
-                    (OpenTK.Graphics.OpenGL.BlendingFactorSrc) AlphaSourceBlend,
-                    (OpenTK.Graphics.OpenGL.BlendingFactorDest) AlphaDestinationBlend);
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+
+            GL.BlendFuncSeparate(
+                (OpenToolkit.Graphics.OpenGL.BlendingFactorSrc) ColorSourceBlend,
+                (OpenToolkit.Graphics.OpenGL.BlendingFactorDest) ColorDestinationBlend,
+                (OpenToolkit.Graphics.OpenGL.BlendingFactorSrc) AlphaSourceBlend,
+                (OpenToolkit.Graphics.OpenGL.BlendingFactorDest) AlphaDestinationBlend);
         }
 
         private void ApplyBlendFuncs()
         {
-            using (Execute.OnUiContext)
-            {
-                GL.BlendEquationSeparate(
-                    (OpenTK.Graphics.OpenGL.BlendEquationMode) ColorBlendFunction,
-                    (OpenTK.Graphics.OpenGL.BlendEquationMode) AlphaBlendFunction);
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+
+            GL.BlendEquationSeparate(
+                (OpenToolkit.Graphics.OpenGL.BlendEquationMode) ColorBlendFunction,
+                (OpenToolkit.Graphics.OpenGL.BlendEquationMode) AlphaBlendFunction);
         }
         
         internal void Bind(GraphicsDevice graphicsDevice)
@@ -349,60 +345,59 @@ namespace engenious.Graphics
         
         private void Apply()
         {
-            using (Execute.OnUiContext)
+            GraphicsDevice.ValidateGraphicsThread();
+
+            //TODO:(BlendFactor+MultisampleMask)?
+            var oldState = GraphicsDevice.BlendState;
+
+            if (oldState == null || oldState.ColorSourceBlend != ColorSourceBlend ||
+                oldState.ColorDestinationBlend != ColorDestinationBlend ||
+                oldState.AlphaSourceBlend != AlphaSourceBlend ||
+                oldState.AlphaDestinationBlend != AlphaDestinationBlend)
             {
-                //TODO:(BlendFactor+MultisampleMask)?
-                var oldState = GraphicsDevice.BlendState;
+                GL.BlendFuncSeparate(
+                    (OpenToolkit.Graphics.OpenGL.BlendingFactorSrc) ColorSourceBlend,
+                    (OpenToolkit.Graphics.OpenGL.BlendingFactorDest) ColorDestinationBlend,
+                    (OpenToolkit.Graphics.OpenGL.BlendingFactorSrc) AlphaSourceBlend,
+                    (OpenToolkit.Graphics.OpenGL.BlendingFactorDest) AlphaDestinationBlend);
+            }
 
-                if (oldState == null || oldState.ColorSourceBlend != ColorSourceBlend ||
-                    oldState.ColorDestinationBlend != ColorDestinationBlend ||
-                    oldState.AlphaSourceBlend != AlphaSourceBlend ||
-                    oldState.AlphaDestinationBlend != AlphaDestinationBlend)
-                {
-                    GL.BlendFuncSeparate(
-                        (OpenTK.Graphics.OpenGL.BlendingFactorSrc) ColorSourceBlend,
-                        (OpenTK.Graphics.OpenGL.BlendingFactorDest) ColorDestinationBlend,
-                        (OpenTK.Graphics.OpenGL.BlendingFactorSrc) AlphaSourceBlend,
-                        (OpenTK.Graphics.OpenGL.BlendingFactorDest) AlphaDestinationBlend);
-                }
+            if (oldState == null || oldState.ColorBlendFunction != ColorBlendFunction || oldState.AlphaBlendFunction != AlphaBlendFunction)
+                GL.BlendEquationSeparate((OpenToolkit.Graphics.OpenGL.BlendEquationMode) ColorBlendFunction,(OpenToolkit.Graphics.OpenGL.BlendEquationMode) AlphaBlendFunction);
 
-                if (oldState == null || oldState.ColorBlendFunction != ColorBlendFunction || oldState.AlphaBlendFunction != AlphaBlendFunction)
-                    GL.BlendEquationSeparate((OpenTK.Graphics.OpenGL.BlendEquationMode) ColorBlendFunction,(OpenTK.Graphics.OpenGL.BlendEquationMode) AlphaBlendFunction);
+            if (oldState == null || oldState.ColorWriteChannels != ColorWriteChannels)
+            {
+                GL.ColorMask((ColorWriteChannels & ColorWriteChannels.Red) != 0,
+                    (ColorWriteChannels & ColorWriteChannels.Green) != 0,
+                    (ColorWriteChannels & ColorWriteChannels.Blue) != 0,
+                    (ColorWriteChannels & ColorWriteChannels.Alpha) != 0);
+            }
 
-                if (oldState == null || oldState.ColorWriteChannels != ColorWriteChannels)
-                {
-                    GL.ColorMask((ColorWriteChannels & ColorWriteChannels.Red) != 0,
-                        (ColorWriteChannels & ColorWriteChannels.Green) != 0,
-                        (ColorWriteChannels & ColorWriteChannels.Blue) != 0,
-                        (ColorWriteChannels & ColorWriteChannels.Alpha) != 0);
-                }
+            if (oldState == null || oldState.ColorWriteChannels1 != ColorWriteChannels1)
+            {
+                GL.ColorMask(1,
+                    (ColorWriteChannels1 & ColorWriteChannels.Red) != 0,
+                    (ColorWriteChannels1 & ColorWriteChannels.Green) != 0,
+                    (ColorWriteChannels1 & ColorWriteChannels.Blue) != 0,
+                    (ColorWriteChannels1 & ColorWriteChannels.Alpha) != 0);
+            }
 
-                if (oldState == null || oldState.ColorWriteChannels1 != ColorWriteChannels1)
-                {
-                    GL.ColorMask(1,
-                        (ColorWriteChannels1 & ColorWriteChannels.Red) != 0,
-                        (ColorWriteChannels1 & ColorWriteChannels.Green) != 0,
-                        (ColorWriteChannels1 & ColorWriteChannels.Blue) != 0,
-                        (ColorWriteChannels1 & ColorWriteChannels.Alpha) != 0);
-                }
+            if (oldState == null || oldState.ColorWriteChannels2 != ColorWriteChannels2)
+            {
+                GL.ColorMask(2,
+                    (ColorWriteChannels2 & ColorWriteChannels.Red) != 0,
+                    (ColorWriteChannels2 & ColorWriteChannels.Green) != 0,
+                    (ColorWriteChannels2 & ColorWriteChannels.Blue) != 0,
+                    (ColorWriteChannels2 & ColorWriteChannels.Alpha) != 0);
+            }
 
-                if (oldState == null || oldState.ColorWriteChannels2 != ColorWriteChannels2)
-                {
-                    GL.ColorMask(2,
-                        (ColorWriteChannels2 & ColorWriteChannels.Red) != 0,
-                        (ColorWriteChannels2 & ColorWriteChannels.Green) != 0,
-                        (ColorWriteChannels2 & ColorWriteChannels.Blue) != 0,
-                        (ColorWriteChannels2 & ColorWriteChannels.Alpha) != 0);
-                }
-
-                if (oldState == null || oldState.ColorWriteChannels3 != ColorWriteChannels3)
-                {
-                    GL.ColorMask(3,
-                        (ColorWriteChannels3 & ColorWriteChannels.Red) != 0,
-                        (ColorWriteChannels3 & ColorWriteChannels.Green) != 0,
-                        (ColorWriteChannels3 & ColorWriteChannels.Blue) != 0,
-                        (ColorWriteChannels3 & ColorWriteChannels.Alpha) != 0);
-                }
+            if (oldState == null || oldState.ColorWriteChannels3 != ColorWriteChannels3)
+            {
+                GL.ColorMask(3,
+                    (ColorWriteChannels3 & ColorWriteChannels.Red) != 0,
+                    (ColorWriteChannels3 & ColorWriteChannels.Green) != 0,
+                    (ColorWriteChannels3 & ColorWriteChannels.Blue) != 0,
+                    (ColorWriteChannels3 & ColorWriteChannels.Alpha) != 0);
             }
         }
 

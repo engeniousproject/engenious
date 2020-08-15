@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using engenious.Helper;
-using OpenTK;
-using OpenTK.Input;
+using OpenToolkit.Windowing.Common;
 
 namespace engenious.Input
 {
@@ -11,22 +11,28 @@ namespace engenious.Input
     /// </summary>
     public static class Mouse
     {
-
         private static IRenderingSurface _window;
         private static float _deltaPrecise;
+        private static MouseScroll _scroll = default;
+
+        private static readonly int MouseButtonCount;
         static Mouse()
         {
-            if (!WrappingHelper.ValidateStructs<OpenTK.Input.MouseState,MouseState>())
-                throw new Exception("test");
+            //if (!WrappingHelper.ValidateStructs<OpenToolkit.Windowing.Common.Input.MouseState,MouseState>())
+            //    throw new Exception("test");
+
+            MouseButtonCount = Enum.GetValues(typeof(OpenToolkit.Windowing.Common.Input.MouseButton)).OfType<OpenToolkit.Windowing.Common.Input.MouseButton>().Select(x => (int)x)
+                .Max();
         }
 
         internal static void UpdateWindow<TControl>(TControl window)
             where TControl : class, IRenderingSurface
         {
             _window = window;
-            window.MouseWheel += delegate(object sender, MouseWheelEventArgs e)
+            window.MouseWheel += delegate(MouseWheelEventArgs e)
             {
-                _deltaPrecise-=(e.DeltaPrecise);
+                _scroll = new MouseScroll(_scroll.X + e.OffsetX, _scroll.Y + e.OffsetY);
+                _deltaPrecise -= e.OffsetX;
             };
         }
         
@@ -39,49 +45,64 @@ namespace engenious.Input
         {
             return GetState();
             //TODO multiple mice
-            /*OpenTK.Input.MouseState state = OpenTK.Input.Mouse.GetState(index);
-            MouseState actual = *(MouseState*)(&state);
-            
-            actual.X = _window.Mouse.X;
-            actual.Y = _window.Mouse.Y;
-            return actual;*/
+        }
 
+        private static MouseButton TranslateMouseButton(OpenToolkit.Windowing.Common.Input.MouseButton button)
+        {
+            return (MouseButton) button;
         }
 
         /// <summary>
         /// Gets the current raw mouse state.
         /// </summary>
         /// <returns>The current raw mouse state.</returns>
-        public static unsafe MouseState GetState()
+        public static MouseState GetState()
         {
-            var state = OpenTK.Input.Mouse.GetState();
-            var actual = *(MouseState*)(&state);
+            var state = _window.WindowInfo.MouseState;
+            var actual = new MouseState()
+                {IsConnected = true, Position = new Vector2(state.Position.X, state.Position.Y), Scroll = _scroll};
+            for (var i = 0; i < MouseButtonCount; i++)
+            {
+                var original = (OpenToolkit.Windowing.Common.Input.MouseButton) i;
+                if (state[original])
+                {
+                    actual.EnableBit(i);
+                }
+                
+            }
             return actual;
-
         }
 
         /// <summary>
         /// Gets the current mouse cursor state.
         /// </summary>
         /// <returns>The current mouse cursor state.</returns>
-        public static unsafe MouseState GetCursorState()
+        public static MouseState GetCursorState()
         {
-            var state = OpenTK.Input.Mouse.GetCursorState();
-            var actual = *(MouseState*)(&state);
+            var state = _window.WindowInfo.MouseState;
+            var actual = new MouseState()
+                {IsConnected = true, Position = new Vector2(state.Position.X, state.Position.Y), Scroll = _scroll};
+            for (var i = 0; i < MouseButtonCount; i++)
+            {
+                var original = (OpenToolkit.Windowing.Common.Input.MouseButton) i;
+                if (state[original])
+                {
+                    actual.EnableBit(i);
+                }
+                
+            }
             return actual;
         }
 
         /// <summary>
-        /// Sets the mouse position in screen coordinates.
+        /// Sets the mouse cursor position.
         /// </summary>
-        /// <param name="x">The x coordinate to move the mouse position to.</param>
-        /// <param name="y">The y coordinate to move the mouse position to.</param>
-        public static void SetPosition(double x, double y)
+        /// <param name="x">The x-component for the new cursor position.</param>
+        /// <param name="y">The y-component for the new cursor position.</param>
+        public static void SetPosition(float x, float y)
         {
-            var pt = _window.PointToScreen(new System.Drawing.Point((int)x, (int)y));
-            x = pt.X + (x - (int)x);
-            y = pt.Y + (y - (int)y);
-            OpenTK.Input.Mouse.SetPosition(x,y);
+            var pos = _window.Vector2ToScreen(new Vector2(x, y));
+            _window.WindowInfo.MousePosition = new OpenToolkit.Mathematics.Vector2(pos.X, pos.Y);
         }
     }
 }

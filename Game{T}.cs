@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Drawing;
 using engenious.Audio;
 using engenious.Content;
 using engenious.Graphics;
 using engenious.Helper;
-using OpenTK;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Platform;
+using OpenToolkit.Graphics.OpenGL;
+using OpenToolkit.Windowing.Common;
+using OpenToolkit.Windowing.Desktop;
 
 namespace engenious
 {
@@ -45,7 +43,7 @@ namespace engenious
         /// </summary>
         public event EventHandler Resized;
 
-        protected readonly GraphicsContextFlags ContextFlags;
+        protected readonly ContextFlags ContextFlags;
         protected IGraphicsContext _context;
         private readonly AudioDevice _audio;
 
@@ -55,10 +53,10 @@ namespace engenious
         protected Game()
         {
             _audio = new AudioDevice();
-            ContextFlags = GraphicsContextFlags.Default;
+            ContextFlags = ContextFlags.Default;
             
 #if DEBUG
-            ContextFlags |= GraphicsContextFlags.Debug;
+            ContextFlags |= ContextFlags.Debug;
 #endif
         }
 
@@ -67,12 +65,11 @@ namespace engenious
         /// </summary>
         /// <param name="windowInfo">The <see cref="IWindowInfo"/>.</param>
         /// <param name="context">The context.</param>
-        protected void ConstructContext(IWindowInfo windowInfo, IGraphicsContext context)
+        protected void ConstructContext(INativeWindow windowInfo, IGraphicsContext context)
         {
             _context = context;
 
-            _context.MakeCurrent(windowInfo);
-            (_context as IGraphicsContextInternal)?.LoadAll();
+            _context.MakeCurrent();
             
             GraphicsDevice = new GraphicsDevice(this, _context);
             
@@ -82,34 +79,47 @@ namespace engenious
         /// Creates a shared context for a given <see cref="IWindowInfo"/>.
         /// </summary>
         /// <param name="windowInfo">The <see cref="IWindowInfo"/>.</param>
-        protected void CreateSharedContext(IWindowInfo windowInfo)
+        protected void CreateSharedContext(NativeWindow windowInfo)
         {
             if (GraphicsDevice?.DriverVendor == null || GraphicsDevice.DriverVendor.IndexOf("amd", StringComparison.InvariantCultureIgnoreCase) != -1)
             {
-                var secondwindow = new GameWindow();
-                ThreadingHelper.Initialize(_context,secondwindow.WindowInfo, 0,0, ContextFlags);
+                // TODO: context sharing needs shared context
+                var secondwindow = new GameWindow(GameWindowSettings.Default, NativeWindowSettings.Default);
+                ThreadingHelper.Initialize(_context,secondwindow);
             }
             else
             {
-                ThreadingHelper.Initialize(_context,windowInfo, 0,0, ContextFlags);
+                ThreadingHelper.Initialize(_context,windowInfo);
             }
-            _context.MakeCurrent(windowInfo);
+            _context.MakeCurrent();
         }
-        void Window_FocusedChanged(object sender, EventArgs e)
+        void Window_FocusedChanged(FocusedChangedEventArgs e)
         {
-            if (Control.Focused)
-                Activated?.Invoke(this, e);
+            if (e.IsFocused)
+                Activated?.Invoke(this, EventArgs.Empty);
             else
-                Deactivated?.Invoke(this, e);
+                Deactivated?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnRenderFrame(GameTime gameTime)
+        {
+            ThreadingHelper.RunUiThread();
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+            Draw(gameTime);
+
+            GraphicsDevice.Present();
         }
 
         protected void InitializeControl(TControl control)
         {
             Control = control;
-            GraphicsDevice.Viewport = new Viewport(Control.ClientRectangle);
+            GraphicsDevice.Viewport = new Viewport(new Rectangle(new Point(), Control.ClientSize));
 
             Input.Mouse.UpdateWindow(Control);
+            Input.Keyboard.UpdateWindow(Control);
             
+            Content = new ContentManager(GraphicsDevice);
+            Components = new GameComponentCollection();
             
             Control.FocusedChanged += Window_FocusedChanged;
             Control.Closing += delegate
@@ -119,7 +129,7 @@ namespace engenious
 
             var gameTime = new GameTime(new TimeSpan(), new TimeSpan());
 
-            Control.UpdateFrame += delegate(object sender, FrameEventArgs e)
+            Control.UpdateFrame += delegate(FrameEventArgs e)
             {
                 Components.Sort();
 
@@ -129,18 +139,14 @@ namespace engenious
             };
             Control.RenderFrame += delegate
             {
-                ThreadingHelper.RunUiThread();
-                GraphicsDevice.Clear(Color.CornflowerBlue);
-                Draw(gameTime);
-
-                GraphicsDevice.Present();
+                OnRenderFrame(gameTime);
             };
-            Control.Resize += delegate(object sender, EventArgs e)
+            Control.Resize += delegate(ResizeEventArgs e)
             {
-                GraphicsDevice.Viewport = new Viewport(Control.ClientRectangle);
+                GraphicsDevice.Viewport = new Viewport(new Rectangle(new Point(), new Size(e.Width, e.Height)));
 
-                Resized?.Invoke(sender,e);
-                OnResize(e);
+                Resized?.Invoke(this, EventArgs.Empty);
+                OnResize(EventArgs.Empty);
             };
             Control.Load += delegate
             {
@@ -151,13 +157,10 @@ namespace engenious
             {
                 OnExiting(EventArgs.Empty);
             };
-            Control.KeyPress += delegate(object sender, KeyPressEventArgs e)
+            Control.KeyPress += delegate(TextInputEventArgs e)
             {
-                KeyPress?.Invoke(this, e.KeyChar);
+                KeyPress?.Invoke(this, (char)e.Unicode);
             };
-
-            Content = new ContentManager(GraphicsDevice);
-            Components = new GameComponentCollection();
         }
         
         /// <summary>
@@ -212,14 +215,17 @@ namespace engenious
         /// </summary>
         public bool IsMouseVisible
         {
-            get
-            {
-                return Control.CursorVisible;
-            }
-            set
-            {
-                Control.CursorVisible = value;
-            }
+            get => Control.CursorVisible;
+            set => Control.CursorVisible = value;
+        }
+        
+        /// <summary>
+        /// Gets or sets whether the mouse cursor is grabbed while on the rendering view.
+        /// </summary>
+        public bool IsCursorGrabbed
+        {
+            get => Control.CursorGrabbed;
+            set => Control.CursorGrabbed = value;
         }
 
         /// <summary>
