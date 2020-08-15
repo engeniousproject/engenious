@@ -10,7 +10,7 @@
         <DocumentationFile>$(BaseIntermediateOutputPath)/engenious.xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="engenious.OpenTK" Version="4.0.0.1-pre" PrivateAssets="compile" />
+        <PackageReference Include="engenious.OpenTK" Version="4.0.0.2-pre" PrivateAssets="compile" />
 
 
         <PackageReference Include="LitGit" Version="0.2.0.11-alpha" PrivateAssets="all" />

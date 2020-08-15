@@ -21,13 +21,15 @@ namespace engenious.Input
         /// <returns>The current gamepad state of the gamepad specified by <paramref name="index"/>.</returns>
         public static unsafe GamePadState GetState(int index = 0)
         {
-            throw new NotSupportedException();
-            /*var state = _window.WindowInfo.JoystickStates[index];
-            
+            var state = _window.WindowInfo.JoystickStates[index];
+            var actual = new GamePadState();
+            if (!state.IsConnected)
+                return actual;
+            actual.SetConnected(true);
 
-            var actual = *(GamePadState*)&state;
-            //TODO:actual.ThumbSticks.Left = new Vector2(Math.M
-            return actual;*/
+            throw new NotSupportedException(); // TODO: implement
+            
+            return actual;
         }
     }
 }
