@@ -548,52 +548,46 @@ namespace engenious
         /// <summary>
         /// Transforms a <see cref="Vector3"/> by a given <see cref="Matrix"/>.
         /// </summary>
-        /// <param name="position">The <see cref="Vector3"/> to transform.</param>
         /// <param name="matrix">The <see cref="Matrix"/> to transform by.</param>
+        /// <param name="position">The <see cref="Vector3"/> to transform.</param>
         /// <returns>The transformed <see cref="Vector3"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector3 Transform(Vector3 position, Matrix matrix)
+        public static Vector3 Transform(Matrix matrix, Vector3 position)
         {
-            return new Vector3(position.X * matrix.M11 + position.Y * matrix.M21 + position.Z * matrix.M31 + matrix.M41,
-                position.X * matrix.M12 + position.Y * matrix.M22 + position.Z * matrix.M32 + matrix.M42,
-                position.X * matrix.M13 + position.Y * matrix.M23 + position.Z * matrix.M33 + matrix.M43);
+            return new Vector3(position.X * matrix.M11 + position.Y * matrix.M12 + position.Z * matrix.M13 + matrix.M14,
+                position.X * matrix.M21 + position.Y * matrix.M22 + position.Z * matrix.M23 + matrix.M24,
+                position.X * matrix.M31 + position.Y * matrix.M32 + position.Z * matrix.M33 + matrix.M34);
         }
         
         /// <summary>
         /// Transforms multiple vectors by a given <see cref="Matrix"/>.
         /// </summary>
         /// <param name="count">The count of vectors to transform.</param>
-        /// <param name="positions">A pointer to the vectors to transform.</param>
         /// <param name="matrix">The <see cref="Matrix"/> to transform by.</param>
+        /// <param name="positions">A pointer to the vectors to transform.</param>
         /// <param name="output">A pointer to write the resulting vectors to.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void Transform(int count, Vector3* positions, ref Matrix matrix, Vector3* output)
+        public static unsafe void Transform(int count, ref Matrix matrix, Vector3* positions, Vector3* output)
         {
             for (var i = 0; i < count; i++, positions++, output++)
             {
-                *output = new Vector3(
-                    (*positions).X * matrix.M11 + (*positions).Y * matrix.M21 + (*positions).Z * matrix.M31 + matrix.M41,
-                    (*positions).X * matrix.M12 + (*positions).Y * matrix.M22 + (*positions).Z * matrix.M32 + matrix.M42,
-                    (*positions).X * matrix.M13 + (*positions).Y * matrix.M23 + (*positions).Z * matrix.M33 + matrix.M43);//TODO: SIMD
+                *output = Transform(matrix, *positions);
             }
         }
 
         /// <summary>
         /// Transforms multiple vectors by a given <see cref="Matrix"/>.
         /// </summary>
-        /// <param name="positions">The vectors to transform.</param>
         /// <param name="matrix">The <see cref="Matrix"/> to transform by.</param>
+        /// <param name="positions">The vectors to transform.</param>
         /// <param name="output">An array to write the resulting vectors to.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Transform(Vector3[] positions, ref Matrix matrix, Vector3[] output)
+        public static void Transform(ref Matrix matrix, Vector3[] positions, Vector3[] output)
         {
             var index = 0;
-            foreach (var position in positions)//TODO: SIMD
+            foreach (var position in positions)
             {
-                output[index++] = new Vector3(
-                    position.X * matrix.M11 + position.Y * matrix.M21 + position.Z * matrix.M31 + matrix.M41,
-                    position.X * matrix.M12 + position.Y * matrix.M22 + position.Z * matrix.M32 + matrix.M42,
-                    position.X * matrix.M13 + position.Y * matrix.M23 + position.Z * matrix.M33 + matrix.M43);
+                output[index++] = Transform(matrix, position);
             }
         }
 
@@ -606,7 +600,7 @@ namespace engenious
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 Transform(Vector3 position, Quaternion quaternion)
         {
-            return Transform(position, Matrix.CreateFromQuaternion(quaternion));
+            return Transform(Matrix.CreateFromQuaternion(quaternion), position); //TODO: directly transform
         }
 
         /// <summary>

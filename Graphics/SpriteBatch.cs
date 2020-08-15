@@ -461,8 +461,9 @@ namespace engenious.Graphics
             _batcher.SamplerState = _samplerState;
 
             var projection = Matrix.CreateOrthographicOffCenter(0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 0, 0, -1);
-
+            
             _worldViewProj.SetValue(projection * _matrix);
+            
             _batcher.End(_effect);
 
 

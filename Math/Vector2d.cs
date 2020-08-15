@@ -2,7 +2,6 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using OpenTK;
 using Fast = System.Numerics;
 // ReSharper disable CompareOfdoublesByEqualityOperator
 namespace engenious
@@ -121,7 +120,7 @@ namespace engenious
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Vector2d Transform(Matrix matrix)
         {
-            return new Vector2d((X * matrix.M11) + (Y * matrix.M21) + matrix.M41, (X * matrix.M12) + (Y * matrix.M22) + matrix.M42);
+            return new Vector2d((X * matrix.M11) + (Y * matrix.M12) + matrix.M14, (X * matrix.M21) + (Y * matrix.M22) + matrix.M24);
         }
 
         /// <inheritdoc />
@@ -445,48 +444,46 @@ namespace engenious
         /// <summary>
         /// Transforms a <see cref="Vector2d"/> by a given <see cref="Matrix"/>.
         /// </summary>
-        /// <param name="position">The <see cref="Vector2d"/> to transform.</param>
         /// <param name="matrix">The <see cref="Matrix"/> to transform by.</param>
+        /// <param name="position">The <see cref="Vector2d"/> to transform.</param>
         /// <returns>The transformed <see cref="Vector2d"/>.</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Vector2d Transform(Vector2d position, Matrix matrix)
+        public static Vector2d Transform(Matrix matrix, Vector2d position)
         {
             //{v1*x1+v2*y1+w1,v1*x2+v2*y2+w2,v1*x3+v2*y3+w3,v1*x4+v2*y4+w4}
             //{v1*x1+v2*x2+x4,v1*y1+v2*y2+y4,v1*z1+v2*z2+z4,v1*w1+v2*w2+w4}
-            return new Vector2d(position.X * matrix.M11 + position.Y * matrix.M21 + matrix.M41, position.X * matrix.M12 + position.Y * matrix.M22 + matrix.M42);//TODO: SIMD
+            return new Vector2d(position.X * matrix.M11 + position.Y * matrix.M12 + matrix.M14, position.X * matrix.M21 + position.Y * matrix.M22 + matrix.M24);//TODO: SIMD
         }
 
         /// <summary>
         /// Transforms multiple vectors by a given <see cref="Matrix"/>.
         /// </summary>
         /// <param name="count">The count of vectors to transform.</param>
-        /// <param name="positions">A pointer to the vectors to transform.</param>
         /// <param name="matrix">The <see cref="Matrix"/> to transform by.</param>
+        /// <param name="positions">A pointer to the vectors to transform.</param>
         /// <param name="output">A pointer to write the resulting vectors to.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void Transform(int count, Vector2d* positions, ref Matrix matrix, Vector2d* output)
+        public static unsafe void Transform(int count, ref Matrix matrix, Vector2d* positions, Vector2d* output)
         {
             for (var i = 0; i < count; i++, positions++, output++)
             {
-                *output = new Vector2d(
-                    ((*positions).X * matrix.M11 + (*positions).Y * matrix.M21) + matrix.M41,
-                    ((*positions).X * matrix.M12 + (*positions).Y * matrix.M22) + matrix.M42);//TODO: SIMD
+                *output = Transform(matrix, *positions);//TODO: SIMD
             }
         }
 
         /// <summary>
         /// Transforms multiple vectors by a given <see cref="Matrix"/>.
         /// </summary>
-        /// <param name="positions">The vectors to transform.</param>
         /// <param name="matrix">The <see cref="Matrix"/> to transform by.</param>
+        /// <param name="positions">The vectors to transform.</param>
         /// <param name="output">An array to write the resulting vectors to.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Transform(Vector2d[] positions, ref Matrix matrix, Vector2d[] output)
+        public static void Transform(ref Matrix matrix, Vector2d[] positions, Vector2d[] output)
         {
             var index = 0;
             foreach (var position in positions)//TODO: SIMD
             {
-                output[index++] = new Vector2d(position.X * matrix.M11 + position.Y * matrix.M21 + matrix.M41, position.X * matrix.M12 + position.Y * matrix.M22 + matrix.M42);
+                output[index++] = Transform(matrix, position);
             }
         }
         

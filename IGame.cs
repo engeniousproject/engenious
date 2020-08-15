@@ -43,6 +43,11 @@ namespace engenious
         bool IsMouseVisible { get; set; }
 
         /// <summary>
+        /// Gets or sets whether the mouse cursor is grabbed while on the rendering view.
+        /// </summary>
+        bool IsCursorGrabbed { get; set; }
+
+        /// <summary>
         /// Gets whether the rendering view is currently in focus.
         /// </summary>
         bool IsActive { get; }

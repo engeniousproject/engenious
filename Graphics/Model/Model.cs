@@ -59,7 +59,7 @@ namespace engenious.Graphics
             if (parent == null)
                 node.GlobalTransform = node.LocalTransform;
             else
-                node.GlobalTransform = parent.GlobalTransform*node.LocalTransform;
+                node.GlobalTransform = parent.GlobalTransform * node.LocalTransform;
 
             foreach (var child in node.Children)
             {
@@ -98,7 +98,7 @@ namespace engenious.Graphics
             {
                 pass.Apply();
                 
-                effect.World = Transform*node.GlobalTransform*node.Transformation;
+                effect.World = Transform*node.GlobalTransform * node.Transformation;
 
                 foreach (var mesh in node.Meshes)
                 {

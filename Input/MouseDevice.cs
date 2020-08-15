@@ -5,26 +5,26 @@
     /// </summary>
     public class MouseDevice
     {
-        private readonly OpenTK.Input.MouseDevice _dev;
+        private readonly IRenderingSurface _surface;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MouseDevice"/> class.
         /// </summary>
         /// <param name="dev">The underlying mouse device.</param>
-        public MouseDevice(OpenTK.Input.MouseDevice dev)
+        public MouseDevice(IRenderingSurface surface)
         {
-            _dev = dev;
+            _surface = surface;
         }
 
         /// <summary>
         /// Gets the mouse x cursor position.
         /// </summary>
-        public int X => _dev.X;
+        public int X => (int)_surface.WindowInfo.MousePosition.X;
         
         /// <summary>
         /// Gets the mouse y cursor position.
         /// </summary>
-        public int Y => _dev.Y;
+        public int Y => (int)_surface.WindowInfo.MousePosition.Y;
     }
 }
 

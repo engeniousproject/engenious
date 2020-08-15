@@ -1,5 +1,6 @@
 ﻿using System;
-using OpenTK.Audio.OpenAL;
+using OpenToolkit.Audio.OpenAL;
+using OpenToolkit.OpenAL;
 
 namespace engenious.Audio
 {
@@ -168,20 +169,20 @@ namespace engenious.Audio
             var right = Vector3.Cross(forward, listener.Up);
             var up = Vector3.Cross(right,forward);
             orientation.M11 = right.X;
-            orientation.M12 = right.Y;
-            orientation.M13 = right.Z;
-            orientation.M21 = up.X;
+            orientation.M21 = right.Y;
+            orientation.M31 = right.Z;
+            orientation.M12 = up.X;
             orientation.M22 = up.Y;
-            orientation.M23 = up.Z;
-            orientation.M31 = -forward.X;
-            orientation.M32 = -forward.Y;
+            orientation.M32 = up.Z;
+            orientation.M13 = -forward.X;
+            orientation.M23 = -forward.Y;
             orientation.M33 = -forward.Z;
 
             // set up our final position and velocity according to orientation of listener
             var finalPos = new Vector3(x + posOffset.X, y + posOffset.Y, z + posOffset.Z);
-            finalPos = Vector3.Transform(finalPos, orientation);
+            finalPos = Vector3.Transform(orientation, finalPos);
             var finalVel = emitter.Velocity;
-            finalVel = Vector3.Transform(finalVel, orientation);
+            finalVel = Vector3.Transform(orientation, finalVel);
 
             // set the position based on relative positon
             AL.Source(Sid, ALSource3f.Position, finalPos.X, finalPos.Y, finalPos.Z);

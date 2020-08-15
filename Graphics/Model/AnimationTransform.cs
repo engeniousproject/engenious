@@ -46,17 +46,17 @@
         {
             var res = Matrix.CreateFromQuaternion(Rotation.X, Rotation.Y, Rotation.Z, Rotation.W);
             res.M11 *= Scale.X;
-            res.M12 *= Scale.X;
-            res.M13 *= Scale.X;
-            res.M21 *= Scale.Y;
+            res.M21 *= Scale.X;
+            res.M31 *= Scale.X;
+            res.M12 *= Scale.Y;
             res.M22 *= Scale.Y;
-            res.M23 *= Scale.Y;
-            res.M31 *= Scale.Z;
-            res.M32 *= Scale.Z;
+            res.M32 *= Scale.Y;
+            res.M13 *= Scale.Z;
+            res.M23 *= Scale.Z;
             res.M33 *= Scale.Z;
-            res.M41 = Location.X;
-            res.M42 = Location.Y;
-            res.M43 = Location.Z;
+            res.M14 = Location.X;
+            res.M24 = Location.Y;
+            res.M34 = Location.Z;
             return res;
         }
 
@@ -93,7 +93,7 @@
         /// <returns>The transformed <see cref="AnimationTransform"/>.</returns>
         public static AnimationTransform Transform(AnimationTransform t,Matrix transformation)
         {
-            return new AnimationTransform(string.Empty,Vector3.Transform(t.Location,transformation),
+            return new AnimationTransform(string.Empty,Vector3.Transform(transformation, t.Location),
                 t.Scale,
                 t.Rotation);
         }

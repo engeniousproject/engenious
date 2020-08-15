@@ -10,7 +10,7 @@ namespace engenious.Content.Serialization
     /// Content type reader to load <see cref="Effect"/> instances.
     /// </summary>
     [ContentTypeReader(typeof(Effect))]
-    public class EffectTypeReader:ContentTypeReader<Effect>
+    public class EffectTypeReader : ContentTypeReader<Effect>
     {
         private static Dictionary<string, Type> _effectTypes;
 
@@ -31,7 +31,7 @@ namespace engenious.Content.Serialization
                 _cachedAssemblies.Add(asm);
                 if (!asm.IsDynamic)
                 {
-                    Type[] exportedTypes = null;
+                    Type[]? exportedTypes = null;
                     try
                     {
                         exportedTypes = asm.GetExportedTypes();
@@ -121,7 +121,7 @@ namespace engenious.Content.Serialization
 
                         if (!_effectTypes.TryGetValue(customType.FullName + "+" + customTypeName, out var techniqueType))
                             techniqueType = _effectTypes[effectType.FullName + "+" + customTypeName];
-                        technique = (EffectTechnique) Activator.CreateInstance(techniqueType,techniqueName);
+                        technique = (EffectTechnique) Activator.CreateInstance(techniqueType, techniqueName);
                     }
                     catch (Exception)
                     {
@@ -142,7 +142,7 @@ namespace engenious.Content.Serialization
                             string customTypeName = technique.GetType().FullName + "+" + passName + "Impl";
 
                             var passType = _effectTypes[customTypeName];
-                            pass = (EffectPass) Activator.CreateInstance(passType,passName);
+                            pass = (EffectPass) Activator.CreateInstance(passType, manager.GraphicsDevice, passName);
                         }
                         catch (Exception)
                         {
@@ -150,7 +150,7 @@ namespace engenious.Content.Serialization
                         }
                     }
                     if (pass == null)
-                        pass = new EffectPass(passName);
+                        pass = new EffectPass(manager.GraphicsDevice, passName);
                     pass.BlendState = reader.Read<BlendState>(manager);
                     pass.DepthStencilState = reader.Read<DepthStencilState>(manager);
                     pass.RasterizerState = reader.Read<RasterizerState>(manager);

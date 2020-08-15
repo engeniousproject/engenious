@@ -102,8 +102,8 @@
             source.X = (((source.X - X) / Width) * 2f) - 1f;
             source.Y = -((((source.Y - Y) / Height) * 2f) - 1f);
             source.Z = (source.Z - MinDepth) / (MaxDepth - MinDepth);
-            var vector = Vector3.Transform(source, matrix);
-            var a = (((source.X * matrix.M14) + (source.Y * matrix.M24)) + (source.Z * matrix.M34)) + matrix.M44;
+            var vector = Vector3.Transform(matrix, source);
+            var a = (((source.X * matrix.M41) + (source.Y * matrix.M42)) + (source.Z * matrix.M43)) + matrix.M44;
             //float a = (((source.X * matrix.M41) + (source.Y * matrix.M42)) + (source.Z * matrix.M43)) + matrix.M44;
             vector.X = vector.X / a;
             vector.Y = vector.Y / a;
@@ -134,8 +134,8 @@
         public Vector3 Project(Vector3 source, Matrix matrix)
         {
 
-            var vector = Vector3.Transform(source, matrix);
-            var a = (((source.X * matrix.M41) + (source.Y * matrix.M42)) + (source.Z * matrix.M43)) + matrix.M44;
+            var vector = Vector3.Transform(matrix, source);
+            var a = (((source.X * matrix.M14) + (source.Y * matrix.M24)) + (source.Z * matrix.M34)) + matrix.M44;
 
             vector.X = vector.X / a;
             vector.Y = vector.Y / a;
@@ -157,7 +157,7 @@
         /// <returns>The <see cref="Vector3"/> in screen space.</returns>
         public Vector3 Project(Vector3 source, Matrix projection, Matrix view, Matrix world)
         {
-            return Project(source, world * view * projection);
+            return Project(source, projection * view * world);
 
         }
 

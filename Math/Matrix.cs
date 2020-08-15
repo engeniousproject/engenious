@@ -23,22 +23,22 @@ namespace engenious
         /// The element in the first row and second column.
         /// </summary>
         [FieldOffset(4)]
-        public float M12;
+        public float M21;
         /// <summary>
         /// The element in the first row and third column.
         /// </summary>
         [FieldOffset(8)]
-        public float M13;
+        public float M31;
         /// <summary>
         /// The element in the first row and fourth column.
         /// </summary>
         [FieldOffset(12)]
-        public float M14;
+        public float M41;
         /// <summary>
         /// The element in the second row and first column.
         /// </summary>
         [FieldOffset(16)]
-        public float M21;
+        public float M12;
         /// <summary>
         /// The element in the second row and second column.
         /// </summary>
@@ -48,23 +48,23 @@ namespace engenious
         /// The element in the second row and third column.
         /// </summary>
         [FieldOffset(24)]
-        public float M23;
+        public float M32;
         /// <summary>
         /// The element in the second row and fourth column.
         /// </summary>
         [FieldOffset(28)]
-        public float M24;
+        public float M42;
 
         /// <summary>
         /// The element in the third row and first column.
         /// </summary>
         [FieldOffset(32)]
-        public float M31;
+        public float M13;
         /// <summary>
         /// The element in the third row and second column.
         /// </summary>
         [FieldOffset(36)]
-        public float M32;
+        public float M23;
         /// <summary>
         /// The element in the third row and third column.
         /// </summary>
@@ -74,23 +74,23 @@ namespace engenious
         /// The element in the third row and fourth column.
         /// </summary>
         [FieldOffset(44)]
-        public float M34;
+        public float M43;
 
         /// <summary>
         /// The element in the fourth row and first column.
         /// </summary>
         [FieldOffset(48)]
-        public float M41;
+        public float M14;
         /// <summary>
         /// The element in the fourth row and second column.
         /// </summary>
         [FieldOffset(52)]
-        public float M42;
+        public float M24;
         /// <summary>
         /// The element in the fourth row and third column.
         /// </summary>
         [FieldOffset(56)]
-        public float M43;
+        public float M34;
         /// <summary>
         /// The element in the fourth row and fourth column.
         /// </summary>
@@ -185,12 +185,12 @@ namespace engenious
         /// </summary>
         public Vector3 Translation
         {
-            get{ return new Vector3(M41, M42, M43); }
+            get => new Vector3(M41, M42, M43);
             set
             {
-                M41 = value.X;
-                M42 = value.Y;
-                M43 = value.Z;
+                M14 = value.X;
+                M24 = value.Y;
+                M34 = value.Z;
             }
         }
 
@@ -199,7 +199,7 @@ namespace engenious
         /// </summary>
         public Vector4 Column0
         {
-            get { return new Vector4(Row0.X, Row1.X, Row2.X, Row3.X); }
+            get => new Vector4(Row0.X, Row1.X, Row2.X, Row3.X);
             set
             {
                 Row0.X = value.X;
@@ -214,7 +214,7 @@ namespace engenious
         /// </summary>
         public Vector4 Column1
         {
-            get { return new Vector4(Row0.Y, Row1.Y, Row2.Y, Row3.Y); }
+            get => new Vector4(Row0.Y, Row1.Y, Row2.Y, Row3.Y);
             set
             {
                 Row0.Y = value.X;
@@ -229,7 +229,7 @@ namespace engenious
         /// </summary>
         public Vector4 Column2
         {
-            get { return new Vector4(Row0.Z, Row1.Z, Row2.Z, Row3.Z); }
+            get => new Vector4(Row0.Z, Row1.Z, Row2.Z, Row3.Z);
             set
             {
                 Row0.Z = value.X;
@@ -244,7 +244,7 @@ namespace engenious
         /// </summary>
         public Vector4 Column3
         {
-            get { return new Vector4(Row0.W, Row1.W, Row2.W, Row3.W); }
+            get => new Vector4(Row0.W, Row1.W, Row2.W, Row3.W);
             set
             {
                 Row0.W = value.X;
@@ -257,12 +257,12 @@ namespace engenious
         /// <summary>
         /// Gets the determinant of the <see cref="Matrix"/>.
         /// </summary>
-        public float Determinant =>   M11 * M22 * M33 * M44 - M11 * M22 * M34 * M43 + M11 * M23 * M34 * M42 - M11 * M23 * M32 * M44
-                                    + M11 * M24 * M32 * M43 - M11 * M24 * M33 * M42 - M12 * M23 * M34 * M41 + M12 * M23 * M31 * M44
-                                    - M12 * M24 * M31 * M43 + M12 * M24 * M33 * M41 - M12 * M21 * M33 * M44 + M12 * M21 * M34 * M43
-                                    + M13 * M24 * M31 * M42 - M13 * M24 * M32 * M41 + M13 * M21 * M32 * M44 - M13 * M21 * M34 * M42
-                                    + M13 * M22 * M34 * M41 - M13 * M22 * M31 * M44 - M14 * M21 * M32 * M43 + M14 * M21 * M33 * M42
-                                    - M14 * M22 * M33 * M41 + M14 * M22 * M31 * M43 - M14 * M23 * M31 * M42 + M14 * M23 * M32 * M41;
+        public float Determinant =>   M11 * M22 * M33 * M44 - M11 * M22 * M43 * M34 + M11 * M32 * M43 * M24 - M11 * M32 * M23 * M44
+                                    + M11 * M42 * M23 * M34 - M11 * M42 * M33 * M24 - M21 * M32 * M43 * M14 + M21 * M32 * M13 * M44
+                                    - M21 * M42 * M13 * M34 + M21 * M42 * M33 * M14 - M21 * M12 * M33 * M44 + M21 * M12 * M43 * M34
+                                    + M31 * M42 * M13 * M24 - M31 * M42 * M23 * M14 + M31 * M12 * M23 * M44 - M31 * M12 * M43 * M24
+                                    + M31 * M22 * M43 * M14 - M31 * M22 * M13 * M44 - M41 * M12 * M23 * M34 + M41 * M12 * M33 * M24
+                                    - M41 * M22 * M33 * M14 + M41 * M22 * M13 * M34 - M41 * M32 * M13 * M24 + M41 * M32 * M23 * M14;
 
         /// <summary>
         /// Gets or sets an element in a specific row and column.
@@ -276,15 +276,13 @@ namespace engenious
             {
                 if (rowIndex < 0 || columnIndex < 0 || rowIndex >= 4 || columnIndex >= 4)
                     throw new IndexOutOfRangeException();
-                fixed(float* ptr = items)
-                    return ptr[rowIndex + columnIndex * 4];
+                return items[rowIndex * 4 + columnIndex];
             }
             set
             {
                 if (rowIndex < 0 || columnIndex < 0 || rowIndex >= 4 || columnIndex >= 4)
                     throw new IndexOutOfRangeException();
-                fixed(float* ptr = items)
-                    ptr[rowIndex + columnIndex * 4] = value;
+                items[rowIndex * 4 + columnIndex] = value;
             }
         }
 
@@ -299,15 +297,13 @@ namespace engenious
             {
                 if (index < 0 || index >= 16)
                     throw new IndexOutOfRangeException();
-                fixed(float* ptr = items)
-                    return ptr[index];
+                return items[index];
             }
             set
             {
                 if (index < 0 || index >= 16)
                     throw new IndexOutOfRangeException();
-                fixed(float* ptr = items)
-                    ptr[index] = value;
+                items[index] = value;
             }
         }
 
@@ -316,10 +312,7 @@ namespace engenious
         /// </summary>
         public void Transpose()
         {
-            this = new Matrix(M11, M12, M13, M14,
-                M21, M22, M23, M24,
-                M31, M32, M33, M34,
-                M41, M42, M43, M44);
+            this = Transposed();
         }
 
         /// <summary>
@@ -329,34 +322,20 @@ namespace engenious
         public Matrix Transposed()
         {
             return new Matrix(M11, M12, M13, M14,
-                M21, M22, M23, M24,
-                M31, M32, M33, M34,
-                M41, M42, M43, M44);
+                              M21, M22, M23, M24,
+                              M31, M32, M33, M34,
+                              M41, M42, M43, M44);
         }
 
         /// <inheritdoc />
         public override int GetHashCode()
         {
-            unchecked
-            {
-                var hashCode = M11.GetHashCode();
-                hashCode = (hashCode * 397) ^ M12.GetHashCode();
-                hashCode = (hashCode * 397) ^ M13.GetHashCode();
-                hashCode = (hashCode * 397) ^ M14.GetHashCode();
-                hashCode = (hashCode * 397) ^ M21.GetHashCode();
-                hashCode = (hashCode * 397) ^ M22.GetHashCode();
-                hashCode = (hashCode * 397) ^ M23.GetHashCode();
-                hashCode = (hashCode * 397) ^ M24.GetHashCode();
-                hashCode = (hashCode * 397) ^ M31.GetHashCode();
-                hashCode = (hashCode * 397) ^ M32.GetHashCode();
-                hashCode = (hashCode * 397) ^ M33.GetHashCode();
-                hashCode = (hashCode * 397) ^ M34.GetHashCode();
-                hashCode = (hashCode * 397) ^ M41.GetHashCode();
-                hashCode = (hashCode * 397) ^ M42.GetHashCode();
-                hashCode = (hashCode * 397) ^ M43.GetHashCode();
-                hashCode = (hashCode * 397) ^ M44.GetHashCode();
-                return hashCode;
-            }
+            return HashCode.Combine(
+                HashCode.Combine(M11, M21, M31, M41),
+                HashCode.Combine(M12, M22, M32, M42),
+                HashCode.Combine(M13, M23, M33, M43),
+                HashCode.Combine(M14, M24, M34, M44)
+            );
         }
 
         #region IEquatable implementation
@@ -554,16 +533,16 @@ namespace engenious
             if (near == far)
                 throw new ArgumentOutOfRangeException($"{nameof(near)} or {nameof(far)}");
             var m = Identity;
-            m.items[0] = 2.0f * near / (right - left);
-            m.items[5] = 2.0f * near / (top - bottom);
-            m.items[8] = (right + left) / (right - left);
-            m.items[9] = (top + bottom) / (top - bottom);
-            m.items[10] = -(far + near) / (far - near);
-            m.items[11] = -1;
-            m.items[12] = 0;
-            m.items[13] = 0;
-            m.items[14] = -2 * (far * near) / (far - near);
-            m.items[15] = 0;
+            m.M11 = 2.0f * near / (right - left);
+            m.M22 = 2.0f * near / (top - bottom);
+            m.M13 = (right + left) / (right - left);
+            m.M23 = (top + bottom) / (top - bottom);
+            m.M33 = -(far + near) / (far - near);
+            m.M43 = -1;
+            m.M14 = 0;
+            m.M24 = 0;
+            m.M34 = -2 * (far * near) / (far - near);
+            m.M44 = 0;
             result = m;
         }
 
@@ -578,11 +557,11 @@ namespace engenious
         public static unsafe Matrix CreateOrthographic(float width, float height, float near, float far)
         {
             var res = Identity;
-            res.items[0] = 2f / width;
-            res.items[5] = -2f / height;
-            res.items[10] = 1f / (near - far);
-            res.items[12] = res.items[13] = 0;
-            res.items[14] = -(far + near) / (far - near);
+            res.M11 = 2f / width;
+            res.M22 = -2f / height;
+            res.M33 = 1f / (near - far);
+            res.M14 = res.M24 = 0;
+            res.M34 = -(far + near) / (far - near);
 
             return res;
         }
@@ -602,12 +581,12 @@ namespace engenious
 
 
             var res = Identity;
-            res.items[0] = 2.0f / (right - left);
-            res.items[5] = 2.0f / (top - bottom);
-            res.items[10] = -2.0f / (far - near);
-            res.items[12] = -(right + left) / (right - left);
-            res.items[13] = -(top + bottom) / (top - bottom);
-            res.items[14] = -(far + near) / (far - near);
+            res.M11 = 2.0f / (right - left);
+            res.M22 = 2.0f / (top - bottom);
+            res.M33 = -2.0f / (far - near);
+            res.M14 = -(right + left) / (right - left);
+            res.M24 = -(top + bottom) / (top - bottom);
+            res.M34 = -(far + near) / (far - near);
             return res;
         }
 
@@ -642,25 +621,25 @@ namespace engenious
 
             var newUp = side.Cross(forward).Normalized();
 
-            var m = new Matrix();
-            m.items[0] = side.X;
-            m.items[4] = side.Y;
-            m.items[8] = side.Z;
+            var m = default(Matrix);
+            m.M11 = side.X;
+            m.M12 = side.Y;
+            m.M13 = side.Z;
 
-            m.items[1] = newUp.X;
-            m.items[5] = newUp.Y;
-            m.items[9] = newUp.Z;
+            m.M21 = newUp.X;
+            m.M22 = newUp.Y;
+            m.M23 = newUp.Z;
 
-            m.items[2] = -forward.X;
-            m.items[6] = -forward.Y;
-            m.items[10] = -forward.Z;
+            m.M31 = -forward.X;
+            m.M32 = -forward.Y;
+            m.M33 = -forward.Z;
 
-            m.items[3] = m.items[7] = m.items[11] = 0.0f;
+            m.M41 = m.M42 = m.M43 = 0.0f;
 
-            m.items[12] = -side.Dot(eyePos);
-            m.items[13] = -newUp.Dot(eyePos);
-            m.items[14] = forward.Dot(eyePos);
-            m.items[15] = 1.0f;
+            m.M14 = -side.Dot(eyePos);
+            m.M24 = -newUp.Dot(eyePos);
+            m.M34 = forward.Dot(eyePos);
+            m.M44 = 1.0f;
 
 
             return m;
@@ -755,9 +734,9 @@ namespace engenious
         public static Matrix CreateTranslation(float x, float y, float z)
         {
             var res = Identity;
-            res.M41 = x;
-            res.M42 = y;
-            res.M43 = z;
+            res.M14 = x;
+            res.M24 = y;
+            res.M34 = z;
             return res;
 
         }
@@ -771,8 +750,8 @@ namespace engenious
         {
             var ret = Identity;
             ret.M22 = ret.M33 = (float)Math.Cos(rot);
-            ret.M32 = (float)Math.Sin(rot);
-            ret.M23 = -ret.M32;
+            ret.M23 = (float)Math.Sin(rot);
+            ret.M32 = -ret.M23;
             return ret;
         }
 
@@ -785,8 +764,8 @@ namespace engenious
         {
             var ret = Identity;
             ret.M11 = ret.M33 = (float)Math.Cos(rot);
-            ret.M13 = (float)Math.Sin(rot);
-            ret.M31 = -ret.M13;
+            ret.M31 = (float)Math.Sin(rot);
+            ret.M13 = -ret.M31;
             return ret;
         }
 
@@ -799,8 +778,8 @@ namespace engenious
         {
             var ret = Identity;
             ret.M11 = ret.M22 = (float)Math.Cos(rot);
-            ret.M12 = (float)Math.Sin(rot);
-            ret.M21 = -ret.M12;
+            ret.M21 = (float)Math.Sin(rot);
+            ret.M12 = -ret.M21;
             return ret;
         }
 
@@ -830,104 +809,104 @@ namespace engenious
         public static Matrix Invert(Matrix m)
         {
             float det;
-            var inv = new Matrix();
-            inv[0] = m[5] * m[10] * m[15] -
-            m[5] * m[11] * m[14] -
-            m[9] * m[6] * m[15] +
-            m[9] * m[7] * m[14] +
-            m[13] * m[6] * m[11] -
-            m[13] * m[7] * m[10];
-            inv[4] = -m[4] * m[10] * m[15] +
-            m[4] * m[11] * m[14] +
-            m[8] * m[6] * m[15] -
-            m[8] * m[7] * m[14] -
-            m[12] * m[6] * m[11] +
-            m[12] * m[7] * m[10];
-            inv[8] = m[4] * m[9] * m[15] -
-            m[4] * m[11] * m[13] -
-            m[8] * m[5] * m[15] +
-            m[8] * m[7] * m[13] +
-            m[12] * m[5] * m[11] -
-            m[12] * m[7] * m[9];
-            inv[12] = -m[4] * m[9] * m[14] +
-            m[4] * m[10] * m[13] +
-            m[8] * m[5] * m[14] -
-            m[8] * m[6] * m[13] -
-            m[12] * m[5] * m[10] +
-            m[12] * m[6] * m[9];
-            inv[1] = -m[1] * m[10] * m[15] +
-            m[1] * m[11] * m[14] +
-            m[9] * m[2] * m[15] -
-            m[9] * m[3] * m[14] -
-            m[13] * m[2] * m[11] +
-            m[13] * m[3] * m[10];
-            inv[5] = m[0] * m[10] * m[15] -
-            m[0] * m[11] * m[14] -
-            m[8] * m[2] * m[15] +
-            m[8] * m[3] * m[14] +
-            m[12] * m[2] * m[11] -
-            m[12] * m[3] * m[10];
-            inv[9] = -m[0] * m[9] * m[15] +
-            m[0] * m[11] * m[13] +
-            m[8] * m[1] * m[15] -
-            m[8] * m[3] * m[13] -
-            m[12] * m[1] * m[11] +
-            m[12] * m[3] * m[9];
-            inv[13] = m[0] * m[9] * m[14] -
-            m[0] * m[10] * m[13] -
-            m[8] * m[1] * m[14] +
-            m[8] * m[2] * m[13] +
-            m[12] * m[1] * m[10] -
-            m[12] * m[2] * m[9];
-            inv[2] = m[1] * m[6] * m[15] -
-            m[1] * m[7] * m[14] -
-            m[5] * m[2] * m[15] +
-            m[5] * m[3] * m[14] +
-            m[13] * m[2] * m[7] -
-            m[13] * m[3] * m[6];
-            inv[6] = -m[0] * m[6] * m[15] +
-            m[0] * m[7] * m[14] +
-            m[4] * m[2] * m[15] -
-            m[4] * m[3] * m[14] -
-            m[12] * m[2] * m[7] +
-            m[12] * m[3] * m[6];
-            inv[10] = m[0] * m[5] * m[15] -
-            m[0] * m[7] * m[13] -
-            m[4] * m[1] * m[15] +
-            m[4] * m[3] * m[13] +
-            m[12] * m[1] * m[7] -
-            m[12] * m[3] * m[5];
-            inv[14] = -m[0] * m[5] * m[14] +
-            m[0] * m[6] * m[13] +
-            m[4] * m[1] * m[14] -
-            m[4] * m[2] * m[13] -
-            m[12] * m[1] * m[6] +
-            m[12] * m[2] * m[5];
-            inv[3] = -m[1] * m[6] * m[11] +
-            m[1] * m[7] * m[10] +
-            m[5] * m[2] * m[11] -
-            m[5] * m[3] * m[10] -
-            m[9] * m[2] * m[7] +
-            m[9] * m[3] * m[6];
-            inv[7] = m[0] * m[6] * m[11] -
-            m[0] * m[7] * m[10] -
-            m[4] * m[2] * m[11] +
-            m[4] * m[3] * m[10] +
-            m[8] * m[2] * m[7] -
-            m[8] * m[3] * m[6];
-            inv[11] = -m[0] * m[5] * m[11] +
-            m[0] * m[7] * m[9] +
-            m[4] * m[1] * m[11] -
-            m[4] * m[3] * m[9] -
-            m[8] * m[1] * m[7] +
-            m[8] * m[3] * m[5];
-            inv[15] = m[0] * m[5] * m[10] -
-            m[0] * m[6] * m[9] -
-            m[4] * m[1] * m[10] +
-            m[4] * m[2] * m[9] +
-            m[8] * m[1] * m[6] -
-            m[8] * m[2] * m[5];
-            det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
+            var inv = default(Matrix);
+            inv.M11 = m.M22 * m.M33 * m.M44 -
+            m.M22 * m.M43 * m.M34 -
+            m.M23 * m.M32 * m.M44 +
+            m.M23 * m.M42 * m.M34 +
+            m.M24 * m.M32 * m.M43 -
+            m.M24 * m.M42 * m.M33;
+            inv.M12 = -m.M12 * m.M33 * m.M44 +
+            m.M12 * m.M43 * m.M34 +
+            m.M13 * m.M32 * m.M44 -
+            m.M13 * m.M42 * m.M34 -
+            m.M14 * m.M32 * m.M43 +
+            m.M14 * m.M42 * m.M33;
+            inv.M13 = m.M12 * m.M23 * m.M44 -
+            m.M12 * m.M43 * m.M24 -
+            m.M13 * m.M22 * m.M44 +
+            m.M13 * m.M42 * m.M24 +
+            m.M14 * m.M22 * m.M43 -
+            m.M14 * m.M42 * m.M23;
+            inv.M14 = -m.M12 * m.M23 * m.M34 +
+            m.M12 * m.M33 * m.M24 +
+            m.M13 * m.M22 * m.M34 -
+            m.M13 * m.M32 * m.M24 -
+            m.M14 * m.M22 * m.M33 +
+            m.M14 * m.M32 * m.M23;
+            inv.M21 = -m.M21 * m.M33 * m.M44 +
+            m.M21 * m.M43 * m.M34 +
+            m.M23 * m.M31 * m.M44 -
+            m.M23 * m.M41 * m.M34 -
+            m.M24 * m.M31 * m.M43 +
+            m.M24 * m.M41 * m.M33;
+            inv.M22 = m.M11 * m.M33 * m.M44 -
+            m.M11 * m.M43 * m.M34 -
+            m.M13 * m.M31 * m.M44 +
+            m.M13 * m.M41 * m.M34 +
+            m.M14 * m.M31 * m.M43 -
+            m.M14 * m.M41 * m.M33;
+            inv.M23 = -m.M11 * m.M23 * m.M44 +
+            m.M11 * m.M43 * m.M24 +
+            m.M13 * m.M21 * m.M44 -
+            m.M13 * m.M41 * m.M24 -
+            m.M14 * m.M21 * m.M43 +
+            m.M14 * m.M41 * m.M23;
+            inv.M24 = m.M11 * m.M23 * m.M34 -
+            m.M11 * m.M33 * m.M24 -
+            m.M13 * m.M21 * m.M34 +
+            m.M13 * m.M31 * m.M24 +
+            m.M14 * m.M21 * m.M33 -
+            m.M14 * m.M31 * m.M23;
+            inv.M31 = m.M21 * m.M32 * m.M44 -
+            m.M21 * m.M42 * m.M34 -
+            m.M22 * m.M31 * m.M44 +
+            m.M22 * m.M41 * m.M34 +
+            m.M24 * m.M31 * m.M42 -
+            m.M24 * m.M41 * m.M32;
+            inv.M32 = -m.M11 * m.M32 * m.M44 +
+            m.M11 * m.M42 * m.M34 +
+            m.M12 * m.M31 * m.M44 -
+            m.M12 * m.M41 * m.M34 -
+            m.M14 * m.M31 * m.M42 +
+            m.M14 * m.M41 * m.M32;
+            inv.M33 = m.M11 * m.M22 * m.M44 -
+            m.M11 * m.M42 * m.M24 -
+            m.M12 * m.M21 * m.M44 +
+            m.M12 * m.M41 * m.M24 +
+            m.M14 * m.M21 * m.M42 -
+            m.M14 * m.M41 * m.M22;
+            inv.M34 = -m.M11 * m.M22 * m.M34 +
+            m.M11 * m.M32 * m.M24 +
+            m.M12 * m.M21 * m.M34 -
+            m.M12 * m.M31 * m.M24 -
+            m.M14 * m.M21 * m.M32 +
+            m.M14 * m.M31 * m.M22;
+            inv.M41 = -m.M21 * m.M32 * m.M43 +
+            m.M21 * m.M42 * m.M33 +
+            m.M22 * m.M31 * m.M43 -
+            m.M22 * m.M41 * m.M33 -
+            m.M23 * m.M31 * m.M42 +
+            m.M23 * m.M41 * m.M32;
+            inv.M42 = m.M11 * m.M32 * m.M43 -
+            m.M11 * m.M42 * m.M33 -
+            m.M12 * m.M31 * m.M43 +
+            m.M12 * m.M41 * m.M33 +
+            m.M13 * m.M31 * m.M42 -
+            m.M13 * m.M41 * m.M32;
+            inv.M43 = -m.M11 * m.M22 * m.M43 +
+            m.M11 * m.M42 * m.M23 +
+            m.M12 * m.M21 * m.M43 -
+            m.M12 * m.M41 * m.M23 -
+            m.M13 * m.M21 * m.M42 +
+            m.M13 * m.M41 * m.M22;
+            inv.M44 = m.M11 * m.M22 * m.M33 -
+            m.M11 * m.M32 * m.M23 -
+            m.M12 * m.M21 * m.M33 +
+            m.M12 * m.M31 * m.M23 +
+            m.M13 * m.M21 * m.M32 -
+            m.M13 * m.M31 * m.M22;
+            det = m.M11 * inv.M11 + m.M21 * inv.M12 + m.M31 * inv.M13 + m.M41 * inv.M14;
             // ReSharper disable once CompareOfFloatsByEqualityOperator
             if (det == 0)
                 throw new ArgumentException("Not invertible",nameof(m));

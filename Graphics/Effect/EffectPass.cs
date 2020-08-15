@@ -2,37 +2,34 @@
 using System.Collections.Generic;
 using System.Text;
 using engenious.Helper;
-using OpenTK.Graphics.OpenGL;
+using OpenToolkit.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
     /// <summary>
     /// Render pass of an <see cref="Effect"/>.
     /// </summary>
-    public class EffectPass :IDisposable
+    public class EffectPass : GraphicsResource, IDisposable
     {
         internal readonly int Program;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EffectPass"/> class.
         /// </summary>
+        /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> the resource is allocated on.</param>
         /// <param name="name">The name of the pass.</param>
-        protected internal EffectPass(string name)//TODO: content loading
+        protected internal EffectPass(GraphicsDevice graphicsDevice, string name)//TODO: content loading
+            : base(graphicsDevice)
         {
             Name = name;
-            using (Execute.OnUiContext)
-            {
-                Program = GL.CreateProgram();
-            }
-
+            GraphicsDevice.ValidateGraphicsThread();
+            Program = GL.CreateProgram();
         }
 
         internal void BindAttribute(VertexElementUsage usage, string name)
         {
-            using (Execute.OnUiContext)
-            {
-                GL.BindAttribLocation(Program, (int) usage, name);
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+            GL.BindAttribLocation(Program, (int) usage, name);
         }
 
         /// <summary>
@@ -41,29 +38,27 @@ namespace engenious.Graphics
         protected internal virtual void CacheParameters()
         {
             var total = -1;
-            using (Execute.OnUiContext)
+            GraphicsDevice.ValidateGraphicsThread();
+            GL.GetProgram(Program, GetProgramParameterName.ActiveUniforms, out total);
+            for (var i = 0; i < total; ++i)
             {
-                GL.GetProgram(Program, GetProgramParameterName.ActiveUniforms, out total);
-                for (var i = 0; i < total; ++i)
-                {
-                    var name = GL.GetActiveUniform(Program, i, out _, out var type);
-                    var location = GetUniformLocation(name);
-                    Parameters.Add(new EffectPassParameter(this, name, location, (EffectParameterType)type));
-                }
-                GL.GetProgram(Program, GetProgramParameterName.ActiveUniformBlocks, out total);
-                for (var i = 0; i < total; ++i)
-                {
-                    int size;
-                    var sb = new StringBuilder(512);
-                    string name;
-                    GL.GetActiveUniformBlockName(Program, i, 512, out size, out name);
-                    //var name = sb.ToString();
-                    var location = GL.GetUniformBlockIndex(Program, name);
-                    Parameters.Add(new EffectPassParameter(this, name, location));//TODO: 
-                }
-                //TODO: ssbos?
-
+                var name = GL.GetActiveUniform(Program, i, out _, out var type);
+                var location = GetUniformLocation(name);
+                Parameters.Add(new EffectPassParameter(this, name, location, (EffectParameterType)type));
             }
+            GL.GetProgram(Program, GetProgramParameterName.ActiveUniformBlocks, out total);
+            for (var i = 0; i < total; ++i)
+            {
+                int size;
+                var sb = new StringBuilder(512);
+                string name;
+                GL.GetActiveUniformBlockName(Program, i, 512, out size, out name);
+                //var name = sb.ToString();
+                var location = GL.GetUniformBlockIndex(Program, name);
+                Parameters.Add(new EffectPassParameter(this, name, location));//TODO: 
+            }
+            //TODO: ssbos?
+
         }
 
         internal int GetUniformLocation(string name)
@@ -75,50 +70,44 @@ namespace engenious.Graphics
 
         internal void AttachShaders(IEnumerable<Shader> shaders)
         {
-            using (Execute.OnUiContext)
+            GraphicsDevice.ValidateGraphicsThread();
+            foreach (var shader in shaders)
             {
-                foreach (var shader in shaders)
-                {
-                    AttachShader(shader);
-                }
+                AttachShader(shader);
             }
         }
 
         internal void AttachShader(Shader shader)
         {
-            using (Execute.OnUiContext)
-            {
-                GL.AttachShader(Program, shader.BaseShader);
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+            GL.AttachShader(Program, shader.BaseShader);
         }
 
         internal void Link()
         {
             if (Attached == null)
                 throw new Exception("Already linked");
-            using (Execute.OnUiContext)
+            GraphicsDevice.ValidateGraphicsThread();
+            
+            GL.LinkProgram(Program);
+            int linked;
+            GL.GetProgram(Program, GetProgramParameterName.LinkStatus, out linked);
+            if (linked != 1)
             {
-                GL.LinkProgram(Program);
-                int linked;
-                GL.GetProgram(Program, GetProgramParameterName.LinkStatus, out linked);
-                if (linked != 1)
-                {
-                    var error = GL.GetProgramInfoLog(Program);
-                    if (string.IsNullOrEmpty(error))
-                        throw new Exception("Unknown error occured");
-                    throw new Exception(error);
-                }
-                foreach (var shader in Attached)
-                {
-                    GL.DetachShader(Program, shader.BaseShader);
-                }
+                var error = GL.GetProgramInfoLog(Program);
+                if (string.IsNullOrEmpty(error))
+                    throw new Exception("Unknown error occured");
+                throw new Exception(error);
             }
+            foreach (var shader in Attached)
+            {
+                GL.DetachShader(Program, shader.BaseShader);
+            }
+            
             Attached.Clear();
             Attached = null;
-            using (Execute.OnUiContext)
-            {
-                Parameters = new EffectPassParameterCollection(this);
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+            Parameters = new EffectPassParameterCollection(this);
         }
 
         /// <summary>
@@ -140,10 +129,8 @@ namespace engenious.Graphics
         /// </summary>
         public void Apply()
         {
-            using (Execute.OnUiContext)
-            {
-                GL.UseProgram(Program);
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+            GL.UseProgram(Program);
         }
 
         /// <summary>
@@ -155,11 +142,9 @@ namespace engenious.Graphics
         /// <param name="z">The z count of groups.</param>
         public void Compute(int x,int y=1,int z=1)
         {
-            using (Execute.OnUiContext)
-            {
-                GL.UseProgram(Program);
-                GL.DispatchCompute(x, y, z);
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+            GL.UseProgram(Program);
+            GL.DispatchCompute(x, y, z);
         }
 
         /// <summary>
@@ -168,19 +153,15 @@ namespace engenious.Graphics
         /// <remarks>Only works on compute shaders.</remarks>
         public void WaitForImageCompletion()
         {
-            using (Execute.OnUiContext)
-            {
-                GL.MemoryBarrier(MemoryBarrierFlags.ShaderImageAccessBarrierBit);
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+            GL.MemoryBarrier(MemoryBarrierFlags.ShaderImageAccessBarrierBit);
         }
 
         /// <inheritdoc />
         public void Dispose()
         {
-            using (Execute.OnUiContext)
-            {
-                GL.DeleteProgram(Program);
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+            GL.DeleteProgram(Program);
         }
 
         /// <summary>

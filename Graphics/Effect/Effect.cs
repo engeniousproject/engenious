@@ -21,7 +21,7 @@
 		/// </summary>
 		protected internal virtual void Initialize ()
 		{
-			Parameters = new EffectParameterCollection (Techniques);
+			Parameters = new EffectParameterCollection (GraphicsDevice, Techniques);
 			foreach (var technique in Techniques)
 			{
 				technique.Initialize();

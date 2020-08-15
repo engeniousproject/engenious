@@ -6,29 +6,29 @@
     public enum MouseButton
     {
         /// <summary>
+        /// The button 1.
+        /// </summary>
+        Button1 = 0,
+        /// <summary>
         /// The left mouse button.
         /// </summary>
         Left = 0,
         /// <summary>
-        /// The middle mouse button.
+        /// The button 2.
         /// </summary>
-        Middle,
+        Button2 = 1,
         /// <summary>
         /// The right mouse button.
         /// </summary>
-        Right,
-        /// <summary>
-        /// The button 1.
-        /// </summary>
-        Button1,
-        /// <summary>
-        /// The button 2.
-        /// </summary>
-        Button2,
+        Right = 1,
         /// <summary>
         /// The button 3.
         /// </summary>
-        Button3,
+        Button3 = 2,
+        /// <summary>
+        /// The middle mouse button.
+        /// </summary>
+        Middle = 2,
         /// <summary>
         /// The button 4.
         /// </summary>
@@ -49,10 +49,6 @@
         /// The button 8.
         /// </summary>
         Button8,
-        /// <summary>
-        /// The button 9.
-        /// </summary>
-        Button9,
         /// <summary>
         /// The last mappable button.
         /// </summary>

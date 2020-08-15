@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Channels;
+using System.Threading;
 using engenious.Helper;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
+using OpenToolkit.Graphics.OpenGL;
+using OpenToolkit.Windowing.Common;
 
 namespace engenious.Graphics
 {
@@ -22,13 +23,50 @@ namespace engenious.Graphics
         private Viewport _viewport;
         internal readonly IGraphicsContext _context;
 
+        private readonly Thread _graphicsThread;
+        
+
 
         DebugProc DebugCallbackInstance;
         
 
         static void DebugCallback(DebugSource source, DebugType type, int id, DebugSeverity severity, int length, IntPtr message, IntPtr userParam)
         {
-            Console.WriteLine("[GL] {0}; {1}; {2}; ", id, severity, message);
+
+            Console.WriteLine("[GL] {0}; {1}; {2}; ", id, severity, Marshal.PtrToStringAnsi(message));
+            if (severity >= DebugSeverity.DebugSeverityHigh && severity <= DebugSeverity.DebugSeverityHigh)
+            {
+                var s = new StackTrace(1, true);
+                Console.WriteLine(s.ToString());
+            }
+            
+        }
+
+        /// <summary>
+        /// Gets whether the calling thread matches the current graphics thread.
+        /// </summary>
+        public bool IsOnGraphicsThread
+        {
+#if !DEBUG
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+#endif
+            get
+            {
+#if DEBUG
+                return Thread.CurrentThread == _graphicsThread;
+#else
+                return true;
+#endif
+            }
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ValidateGraphicsThread()
+        {
+            if (!IsOnGraphicsThread)
+            {
+                ThrowHelper.ThrowNotOnGraphicsThreadException();
+            }
         }
 
         internal IGame Game;
@@ -44,6 +82,7 @@ namespace engenious.Graphics
         /// <param name="context">The graphics context of this device.</param>
         public GraphicsDevice(IGame game, IGraphicsContext context)
         {
+            _graphicsThread = Thread.CurrentThread;
             _context = context;
             Game = game;
 
@@ -60,7 +99,7 @@ namespace engenious.Graphics
             if (Extensions.Contains("GL_ARB_debug_output"))
             {
                 //_context.ErrorChecking = true;
-                /*GL.Enable(EnableCap.DebugOutput);
+                GL.Enable(EnableCap.DebugOutput);
                 GL.Enable(EnableCap.DebugOutputSynchronous);
                 CheckError();
                 DebugCallbackInstance = new DebugProc(DebugCallback);
@@ -70,7 +109,7 @@ namespace engenious.Graphics
                 GL.DebugMessageCallback(DebugCallbackInstance, IntPtr.Zero);
                 GL.DebugMessageControl(DebugSourceControl.DontCare, DebugTypeControl.DontCare,
                     DebugSeverityControl.DontCare, 0, new int[0], true);
-                GL.DebugMessageInsert(DebugSourceExternal.DebugSourceApplication, DebugType.DebugTypeMarker, 0, DebugSeverity.DebugSeverityNotification, -1, "Debug output enabled");*/
+                GL.DebugMessageInsert(DebugSourceExternal.DebugSourceApplication, DebugType.DebugTypeMarker, 0, DebugSeverity.DebugSeverityNotification, -1, "Debug output enabled");
             }
 #endif
 
@@ -135,10 +174,9 @@ namespace engenious.Graphics
         /// <param name="mask">A value indicating which buffers to clear.</param>
         public void Clear(ClearBufferMask mask)
         {
-            using (Execute.OnUiContext)
-            {
-                GL.Clear((OpenTK.Graphics.OpenGL.ClearBufferMask) mask);
-            }
+            ValidateGraphicsThread();
+            
+            GL.Clear((OpenToolkit.Graphics.OpenGL.ClearBufferMask) mask);
         }
 
         /// <summary>
@@ -148,28 +186,25 @@ namespace engenious.Graphics
         /// <param name="color">A value indicating the color with which to clear the color buffer.</param>
         public void Clear(ClearBufferMask mask, System.Drawing.Color color)
         {
-            using (Execute.OnUiContext)
-            {
-                GL.ClearColor(color);
-                GL.Clear((OpenTK.Graphics.OpenGL.ClearBufferMask) mask);
-            }
+            ValidateGraphicsThread();
+
+            GL.ClearColor(color);
+            GL.Clear((OpenToolkit.Graphics.OpenGL.ClearBufferMask) mask);
         }
 
         internal void CheckError()
         {
             //return;
 #if DEBUG
-            using (Execute.OnUiContext)
-            {
-                var code = GL.GetError();
-                if (code == ErrorCode.NoError)
-                    return;
-                var frame = new System.Diagnostics.StackTrace(true).GetFrame(1);
-                string filename = frame.GetFileName();
-                int line = frame.GetFileLineNumber();
-                string method = frame.GetMethod().Name;
-                Debug.WriteLine("[GL] " + filename + ":" + method + " - " + line.ToString() + ":" + code.ToString());
-            }
+            ValidateGraphicsThread();
+            var code = GL.GetError();
+            if (code == ErrorCode.NoError)
+                return;
+            var frame = new System.Diagnostics.StackTrace(true).GetFrame(1);
+            string filename = frame.GetFileName();
+            int line = frame.GetFileLineNumber();
+            string method = frame.GetMethod().Name;
+            Debug.WriteLine("[GL] " + filename + ":" + method + " - " + line.ToString() + ":" + code.ToString());
             /*var frame = new System.Diagnostics.StackTrace(true).GetFrame(1);
             ErrorCode code = ErrorCode.InvalidValue;
             ThreadingHelper.BlockOnUIThread(() =>
@@ -193,12 +228,10 @@ namespace engenious.Graphics
         /// <param name="color">A value indicating the color with which to clear the color buffer.</param>
         public void Clear(Color color)
         {
-            using (Execute.OnUiContext)
-            {
-                GL.ClearColor(color.R, color.G, color.B, color.A);
-                GL.Clear(OpenTK.Graphics.OpenGL.ClearBufferMask.ColorBufferBit |
-                         OpenTK.Graphics.OpenGL.ClearBufferMask.DepthBufferBit);
-            }
+            ValidateGraphicsThread();
+            GL.ClearColor(color.R, color.G, color.B, color.A);
+            GL.Clear(OpenToolkit.Graphics.OpenGL.ClearBufferMask.ColorBufferBit |
+                     OpenToolkit.Graphics.OpenGL.ClearBufferMask.DepthBufferBit);
 
             CheckError();
         }
@@ -208,6 +241,7 @@ namespace engenious.Graphics
         /// </summary>
         public void Present()
         {
+            ValidateGraphicsThread();
             CheckError();
             _context.SwapBuffers();
         }
@@ -228,13 +262,12 @@ namespace engenious.Graphics
                 if (_viewport.Bounds != value.Bounds)
                 {
                     _viewport = value;
-                    using (Execute.OnUiContext)
-                    {
-                        //GL.Viewport(viewport.X, game.Window.ClientSize.Height - viewport.Y - viewport.Height, viewport.Width, viewport.Height);
-                        GL.Viewport(_viewport.X, _viewport.Y, _viewport.Width, _viewport.Height);
-                        GL.Scissor(_scissorRectangle.X, Viewport.Height - _scissorRectangle.Bottom,
-                            _scissorRectangle.Width, _scissorRectangle.Height);
-                    }
+                    ValidateGraphicsThread();
+                    //GL.Viewport(viewport.X, game.Window.ClientSize.Height - viewport.Y - viewport.Height, viewport.Width, viewport.Height);
+                    GL.Scissor(_scissorRectangle.X, Viewport.Height - _scissorRectangle.Bottom,
+                        _scissorRectangle.Width, _scissorRectangle.Height);
+                    GL.Viewport(_viewport.X, _viewport.Y, _viewport.Width, _viewport.Height);
+
                 }
             }
         }
@@ -276,28 +309,27 @@ namespace engenious.Graphics
             int primitiveCount, VertexDeclaration vertexDeclaration) where T : struct
         {
             var old = VertexBuffer;
-            using (Execute.OnUiContext)
+            
+            ValidateGraphicsThread();
+            
+            if (!_userBuffers.TryGetValue(vertexDeclaration, out var current))
             {
-                VertexBuffer current;
-                if (!_userBuffers.TryGetValue(vertexDeclaration, out current))
-                {
-                    current = new VertexBuffer(this, vertexDeclaration, vertexData.Length);
-                    _userBuffers.Add(vertexDeclaration, current);
-                }
-                else if (current.VertexCount < vertexData.Length)
-                {
-                    if (!current.IsDisposed)
-                        current.Dispose();
-                    current = new VertexBuffer(this, vertexDeclaration, vertexData.Length);
-                    _userBuffers[vertexDeclaration] = current;
-                }
-
-                current.SetData(vertexData);
-
-                VertexBuffer = current;
-
-                DrawPrimitives(primitiveType, vertexOffset, primitiveCount);
+                current = new VertexBuffer(this, vertexDeclaration, vertexData.Length);
+                _userBuffers.Add(vertexDeclaration, current);
             }
+            else if (current.VertexCount < vertexData.Length)
+            {
+                if (!current.IsDisposed)
+                    current.Dispose();
+                current = new VertexBuffer(this, vertexDeclaration, vertexData.Length);
+                _userBuffers[vertexDeclaration] = current;
+            }
+
+            current.SetData(vertexData);
+
+            VertexBuffer = current;
+
+            DrawPrimitives(primitiveType, vertexOffset, primitiveCount);
 
             VertexBuffer = old;
             CheckError();
@@ -359,7 +391,7 @@ namespace engenious.Graphics
             VertexBuffer.Vao.Bind();
 
 
-            GL.DrawArrays((OpenTK.Graphics.OpenGL.PrimitiveType) primitiveType, startVertex, vertexCount);
+            GL.DrawArrays((OpenToolkit.Graphics.OpenGL.PrimitiveType) primitiveType, startVertex, vertexCount);
             CheckError();
         }
 
@@ -381,8 +413,8 @@ namespace engenious.Graphics
             {
                 IndexBuffer.Bind();
 
-                GL.DrawElementsBaseVertex((OpenTK.Graphics.OpenGL.PrimitiveType) primitiveType, primitiveCount * 3,
-                    (OpenTK.Graphics.OpenGL.DrawElementsType) IndexBuffer.IndexElementSize, IntPtr.Zero, baseVertex);
+                GL.DrawElementsBaseVertex((OpenToolkit.Graphics.OpenGL.PrimitiveType) primitiveType, primitiveCount * 3,
+                    (OpenToolkit.Graphics.OpenGL.DrawElementsType) IndexBuffer.IndexElementSize, IntPtr.Zero, baseVertex);
             }
 
             CheckError();
@@ -401,8 +433,8 @@ namespace engenious.Graphics
         {
             VertexBuffer.EnsureVao();
             VertexBuffer.Vao.Bind();
-            GL.DrawElementsInstancedBaseVertex((OpenTK.Graphics.OpenGL.PrimitiveType) primitiveType, primitiveCount * 3,
-                (OpenTK.Graphics.OpenGL.DrawElementsType)IndexBuffer.IndexElementSize, IntPtr.Zero, instanceCount,
+            GL.DrawElementsInstancedBaseVertex((OpenToolkit.Graphics.OpenGL.PrimitiveType) primitiveType, primitiveCount * 3,
+                (OpenToolkit.Graphics.OpenGL.DrawElementsType)IndexBuffer.IndexElementSize, IntPtr.Zero, instanceCount,
                 baseVertex);
         }
 
@@ -412,19 +444,17 @@ namespace engenious.Graphics
         /// <param name="target">The render target to render to or <c>null</c> to use the default render target.</param>
         public void SetRenderTarget(RenderTarget2D target)
         {
-            using (Execute.OnUiContext)
+            ValidateGraphicsThread();
+            if (target == null)
             {
-                if (target == null)
-                {
-                    GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
-                    Viewport = new Viewport(Game.RenderingSurface.ClientRectangle);
-                }
-                else
-                {
-                    target.BindFbo();
-                    Viewport = new Viewport(target.Bounds);
-                    ScissorRectangle = target.Bounds;
-                }
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+                Viewport = new Viewport(new Rectangle(new Point(), Game.RenderingSurface.ClientSize));
+            }
+            else
+            {
+                target.BindFbo();
+                Viewport = new Viewport(target.Bounds);
+                ScissorRectangle = target.Bounds;
             }
 
             CheckError();
@@ -506,11 +536,9 @@ namespace engenious.Graphics
                 if (_scissorRectangle != value)
                 {
                     _scissorRectangle = value;
-                    using (Execute.OnUiContext)
-                    {
-                        GL.Scissor(_scissorRectangle.X, Viewport.Height - _scissorRectangle.Bottom,
-                            _scissorRectangle.Width, _scissorRectangle.Height);
-                    }
+                    ValidateGraphicsThread();
+                    GL.Scissor(_scissorRectangle.X, Viewport.Height - _scissorRectangle.Bottom,
+                        _scissorRectangle.Width, _scissorRectangle.Height);
 
                     //GL.Scissor(scissorRectangle.X, scissorRectangle.Y, scissorRectangle.Width, -scissorRectangle.Height);
                 }
@@ -530,7 +558,7 @@ namespace engenious.Graphics
         /// <inheritdoc />
         public void Dispose()
         {
-            _context.Dispose();
+            
         }
     }
 }

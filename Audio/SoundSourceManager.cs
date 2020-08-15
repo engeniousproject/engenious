@@ -1,8 +1,9 @@
 ﻿using System;
-using OpenTK.Audio.OpenAL;
+using OpenToolkit.OpenAL;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using OpenToolkit.Audio.OpenAL;
 
 namespace engenious.Audio
 {
@@ -21,6 +22,8 @@ namespace engenious.Audio
         private readonly List<int> _available;
         private readonly List<int> _playing;
 
+        private bool _run;
+
         private SoundSourceManager()
         {
             _sources = AL.GenSources(MaxSources);
@@ -29,13 +32,14 @@ namespace engenious.Audio
             _playing = new List<int>();
             _available = new List<int>(_sources);
             _playingInstances = new List<SoundEffectInstance>();
+            _run = true;
             _updateThread = new Thread(UpdateLoop){IsBackground = true};
             _updateThread.Start();
         }
 
         private void UpdateLoop()
         {
-            while (true)
+            while (_run)
             {
                 Update();
                 Thread.Sleep(100);
@@ -118,8 +122,9 @@ namespace engenious.Audio
             _inUse.Clear();
             _playing.Clear();
 
+            _run = false;
+
             AL.DeleteSources(_sources);
-            _updateThread.Abort();
         }
     }
 }

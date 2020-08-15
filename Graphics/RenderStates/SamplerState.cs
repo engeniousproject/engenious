@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Runtime.CompilerServices;
 using engenious.Helper;
-using OpenTK.Graphics.OpenGL;
+using OpenToolkit.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
@@ -74,12 +74,11 @@ namespace engenious.Graphics
 
         private void ApplyAddressU()
         {
-            using (Execute.OnUiContext)
-            {
-                BeginApply();
-                ApplyAddressUGl();
-                EndApply();
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+
+            BeginApply();
+            ApplyAddressUGl();
+            EndApply();
         }
         private void ApplyAddressUGl()
         {
@@ -105,12 +104,11 @@ namespace engenious.Graphics
 
         private void ApplyAddressV()
         {
-            using (Execute.OnUiContext)
-            {
-                BeginApply();
-                ApplyAddressVGl();
-                EndApply();
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+
+            BeginApply();
+            ApplyAddressVGl();
+            EndApply();
         }
         private void ApplyAddressVGl()
         {
@@ -136,12 +134,11 @@ namespace engenious.Graphics
 
         private void ApplyAddressW()
         {
-            using (Execute.OnUiContext)
-            {
-                BeginApply();
-                ApplyAddressWGl();
-                EndApply();
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+
+            BeginApply();
+            ApplyAddressWGl();
+            EndApply();
         }
         private void ApplyAddressWGl()
         {
@@ -167,12 +164,11 @@ namespace engenious.Graphics
 
         private void ApplyMinFilter()
         {
-            using (Execute.OnUiContext)
-            {
-                BeginApply();
-                ApplyMinFilterGl();
-                EndApply();
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+
+            BeginApply();
+            ApplyMinFilterGl();
+            EndApply();
         }
         private void ApplyMinFilterGl()
         {
@@ -198,12 +194,11 @@ namespace engenious.Graphics
 
         private void ApplyMagFilter()
         {
-            using (Execute.OnUiContext)
-            {
-                BeginApply();
-                ApplyMagFilterGl();
-                EndApply();
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+
+            BeginApply();
+            ApplyMagFilterGl();
+            EndApply();
         }
 
         private void ApplyMagFilterGl()
@@ -231,12 +226,11 @@ namespace engenious.Graphics
         {
             if (!GraphicsDevice.Capabilities.SupportsTextureFilterAnisotropic)
                 return;
-            using (Execute.OnUiContext)
-            {
-                BeginApply();
-                ApplyMaxAnisotropyGl();
-                EndApply();
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+
+            BeginApply();
+            ApplyMaxAnisotropyGl();
+            EndApply();
         }
 
         private void ApplyMaxAnisotropyGl()
@@ -265,14 +259,13 @@ namespace engenious.Graphics
         {
             if (!GraphicsDevice.Capabilities.SupportsTextureMaxLevel)
                 return;
-            using (Execute.OnUiContext)
-            {
-                BeginApply();
+            GraphicsDevice.ValidateGraphicsThread();
 
-                ApplyMaxMipLevelGl();
+            BeginApply();
 
-                EndApply();
-            }
+            ApplyMaxMipLevelGl();
+
+            EndApply();
         }
 
         private void ApplyMaxMipLevelGl()
@@ -298,14 +291,13 @@ namespace engenious.Graphics
         }
         private void ApplyMipMapLevelOfDetailBias()
         {
-            using (Execute.OnUiContext)
-            {
-                BeginApply();
+            GraphicsDevice.ValidateGraphicsThread();
 
-                ApplyMipMapLevelOfDetailBiasGl();
+            BeginApply();
 
-                EndApply();
-            }
+            ApplyMipMapLevelOfDetailBiasGl();
+
+            EndApply();
         }
         private void ApplyMipMapLevelOfDetailBiasGl()
         {
@@ -402,35 +394,34 @@ namespace engenious.Graphics
         }
         private void Apply()
         {
-            using (Execute.OnUiContext)
-            {
-                BeginApply();
-                var oldState = _boundTexture.SamplerState;
+            GraphicsDevice.ValidateGraphicsThread();
 
-                if (oldState == null || oldState.MipMapLevelOfDetailBias != MipMapLevelOfDetailBias)
-                    ApplyMipMapLevelOfDetailBiasGl();
-                
-                if (oldState == null ||oldState.AddressU != AddressU)
-                    ApplyAddressUGl();
-                if (oldState == null ||oldState.AddressV != AddressV)
-                    ApplyAddressVGl();
-                if (oldState == null ||oldState.AddressW != AddressW)
-                    ApplyAddressWGl();
+            BeginApply();
+            var oldState = _boundTexture.SamplerState;
 
-                if (oldState == null ||oldState.MagFilter != MagFilter)
-                    ApplyMagFilterGl();
-                if (oldState == null ||oldState.MinFilter != MinFilter)
-                    ApplyMagFilterGl();
-                
-                if (GraphicsDevice.Capabilities.SupportsTextureMaxLevel && (oldState == null ||oldState.MaxMipLevel != MaxMipLevel))
-                    ApplyMaxMipLevelGl();
-                
-                if (GraphicsDevice.Capabilities.SupportsTextureFilterAnisotropic && (oldState == null ||oldState.MaxAnisotropy != MaxAnisotropy))
-                    ApplyMaxAnisotropyGl();
-                
-                
-                EndApply();
-            }
+            if (oldState == null || oldState.MipMapLevelOfDetailBias != MipMapLevelOfDetailBias)
+                ApplyMipMapLevelOfDetailBiasGl();
+            
+            if (oldState == null ||oldState.AddressU != AddressU)
+                ApplyAddressUGl();
+            if (oldState == null ||oldState.AddressV != AddressV)
+                ApplyAddressVGl();
+            if (oldState == null ||oldState.AddressW != AddressW)
+                ApplyAddressWGl();
+
+            if (oldState == null ||oldState.MagFilter != MagFilter)
+                ApplyMagFilterGl();
+            if (oldState == null ||oldState.MinFilter != MinFilter)
+                ApplyMagFilterGl();
+            
+            if (GraphicsDevice.Capabilities.SupportsTextureMaxLevel && (oldState == null ||oldState.MaxMipLevel != MaxMipLevel))
+                ApplyMaxMipLevelGl();
+            
+            if (GraphicsDevice.Capabilities.SupportsTextureFilterAnisotropic && (oldState == null ||oldState.MaxAnisotropy != MaxAnisotropy))
+                ApplyMaxAnisotropyGl();
+            
+            
+            EndApply();
         }
 
         

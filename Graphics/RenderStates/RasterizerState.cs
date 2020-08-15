@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using engenious.Helper;
-using OpenTK.Graphics.OpenGL;
+using OpenToolkit.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
@@ -106,10 +106,9 @@ namespace engenious.Graphics
 
         private void ApplyCullAndFill()
         {
-            using (Execute.OnUiContext)
-            {
-                ApplyCullAndFillGl();
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+
+            ApplyCullAndFillGl();
         }
 
         private void ApplyCullAndFillGl()
@@ -117,14 +116,14 @@ namespace engenious.Graphics
             if (CullMode == CullMode.None)
             {
                 GL.Disable(EnableCap.CullFace);
-                GL.PolygonMode(MaterialFace.FrontAndBack, (OpenTK.Graphics.OpenGL.PolygonMode) FillMode);
+                GL.PolygonMode(MaterialFace.FrontAndBack, (OpenToolkit.Graphics.OpenGL.PolygonMode) FillMode);
             }
             else
             {
                 GL.Enable(EnableCap.CullFace);
                 GL.FrontFace((FrontFaceDirection) CullMode);
-                GL.PolygonMode(CullMode == CullMode.Clockwise ? MaterialFace.Back : MaterialFace.Front,
-                    (OpenTK.Graphics.OpenGL.PolygonMode) FillMode);
+                GL.PolygonMode(MaterialFace.FrontAndBack,
+                    (OpenToolkit.Graphics.OpenGL.PolygonMode) FillMode);
             }
         }
 
@@ -147,13 +146,12 @@ namespace engenious.Graphics
 
         private void ApplyMultiSampleAntiAlias()
         {
-            using (Execute.OnUiContext)
-            {
-                if (MultiSampleAntiAlias)
-                    GL.Enable(EnableCap.Multisample);
-                else
-                    GL.Disable(EnableCap.Multisample);
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+
+            if (MultiSampleAntiAlias)
+                GL.Enable(EnableCap.Multisample);
+            else
+                GL.Disable(EnableCap.Multisample);
         }
 
         /// <summary>
@@ -175,13 +173,12 @@ namespace engenious.Graphics
 
         private void ApplyScissorTest()
         {
-            using (Execute.OnUiContext)
-            {
-                if (ScissorTestEnable)
-                    GL.Enable(EnableCap.ScissorTest);
-                else
-                    GL.Disable(EnableCap.ScissorTest);
-            }
+            GraphicsDevice.ValidateGraphicsThread();
+
+            if (ScissorTestEnable)
+                GL.Enable(EnableCap.ScissorTest);
+            else
+                GL.Disable(EnableCap.ScissorTest);
         }
 
         /// <summary>
@@ -221,8 +218,9 @@ namespace engenious.Graphics
 
         private void ApplyPolygonOffset()
         {
-            using(Execute.OnUiContext)
-                GL.PolygonOffset(_slopeScaleDepthBias, _depthBias);
+            GraphicsDevice.ValidateGraphicsThread();
+
+            GL.PolygonOffset(_slopeScaleDepthBias, _depthBias);
         }
 
         internal void Bind(GraphicsDevice graphicsDevice)
@@ -233,30 +231,29 @@ namespace engenious.Graphics
 
         private void Apply()
         {
-            using (Execute.OnUiContext)
+            GraphicsDevice.ValidateGraphicsThread();
+
+            var oldState = GraphicsDevice.RasterizerState;
+            if (oldState == null || oldState.CullMode != CullMode || oldState.FillMode != FillMode)
+                ApplyCullAndFillGl();
+
+            if (oldState == null || oldState.MultiSampleAntiAlias != MultiSampleAntiAlias)
             {
-                var oldState = GraphicsDevice.RasterizerState;
-                if (oldState == null || oldState.CullMode != CullMode || oldState.FillMode != FillMode)
-                    ApplyCullAndFillGl();
-
-                if (oldState == null || oldState.MultiSampleAntiAlias != MultiSampleAntiAlias)
-                {
-                    if (MultiSampleAntiAlias)
-                        GL.Enable(EnableCap.Multisample);
-                    else
-                        GL.Disable(EnableCap.Multisample);
-                }
-
-                if (oldState == null || oldState.ScissorTestEnable != ScissorTestEnable)
-                {
-                    if (ScissorTestEnable)
-                        GL.Enable(EnableCap.ScissorTest);
-                    else
-                        GL.Disable(EnableCap.ScissorTest);
-                }
-                if (oldState == null || oldState.SlopeScaleDepthBias != SlopeScaleDepthBias || oldState.DepthBias != DepthBias)
-                    GL.PolygonOffset(_slopeScaleDepthBias, _depthBias);
+                if (MultiSampleAntiAlias)
+                    GL.Enable(EnableCap.Multisample);
+                else
+                    GL.Disable(EnableCap.Multisample);
             }
+
+            if (oldState == null || oldState.ScissorTestEnable != ScissorTestEnable)
+            {
+                if (ScissorTestEnable)
+                    GL.Enable(EnableCap.ScissorTest);
+                else
+                    GL.Disable(EnableCap.ScissorTest);
+            }
+            if (oldState == null || oldState.SlopeScaleDepthBias != SlopeScaleDepthBias || oldState.DepthBias != DepthBias)
+                GL.PolygonOffset(_slopeScaleDepthBias, _depthBias);
         }
 
         internal void Unbind()

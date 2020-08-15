@@ -20,6 +20,7 @@ out vec2 psTexCoord;
 uniform mat4 World;
 uniform mat4 View;
 uniform mat4 Proj;
+
 void main(void)
 {
    gl_Position = Proj*View*World*vec4(position, 1.0);
@@ -87,25 +88,23 @@ void main(void)
         {
             var technique = new EffectTechnique("Basic");
 
-            using (Execute.OnUiContext)
-            {
-                Shader[] shaders = {
-                    new Shader(graphicsDevice,ShaderType.VertexShader, VertexShader),
-                    new Shader(graphicsDevice,ShaderType.FragmentShader, PixelShader)
-                };
+            GraphicsDevice.ValidateGraphicsThread();
+            Shader[] shaders = {
+                new Shader(graphicsDevice,ShaderType.VertexShader, VertexShader),
+                new Shader(graphicsDevice,ShaderType.FragmentShader, PixelShader)
+            };
 
-                foreach (var shader in shaders)
-                    shader.Compile();
-                var pass = new EffectPass("Basic");
-                pass.AttachShaders(shaders);
-                pass.BindAttribute(VertexElementUsage.Color, "color");
-                pass.BindAttribute(VertexElementUsage.TextureCoordinate, "textureCoordinate");
-                pass.BindAttribute(VertexElementUsage.Position, "position");
-                pass.Link();
+            foreach (var shader in shaders)
+                shader.Compile();
+            var pass = new EffectPass(graphicsDevice, "Basic");
+            pass.AttachShaders(shaders);
+            pass.BindAttribute(VertexElementUsage.Color, "color");
+            pass.BindAttribute(VertexElementUsage.TextureCoordinate, "textureCoordinate");
+            pass.BindAttribute(VertexElementUsage.Position, "position");
+            pass.Link();
 
-                technique.Passes.Add(pass);
-                Techniques.Add(technique);
-            }
+            technique.Passes.Add(pass);
+            Techniques.Add(technique);
 
             CurrentTechnique = technique;
             
