@@ -10,10 +10,10 @@
         <DocumentationFile>$(BaseIntermediateOutputPath)/engenious.xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="engenious.OpenTK" Version="4.0.0.2-pre" PrivateAssets="compile" />
+        <PackageReference Include="engenious.OpenTK" Version="4.0.0.3-pre" PrivateAssets="compile" />
 
 
-        <PackageReference Include="LitGit" Version="0.2.0.11-alpha" PrivateAssets="all" />
+        <PackageReference Include="LitGit" Version="0.2.0.18-alpha" PrivateAssets="all" />
         <PackageReference Include="NVorbis" Version="0.10.1" Exclude="compile" PrivateAssets="compile" />
         <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
         <PackageReference Include="System.Memory" Version="4.5.3" />
@@ -35,15 +35,5 @@
 
     </ItemGroup>
     <Import Project="engenious.Nuget.props" Condition="Exists('engenious.Nuget.props')" />
-    <!-- Fix adapted from https://jaylee.org/archive/2019/03/31/using-span-of-t-in-xamarin-cross-targeted-projects.html
-  Remove System.Memory/System.Buffers if mono is installed at default location
--->
-    <Target Name="VS16_RemoveSystemMemory" BeforeTargets="FindReferenceAssembliesForReferences" Condition="$(Path.Contains('/usr/lib/mono')) Or $(FrameworkPathOverride.Contains('/usr/lib/mono'))">
-        <ItemGroup>
-            <_ReferencePathToRemove Include="@(ReferencePath)" Condition="'%(ReferencePath.NuGetPackageId)'=='System.Memory'" />
-            <_ReferencePathToRemove Include="@(ReferencePath)" Condition="'%(ReferencePath.NuGetPackageId)'=='System.Buffers'" />
-            <ReferencePath Remove="@(_ReferencePathToRemove)" />
-        </ItemGroup>
-        <Message Text="Removing System.Memory for mono compatibility" Importance="high" />
-    </Target>
+
 </Project>
