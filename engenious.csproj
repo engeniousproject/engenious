@@ -25,10 +25,6 @@
         <LitGitTemplateReference Include="engenious.Nuget.props.template" />
         <None Remove="Properties\AssemblyInfo.cs.template" />
 
-        <Compile Update="Properties\AssemblyInfo.cs">
-            <DependentUpon>Assemblyinfo.cs.template</DependentUpon>
-        </Compile>
-
         <None Update="engenious.Nuget.props" Condition="Exists('engenious.Nuget.props')">
             <DependentUpon>engenious.Nuget.props.template</DependentUpon>
         </None>

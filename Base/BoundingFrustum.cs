@@ -98,12 +98,13 @@
             get => _matrix; set
             {
                 _matrix = value;
-                Right = new Plane(_matrix.M14 - _matrix.M11, _matrix.M24 - _matrix.M21, _matrix.M34 - _matrix.M31, _matrix.M44 - _matrix.M41);
-                Left = new Plane(_matrix.M14 + _matrix.M11, _matrix.M24 + _matrix.M21, _matrix.M34 + _matrix.M31, _matrix.M44 + _matrix.M41);
-                Bottom = new Plane(_matrix.M14 + _matrix.M12, _matrix.M24 + _matrix.M22, _matrix.M34 + _matrix.M32, _matrix.M44 + _matrix.M42);
-                Top = new Plane(_matrix.M14 - _matrix.M12, _matrix.M24 - _matrix.M22, _matrix.M34 - _matrix.M32, _matrix.M44 - _matrix.M42);
-                Far = new Plane(_matrix.M14 - _matrix.M13, _matrix.M24 - _matrix.M23, _matrix.M34 - _matrix.M33, _matrix.M44 - _matrix.M43);
-                Near = new Plane(_matrix.M14 + _matrix.M13, _matrix.M24 + _matrix.M23, _matrix.M34 + _matrix.M33, _matrix.M44 + _matrix.M43);
+                
+                Right  = new Plane( value.M41 + value.M11, value.M42 + value.M12, value.M43 + value.M13, value.M44 + value.M14);
+                Left   = new Plane( value.M41 - value.M11, value.M42 - value.M12, value.M43 - value.M13, value.M44 - value.M14);
+                Top    = new Plane( value.M41 - value.M21, value.M42 - value.M22, value.M43 - value.M23, value.M44 - value.M24);
+                Bottom = new Plane( value.M41 + value.M21, value.M42 + value.M22, value.M43 + value.M23, value.M44 + value.M24);
+                Near   = new Plane( value.M41 - value.M31, value.M42 - value.M32, value.M43 - value.M33, value.M44 - value.M34);
+                Far    = new Plane( value.M31, value.M32, value.M33, value.M34);
             }
         }
 
