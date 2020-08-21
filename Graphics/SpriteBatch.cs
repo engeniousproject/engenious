@@ -62,9 +62,9 @@ namespace engenious.Graphics
         private SamplerState _samplerState;
         private DepthStencilState _depthStencilState;
         private RasterizerState _rasterizerState;
-        private readonly Effect _effect;
+        private IModelEffect _effect;
+        private readonly BasicEffect _defaultEffect;
         private readonly SpriteBatcher _batcher;
-        private EffectParameter _worldViewProj;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SpriteBatch"/> class.
@@ -81,6 +81,7 @@ namespace engenious.Graphics
             effect.Parameters["View"].SetValue(Matrix.Identity);
             effect.Parameters["Proj"].SetValue(Matrix.Identity);
 
+            _defaultEffect = effect;
             _effect = effect;
         }
 
@@ -94,7 +95,7 @@ namespace engenious.Graphics
         /// <param name="rasterizerState">The rasterizer state to use for drawing.</param>
         /// <param name="effect">A custom effect to use for rendering the sprites.</param>
         /// <param name="transformMatrix">A transformation to apply to all sprites.</param>
-        public void Begin(SpriteSortMode sortMode = SpriteSortMode.Deffered, BlendState blendState = null, SamplerState samplerState = null, DepthStencilState depthStencilState = null, RasterizerState rasterizerState = null, Effect effect = null, Matrix? transformMatrix = null)
+        public void Begin(SpriteSortMode sortMode = SpriteSortMode.Deffered, BlendState blendState = null, SamplerState samplerState = null, DepthStencilState depthStencilState = null, RasterizerState rasterizerState = null, IModelEffect effect = null, Matrix? transformMatrix = null)
         {
             _sortMode = sortMode;
             _blendState = blendState;
@@ -109,7 +110,9 @@ namespace engenious.Graphics
                 _matrix = transformMatrix.Value;
             else
                 _matrix = Matrix.Identity;
-            _worldViewProj = _effect.Parameters["World"];
+
+            _effect = effect ?? _defaultEffect;
+
             _batcher.Begin(sortMode);
         }
 
@@ -461,8 +464,8 @@ namespace engenious.Graphics
             _batcher.SamplerState = _samplerState;
 
             var projection = Matrix.CreateOrthographicOffCenter(0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 0, 0, -1);
-            
-            _worldViewProj.SetValue(projection * _matrix);
+
+            _effect.World = projection * _matrix;
             
             _batcher.End(_effect);
 

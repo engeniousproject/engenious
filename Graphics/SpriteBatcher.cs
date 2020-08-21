@@ -165,7 +165,7 @@ namespace engenious.Graphics
 
         internal SamplerState SamplerState;
 
-        public void Flush(Effect effect, Texture texture, int batch, int batchCount)
+        public void Flush(IModelEffect effect, Texture texture, int batch, int batchCount)
         {
             if (batchCount == 0)
                 return;
@@ -190,7 +190,7 @@ namespace engenious.Graphics
             _graphicsDevice.VertexBuffer = null;
         }
 
-        public void End(Effect effect)
+        public void End(IModelEffect effect)
         {
             if (_batches.Count == 0)
                 return;
