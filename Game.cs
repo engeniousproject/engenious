@@ -1,13 +1,18 @@
+using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using OpenToolkit.Graphics.ES20;
 using OpenToolkit.Mathematics;
 using OpenToolkit.Windowing.Common.Input;
 using OpenToolkit.Windowing.Desktop;
-using OpenToolkit.Windowing.GraphicsLibraryFramework;
+using Image = OpenToolkit.Windowing.Common.Input.Image;
 
 namespace engenious
 {
     /// <inheritdoc />
     public abstract class Game : Game<Window>
     {
+        private Icon[] _icons;
         private void CreateWindow()
         {
             var nativeWindowSettings = new NativeWindowSettings();
@@ -38,10 +43,64 @@ namespace engenious
         public Window Window{ get; private set; }
 
         /// <summary>
-        /// Gets or sets an <see cref="Icon"/> associated with the rendering view.
+        /// Gets or sets an <see cref="Icons"/> associated with the rendering view.
         /// <remarks>This sets or gets the window icon, if the rendering view is a <see cref="Window"/>.</remarks>
         /// </summary>
-        public WindowIcon Icon { get { return Window.Icon; } set { Window.Icon = value; } }
+        public Icon[] Icons
+        {
+            get => _icons;
+            set
+            {
+                if (_icons != value)
+                {
+                    if (_icons != null)
+                    {
+                        foreach (var i in _icons)
+                        {
+                            i.Dispose();
+                        }
+                    }
+                    _icons = value;
+                    ReloadIcons();
+                }
+            }
+        }
+
+        private void ReloadIcons()
+        {
+            if (_icons != null)
+            {
+                var img = new Image[_icons.Length];
+                for (int i = 0; i < _icons.Length; i++)
+                {
+                    using var bmp = _icons[i].ToBitmap();
+                    var bmpData =
+                        bmp.LockBits(new System.Drawing.Rectangle(new System.Drawing.Point(), bmp.Size),
+                            ImageLockMode.ReadOnly, bmp.PixelFormat);
+                    var data = new byte[bmpData.Height * bmpData.Stride];
+                    if (bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
+                        throw new NotSupportedException("Currently only 32bppArgb is supported");
+                    unsafe
+                    {
+                        var srcPtr = (byte*) bmpData.Scan0;
+                        for (int p = 0; p < data.Length; p += 4)
+                        {
+                            data[p + 0] = srcPtr[p + 2];
+                            data[p + 1] = srcPtr[p + 1];
+                            data[p + 2] = srcPtr[p + 0];
+                            data[p + 3] = srcPtr[p + 3];
+                        }
+                    }
+                    bmp.UnlockBits(bmpData);
+                    img[i] = new Image(_icons[i].Width, _icons[i].Height, data);
+                }
+                Window.BaseWindow.Icon = new WindowIcon(img);
+            }
+            else
+            {
+                Window.BaseWindow.Icon = null;
+            }
+        }
 
         /// <summary>
         /// Gets or sets a title associated with the rendering view.
