@@ -1,5 +1,5 @@
 ﻿using System;
-using OpenToolkit.Windowing.GraphicsLibraryFramework;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace engenious.Input
 {

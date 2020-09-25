@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using engenious.Content;
 using engenious.Content.Serialization;
 using engenious.Helper;
-using OpenToolkit.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
@@ -46,11 +46,11 @@ namespace engenious.Graphics
                 GL.TexImage2D(
                     Target,
                     0,
-                    (OpenToolkit.Graphics.OpenGL.PixelInternalFormat) internalFormat,
+                    (OpenTK.Graphics.OpenGL.PixelInternalFormat) internalFormat,
                     width,
                     height,
                     0,
-                    OpenToolkit.Graphics.OpenGL.PixelFormat.DepthComponent,
+                    OpenTK.Graphics.OpenGL.PixelFormat.DepthComponent,
                     PixelType.Float,
                     IntPtr.Zero);
             else
@@ -119,16 +119,16 @@ namespace engenious.Graphics
         public void SetData<T>(T[] data, int level = 0)
             where T : struct
         {
-            SetData(data,level,OpenToolkit.Graphics.OpenGL.PixelFormat.Bgra);
+            SetData(data,level,OpenTK.Graphics.OpenGL.PixelFormat.Bgra);
         }
 
-        internal void SetData<T>(T[] data, int level,OpenToolkit.Graphics.OpenGL.PixelFormat format)
+        internal void SetData<T>(T[] data, int level,OpenTK.Graphics.OpenGL.PixelFormat format)
             where T : struct //ValueType
         {
             var hwCompressed =
-                format == (OpenToolkit.Graphics.OpenGL.PixelFormat) TextureContentFormat.DXT1 ||
-                format == (OpenToolkit.Graphics.OpenGL.PixelFormat) TextureContentFormat.DXT3 || format ==
-                (OpenToolkit.Graphics.OpenGL.PixelFormat) TextureContentFormat.DXT5;
+                format == (OpenTK.Graphics.OpenGL.PixelFormat) TextureContentFormat.DXT1 ||
+                format == (OpenTK.Graphics.OpenGL.PixelFormat) TextureContentFormat.DXT3 || format ==
+                (OpenTK.Graphics.OpenGL.PixelFormat) TextureContentFormat.DXT5;
             if (!hwCompressed && Marshal.SizeOf(typeof(T)) * data.Length < Width * Height)
                 throw new ArgumentException("Not enough pixel data");
 
@@ -150,7 +150,7 @@ namespace engenious.Graphics
             if (hwCompressed)
             {
                 var blockSize = (format ==
-                                 (OpenToolkit.Graphics.OpenGL.PixelFormat) TextureContentFormat
+                                 (OpenTK.Graphics.OpenGL.PixelFormat) TextureContentFormat
                                      .DXT1)
                     ? 8
                     : 16;
@@ -236,7 +236,7 @@ namespace engenious.Graphics
             }
             else*/
             {
-                GL.GetTexImage(Target, level, OpenToolkit.Graphics.OpenGL.PixelFormat.Bgra,
+                GL.GetTexImage(Target, level, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
                     PixelType.UnsignedByte, data);
             }
             //}
@@ -261,7 +261,7 @@ namespace engenious.Graphics
             {
                 //TODO: use ? GL.CopyImageSubData(
                 var temp = new T[Width * Height];
-                GL.GetTexImage(Target, level, OpenToolkit.Graphics.OpenGL.PixelFormat.Bgra,
+                GL.GetTexImage(Target, level, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
                     PixelType.UnsignedByte, temp);
                 int z = 0, w = 0;
 
@@ -278,7 +278,7 @@ namespace engenious.Graphics
             }
             else
             {
-                GL.GetTexImage(Target, level, OpenToolkit.Graphics.OpenGL.PixelFormat.Bgra,
+                GL.GetTexImage(Target, level, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
                     PixelType.UnsignedByte, data);
             }
         }
@@ -330,7 +330,7 @@ namespace engenious.Graphics
 
             text.Bind();
             GL.TexSubImage2D(text.Target, 0, 0, 0, text.Width, text.Height,
-                OpenToolkit.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bmpData.Scan0);
+                OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bmpData.Scan0);
             bmp.UnlockBits(bmpData);
 
 
@@ -350,7 +350,7 @@ namespace engenious.Graphics
             text.GraphicsDevice.ValidateGraphicsThread();
 
             text.Bind();
-            GL.GetTexImage(text.Target, 0, OpenToolkit.Graphics.OpenGL.PixelFormat.Bgra,
+            GL.GetTexImage(text.Target, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
                 PixelType.UnsignedByte, bmpData.Scan0);
             //System.Runtime.InteropServices.Marshal.Copy (bmpData.Scan0, data, 0, data.Length);//TODO: performance
             //TODO: convert pixel formats

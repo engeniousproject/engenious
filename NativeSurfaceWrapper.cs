@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel;
-using OpenToolkit.Windowing.Common;
+using OpenTK.Windowing.Common;
 
 namespace engenious
 {

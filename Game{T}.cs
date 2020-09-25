@@ -3,9 +3,9 @@ using engenious.Audio;
 using engenious.Content;
 using engenious.Graphics;
 using engenious.Helper;
-using OpenToolkit.Graphics.OpenGL;
-using OpenToolkit.Windowing.Common;
-using OpenToolkit.Windowing.Desktop;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
 
 namespace engenious
 {

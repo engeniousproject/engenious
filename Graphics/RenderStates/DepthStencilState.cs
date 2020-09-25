@@ -1,6 +1,6 @@
 ﻿using System;
 using engenious.Helper;
-using OpenToolkit.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
@@ -149,7 +149,7 @@ namespace engenious.Graphics
         {
             GraphicsDevice.ValidateGraphicsThread();
 
-            GL.DepthFunc((OpenToolkit.Graphics.OpenGL.DepthFunction) _depthBufferFunction);
+            GL.DepthFunc((OpenTK.Graphics.OpenGL.DepthFunction) _depthBufferFunction);
         }
 
         /// <summary>
@@ -224,30 +224,30 @@ namespace engenious.Graphics
         {
             if (TwoSidedStencilMode)
             {
-                GL.StencilFuncSeparate(StencilFace.Front, (OpenToolkit.Graphics.OpenGL.StencilFunction) StencilFunction,
+                GL.StencilFuncSeparate(StencilFace.Front, (OpenTK.Graphics.OpenGL.StencilFunction) StencilFunction,
                     ReferenceStencil, StencilMask);
 
                 GL.StencilFuncSeparate(StencilFace.Back,
-                    (OpenToolkit.Graphics.OpenGL.StencilFunction) CounterClockwiseStencilFunction, ReferenceStencil,
+                    (OpenTK.Graphics.OpenGL.StencilFunction) CounterClockwiseStencilFunction, ReferenceStencil,
                     StencilMask);
 
-                GL.StencilOpSeparate(StencilFace.Front, (OpenToolkit.Graphics.OpenGL.StencilOp) StencilFail,
-                    (OpenToolkit.Graphics.OpenGL.StencilOp) StencilDepthBufferFail,
-                    (OpenToolkit.Graphics.OpenGL.StencilOp) StencilPass);
+                GL.StencilOpSeparate(StencilFace.Front, (OpenTK.Graphics.OpenGL.StencilOp) StencilFail,
+                    (OpenTK.Graphics.OpenGL.StencilOp) StencilDepthBufferFail,
+                    (OpenTK.Graphics.OpenGL.StencilOp) StencilPass);
 
                 GL.StencilOpSeparate(StencilFace.Back,
-                    (OpenToolkit.Graphics.OpenGL.StencilOp) CounterClockwiseStencilFail,
-                    (OpenToolkit.Graphics.OpenGL.StencilOp) CounterClockwiseStencilDepthBufferFail,
-                    (OpenToolkit.Graphics.OpenGL.StencilOp) CounterClockwiseStencilPass);
+                    (OpenTK.Graphics.OpenGL.StencilOp) CounterClockwiseStencilFail,
+                    (OpenTK.Graphics.OpenGL.StencilOp) CounterClockwiseStencilDepthBufferFail,
+                    (OpenTK.Graphics.OpenGL.StencilOp) CounterClockwiseStencilPass);
             }
             else
             {
-                GL.StencilFunc((OpenToolkit.Graphics.OpenGL.StencilFunction) StencilFunction, ReferenceStencil,
+                GL.StencilFunc((OpenTK.Graphics.OpenGL.StencilFunction) StencilFunction, ReferenceStencil,
                     StencilMask);
 
-                GL.StencilOp((OpenToolkit.Graphics.OpenGL.StencilOp) StencilFail,
-                    (OpenToolkit.Graphics.OpenGL.StencilOp) StencilDepthBufferFail,
-                    (OpenToolkit.Graphics.OpenGL.StencilOp) StencilPass);
+                GL.StencilOp((OpenTK.Graphics.OpenGL.StencilOp) StencilFail,
+                    (OpenTK.Graphics.OpenGL.StencilOp) StencilDepthBufferFail,
+                    (OpenTK.Graphics.OpenGL.StencilOp) StencilPass);
             }
         }
 
@@ -446,7 +446,7 @@ namespace engenious.Graphics
                     GL.Disable(EnableCap.DepthTest);
             }
             if (oldState == null || oldState.DepthBufferFunction != DepthBufferFunction)
-                GL.DepthFunc((OpenToolkit.Graphics.OpenGL.DepthFunction) _depthBufferFunction);
+                GL.DepthFunc((OpenTK.Graphics.OpenGL.DepthFunction) _depthBufferFunction);
             
             if (oldState == null || oldState.DepthBufferWriteEnable != DepthBufferWriteEnable)
                 GL.DepthMask(_depthBufferWriteEnable);

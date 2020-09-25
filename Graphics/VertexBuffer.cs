@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using engenious.Helper;
-using OpenToolkit.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
@@ -56,7 +56,7 @@ namespace engenious.Graphics
                 BufferTarget.ArrayBuffer,
                 new IntPtr(vertexCount * VertexDeclaration.VertexStride),
                 IntPtr.Zero,
-                (OpenToolkit.Graphics.OpenGL.BufferUsageHint) BufferUsage);
+                (OpenTK.Graphics.OpenGL.BufferUsageHint) BufferUsage);
             ExchangeVao();
             GraphicsDevice.CheckError();
         }
@@ -85,7 +85,7 @@ namespace engenious.Graphics
         
             Vbo = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, Vbo);
-            GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(vertexCount * VertexDeclaration.VertexStride), IntPtr.Zero, (OpenToolkit.Graphics.OpenGL.BufferUsageHint)BufferUsage);
+            GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(vertexCount * VertexDeclaration.VertexStride), IntPtr.Zero, (OpenTK.Graphics.OpenGL.BufferUsageHint)BufferUsage);
 
             ExchangeVao();
             GraphicsDevice.CheckError();
@@ -108,7 +108,7 @@ namespace engenious.Graphics
                 BufferTarget.ArrayBuffer,
                 new IntPtr(vertexCount * VertexDeclaration.VertexStride),
                 IntPtr.Zero,
-                (OpenToolkit.Graphics.OpenGL.BufferUsageHint) BufferUsage);
+                (OpenTK.Graphics.OpenGL.BufferUsageHint) BufferUsage);
             GraphicsDevice.CheckError();
 
             VertexCount = vertexCount;

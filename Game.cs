@@ -1,11 +1,11 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using OpenToolkit.Graphics.ES20;
-using OpenToolkit.Mathematics;
-using OpenToolkit.Windowing.Common.Input;
-using OpenToolkit.Windowing.Desktop;
-using Image = OpenToolkit.Windowing.Common.Input.Image;
+using OpenTK.Graphics.ES20;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common.Input;
+using OpenTK.Windowing.Desktop;
+using Image = OpenTK.Windowing.Common.Input.Image;
 
 namespace engenious
 {

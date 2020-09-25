@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using engenious.Helper;
-using OpenToolkit.Windowing.Common;
+using OpenTK.Windowing.Common;
 
 namespace engenious.Input
 {
@@ -18,10 +18,10 @@ namespace engenious.Input
         private static readonly int MouseButtonCount;
         static Mouse()
         {
-            //if (!WrappingHelper.ValidateStructs<OpenToolkit.Windowing.Common.Input.MouseState,MouseState>())
+            //if (!WrappingHelper.ValidateStructs<OpenTK.Windowing.Common.Input.MouseState,MouseState>())
             //    throw new Exception("test");
 
-            MouseButtonCount = Enum.GetValues(typeof(OpenToolkit.Windowing.Common.Input.MouseButton)).OfType<OpenToolkit.Windowing.Common.Input.MouseButton>().Select(x => (int)x)
+            MouseButtonCount = Enum.GetValues(typeof(OpenTK.Windowing.Common.Input.MouseButton)).OfType<OpenTK.Windowing.Common.Input.MouseButton>().Select(x => (int)x)
                 .Max();
         }
 
@@ -47,7 +47,7 @@ namespace engenious.Input
             //TODO multiple mice
         }
 
-        private static MouseButton TranslateMouseButton(OpenToolkit.Windowing.Common.Input.MouseButton button)
+        private static MouseButton TranslateMouseButton(OpenTK.Windowing.Common.Input.MouseButton button)
         {
             return (MouseButton) button;
         }
@@ -63,7 +63,7 @@ namespace engenious.Input
                 {IsConnected = true, Position = new Vector2(state.Position.X, state.Position.Y), Scroll = _scroll};
             for (var i = 0; i < MouseButtonCount; i++)
             {
-                var original = (OpenToolkit.Windowing.Common.Input.MouseButton) i;
+                var original = (OpenTK.Windowing.Common.Input.MouseButton) i;
                 if (state[original])
                 {
                     actual.EnableBit(i);
@@ -84,7 +84,7 @@ namespace engenious.Input
                 {IsConnected = true, Position = new Vector2(state.Position.X, state.Position.Y), Scroll = _scroll};
             for (var i = 0; i < MouseButtonCount; i++)
             {
-                var original = (OpenToolkit.Windowing.Common.Input.MouseButton) i;
+                var original = (OpenTK.Windowing.Common.Input.MouseButton) i;
                 if (state[original])
                 {
                     actual.EnableBit(i);
@@ -102,7 +102,7 @@ namespace engenious.Input
         public static void SetPosition(float x, float y)
         {
             var pos = _window.Vector2ToScreen(new Vector2(x, y));
-            _window.WindowInfo.MousePosition = new OpenToolkit.Mathematics.Vector2(pos.X, pos.Y);
+            _window.WindowInfo.MousePosition = new OpenTK.Mathematics.Vector2(pos.X, pos.Y);
         }
     }
 }

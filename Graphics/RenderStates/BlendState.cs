@@ -1,6 +1,6 @@
 ﻿using System;
 using engenious.Helper;
-using OpenToolkit.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
@@ -322,10 +322,10 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
 
             GL.BlendFuncSeparate(
-                (OpenToolkit.Graphics.OpenGL.BlendingFactorSrc) ColorSourceBlend,
-                (OpenToolkit.Graphics.OpenGL.BlendingFactorDest) ColorDestinationBlend,
-                (OpenToolkit.Graphics.OpenGL.BlendingFactorSrc) AlphaSourceBlend,
-                (OpenToolkit.Graphics.OpenGL.BlendingFactorDest) AlphaDestinationBlend);
+                (OpenTK.Graphics.OpenGL.BlendingFactorSrc) ColorSourceBlend,
+                (OpenTK.Graphics.OpenGL.BlendingFactorDest) ColorDestinationBlend,
+                (OpenTK.Graphics.OpenGL.BlendingFactorSrc) AlphaSourceBlend,
+                (OpenTK.Graphics.OpenGL.BlendingFactorDest) AlphaDestinationBlend);
         }
 
         private void ApplyBlendFuncs()
@@ -333,8 +333,8 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
 
             GL.BlendEquationSeparate(
-                (OpenToolkit.Graphics.OpenGL.BlendEquationMode) ColorBlendFunction,
-                (OpenToolkit.Graphics.OpenGL.BlendEquationMode) AlphaBlendFunction);
+                (OpenTK.Graphics.OpenGL.BlendEquationMode) ColorBlendFunction,
+                (OpenTK.Graphics.OpenGL.BlendEquationMode) AlphaBlendFunction);
         }
         
         internal void Bind(GraphicsDevice graphicsDevice)
@@ -356,14 +356,14 @@ namespace engenious.Graphics
                 oldState.AlphaDestinationBlend != AlphaDestinationBlend)
             {
                 GL.BlendFuncSeparate(
-                    (OpenToolkit.Graphics.OpenGL.BlendingFactorSrc) ColorSourceBlend,
-                    (OpenToolkit.Graphics.OpenGL.BlendingFactorDest) ColorDestinationBlend,
-                    (OpenToolkit.Graphics.OpenGL.BlendingFactorSrc) AlphaSourceBlend,
-                    (OpenToolkit.Graphics.OpenGL.BlendingFactorDest) AlphaDestinationBlend);
+                    (OpenTK.Graphics.OpenGL.BlendingFactorSrc) ColorSourceBlend,
+                    (OpenTK.Graphics.OpenGL.BlendingFactorDest) ColorDestinationBlend,
+                    (OpenTK.Graphics.OpenGL.BlendingFactorSrc) AlphaSourceBlend,
+                    (OpenTK.Graphics.OpenGL.BlendingFactorDest) AlphaDestinationBlend);
             }
 
             if (oldState == null || oldState.ColorBlendFunction != ColorBlendFunction || oldState.AlphaBlendFunction != AlphaBlendFunction)
-                GL.BlendEquationSeparate((OpenToolkit.Graphics.OpenGL.BlendEquationMode) ColorBlendFunction,(OpenToolkit.Graphics.OpenGL.BlendEquationMode) AlphaBlendFunction);
+                GL.BlendEquationSeparate((OpenTK.Graphics.OpenGL.BlendEquationMode) ColorBlendFunction,(OpenTK.Graphics.OpenGL.BlendEquationMode) AlphaBlendFunction);
 
             if (oldState == null || oldState.ColorWriteChannels != ColorWriteChannels)
             {

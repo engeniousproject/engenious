@@ -1,4 +1,4 @@
-﻿using OpenToolkit.Graphics.ES20;
+﻿using OpenTK.Graphics.ES20;
 
 namespace engenious
 {

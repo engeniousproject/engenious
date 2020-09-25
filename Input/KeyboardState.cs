@@ -32,7 +32,7 @@ using System.Text;
 namespace engenious.Input
 {
     // wrapping state from opentk
-    // https://github.com/opentk/opentk/blob/master/src/OpenToolkit.Windowing.Common/Input/KeyboardState.cs
+    // https://github.com/opentk/opentk/blob/master/src/OpenTK.Windowing.Common/Input/KeyboardState.cs
     
     /// <summary>
     /// Encapsulates the state of a Keyboard device.

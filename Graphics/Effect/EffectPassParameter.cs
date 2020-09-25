@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using OpenToolkit.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {

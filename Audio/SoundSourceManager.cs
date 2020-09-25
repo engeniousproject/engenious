@@ -1,9 +1,9 @@
 ﻿using System;
-using OpenToolkit.OpenAL;
+using OpenTK.OpenAL;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using OpenToolkit.Audio.OpenAL;
+using OpenTK.Audio.OpenAL;
 
 namespace engenious.Audio
 {

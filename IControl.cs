@@ -1,6 +1,6 @@
 using System;
-using OpenToolkit.Mathematics;
-using OpenToolkit.Windowing.Common;
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 
 namespace engenious
 {

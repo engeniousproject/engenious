@@ -19,15 +19,15 @@ namespace engenious.Content.Serialization
         /// <summary>
         /// Compressed RGBA S3TC-DXT1 texture format.
         /// </summary>
-        DXT1 = OpenToolkit.Graphics.OpenGL.PixelInternalFormat.CompressedRgbaS3tcDxt1Ext,
+        DXT1 = OpenTK.Graphics.OpenGL.PixelInternalFormat.CompressedRgbaS3tcDxt1Ext,
         /// <summary>
         /// Compressed RGBA S3TC-DXT3 texture format.
         /// </summary>
-        DXT3 = OpenToolkit.Graphics.OpenGL.PixelInternalFormat.CompressedRgbaS3tcDxt3Ext,
+        DXT3 = OpenTK.Graphics.OpenGL.PixelInternalFormat.CompressedRgbaS3tcDxt3Ext,
         /// <summary>
         /// Compressed RGBA S3TC-DXT5 texture format.
         /// </summary>
-        DXT5 = OpenToolkit.Graphics.OpenGL.PixelInternalFormat.CompressedRgbaS3tcDxt5Ext,
+        DXT5 = OpenTK.Graphics.OpenGL.PixelInternalFormat.CompressedRgbaS3tcDxt5Ext,
     }
 }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using engenious.Helper;
-using OpenToolkit.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
@@ -116,14 +116,14 @@ namespace engenious.Graphics
             if (CullMode == CullMode.None)
             {
                 GL.Disable(EnableCap.CullFace);
-                GL.PolygonMode(MaterialFace.FrontAndBack, (OpenToolkit.Graphics.OpenGL.PolygonMode) FillMode);
+                GL.PolygonMode(MaterialFace.FrontAndBack, (OpenTK.Graphics.OpenGL.PolygonMode) FillMode);
             }
             else
             {
                 GL.Enable(EnableCap.CullFace);
                 GL.FrontFace((FrontFaceDirection) CullMode);
                 GL.PolygonMode(MaterialFace.FrontAndBack,
-                    (OpenToolkit.Graphics.OpenGL.PolygonMode) FillMode);
+                    (OpenTK.Graphics.OpenGL.PolygonMode) FillMode);
             }
         }
 

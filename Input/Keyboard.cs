@@ -11,7 +11,7 @@ namespace engenious.Input
         private static IRenderingSurface _window;
         static Keyboard()
         {
-            // if (!WrappingHelper.ValidateStructs<OpenToolkit.Windowing.Common.Input.KeyboardState, KeyboardState>())
+            // if (!WrappingHelper.ValidateStructs<OpenTK.Windowing.Common.Input.KeyboardState, KeyboardState>())
             //     throw new TypeLoadException("Can't wrap OpenTK Keyboard two own internal struct");
         }
 

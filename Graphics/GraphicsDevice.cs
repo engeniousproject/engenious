@@ -6,8 +6,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using engenious.Helper;
-using OpenToolkit.Graphics.OpenGL;
-using OpenToolkit.Windowing.Common;
+using OpenTK.Graphics.OpenGL;
+using OpenTK.Windowing.Common;
 
 namespace engenious.Graphics
 {
@@ -179,7 +179,7 @@ namespace engenious.Graphics
         {
             ValidateGraphicsThread();
             
-            GL.Clear((OpenToolkit.Graphics.OpenGL.ClearBufferMask) mask);
+            GL.Clear((OpenTK.Graphics.OpenGL.ClearBufferMask) mask);
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace engenious.Graphics
             ValidateGraphicsThread();
 
             GL.ClearColor(color);
-            GL.Clear((OpenToolkit.Graphics.OpenGL.ClearBufferMask) mask);
+            GL.Clear((OpenTK.Graphics.OpenGL.ClearBufferMask) mask);
         }
 
         internal void CheckError()
@@ -233,8 +233,8 @@ namespace engenious.Graphics
         {
             ValidateGraphicsThread();
             GL.ClearColor(color.R, color.G, color.B, color.A);
-            GL.Clear(OpenToolkit.Graphics.OpenGL.ClearBufferMask.ColorBufferBit |
-                     OpenToolkit.Graphics.OpenGL.ClearBufferMask.DepthBufferBit);
+            GL.Clear(OpenTK.Graphics.OpenGL.ClearBufferMask.ColorBufferBit |
+                     OpenTK.Graphics.OpenGL.ClearBufferMask.DepthBufferBit);
 
             CheckError();
         }
@@ -394,7 +394,7 @@ namespace engenious.Graphics
             VertexBuffer.Vao.Bind();
 
 
-            GL.DrawArrays((OpenToolkit.Graphics.OpenGL.PrimitiveType) primitiveType, startVertex, vertexCount);
+            GL.DrawArrays((OpenTK.Graphics.OpenGL.PrimitiveType) primitiveType, startVertex, vertexCount);
             CheckError();
         }
 
@@ -416,8 +416,8 @@ namespace engenious.Graphics
             {
                 IndexBuffer.Bind();
 
-                GL.DrawElementsBaseVertex((OpenToolkit.Graphics.OpenGL.PrimitiveType) primitiveType, primitiveCount * 3,
-                    (OpenToolkit.Graphics.OpenGL.DrawElementsType) IndexBuffer.IndexElementSize, IntPtr.Zero, baseVertex);
+                GL.DrawElementsBaseVertex((OpenTK.Graphics.OpenGL.PrimitiveType) primitiveType, primitiveCount * 3,
+                    (OpenTK.Graphics.OpenGL.DrawElementsType) IndexBuffer.IndexElementSize, IntPtr.Zero, baseVertex);
             }
 
             CheckError();
@@ -436,8 +436,8 @@ namespace engenious.Graphics
         {
             VertexBuffer.EnsureVao();
             VertexBuffer.Vao.Bind();
-            GL.DrawElementsInstancedBaseVertex((OpenToolkit.Graphics.OpenGL.PrimitiveType) primitiveType, primitiveCount * 3,
-                (OpenToolkit.Graphics.OpenGL.DrawElementsType)IndexBuffer.IndexElementSize, IntPtr.Zero, instanceCount,
+            GL.DrawElementsInstancedBaseVertex((OpenTK.Graphics.OpenGL.PrimitiveType) primitiveType, primitiveCount * 3,
+                (OpenTK.Graphics.OpenGL.DrawElementsType)IndexBuffer.IndexElementSize, IntPtr.Zero, instanceCount,
                 baseVertex);
         }
 
@@ -453,8 +453,8 @@ namespace engenious.Graphics
         {
             VertexBuffer.EnsureVao();
             VertexBuffer.Vao.Bind();
-            GL.MultiDrawElementsBaseVertex((OpenToolkit.Graphics.OpenGL.PrimitiveType)primitiveType, primitiveCount,
-                (OpenToolkit.Graphics.OpenGL.DrawElementsType)IndexBuffer.IndexElementSize, IntPtr.Zero, primitiveCount.Length,
+            GL.MultiDrawElementsBaseVertex((OpenTK.Graphics.OpenGL.PrimitiveType)primitiveType, primitiveCount,
+                (OpenTK.Graphics.OpenGL.DrawElementsType)IndexBuffer.IndexElementSize, IntPtr.Zero, primitiveCount.Length,
                 baseVertex);
         }
 

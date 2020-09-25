@@ -1,6 +1,6 @@
 ﻿using System;
 using engenious.Helper;
-using OpenToolkit.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL;
 
 
 namespace engenious.Graphics
@@ -45,7 +45,7 @@ namespace engenious.Graphics
         {
             _graphicsDevice = graphicsDevice;
             _graphicsDevice.ValidateGraphicsThread();
-            BaseShader = GL.CreateShader((OpenToolkit.Graphics.OpenGL.ShaderType) type);
+            BaseShader = GL.CreateShader((OpenTK.Graphics.OpenGL.ShaderType) type);
             if (!source.Contains("#version"))
                 source = $"#version {(graphicsDevice.GlslVersion.Major*100+graphicsDevice.GlslVersion.Minor).ToString()}\r\n#line 1\r\n"+source;
             GL.ShaderSource(BaseShader, source);

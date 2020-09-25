@@ -1,5 +1,5 @@
-﻿using OpenToolkit.Audio.OpenAL;
-using OpenToolkit.OpenAL;
+﻿using OpenTK.Audio.OpenAL;
+using OpenTK.OpenAL;
 
 namespace engenious.Audio
 {

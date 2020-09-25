@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.CompilerServices;
-using OpenToolkit.Audio.OpenAL;
-using OpenToolkit.OpenAL;
+using OpenTK.Audio.OpenAL;
+using OpenTK.OpenAL;
 
 namespace engenious.Audio
 {
@@ -89,10 +89,8 @@ namespace engenious.Audio
                 case AudioFormat.Wav:
                     using (var reader = new BinaryReader(stream))
                     {
-                        ALFormat alFormat;
-                        int size, frequency;
-                        var buffer = LoadWave(reader, out alFormat, out size, out frequency);
-                        AL.BufferData(Buffer, alFormat, buffer, size, frequency);
+                        var buffer = LoadWave(reader, out var alFormat, out _, out var frequency);
+                        AL.BufferData(Buffer, alFormat, buffer, frequency);
                     }
                     break;
                 case AudioFormat.Ogg:
@@ -119,7 +117,9 @@ namespace engenious.Audio
                                 }
                             }
                         }
-                        AL.BufferData(Buffer,alFormat,buffer,(buffer.Length - buffer.Length % 4),frequency);
+
+                        var bufferSlice = new Span<byte>(buffer, 0, (buffer.Length - buffer.Length % 4));
+                        AL.BufferData(Buffer,alFormat,bufferSlice,frequency);
                     }
                     break;
             }

@@ -1,5 +1,5 @@
 ﻿using engenious.Graphics;
-using OpenToolkit.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL;
 
 namespace engenious
 {

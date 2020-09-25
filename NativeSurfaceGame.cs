@@ -1,6 +1,6 @@
 using System;
 using engenious.Helper;
-using OpenToolkit.Windowing.Desktop;
+using OpenTK.Windowing.Desktop;
 
 namespace engenious
 {

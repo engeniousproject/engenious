@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using engenious.Helper;
-using OpenToolkit.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
@@ -118,7 +118,7 @@ namespace engenious.Graphics
             if (typeof(T) == typeof(Color))
                 pxType = PixelType.Float;
 
-            GL.TexSubImage3D(Target, level, 0, 0,layer, Width, Height,1, OpenToolkit.Graphics.OpenGL.PixelFormat.Bgra, pxType, handle.AddrOfPinnedObject());
+            GL.TexSubImage3D(Target, level, 0, 0,layer, Width, Height,1, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, pxType, handle.AddrOfPinnedObject());
 
             handle.Free();
         }
