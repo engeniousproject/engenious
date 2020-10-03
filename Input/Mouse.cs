@@ -101,8 +101,7 @@ namespace engenious.Input
         /// <param name="y">The y-component for the new cursor position.</param>
         public static void SetPosition(float x, float y)
         {
-            var pos = _window.Vector2ToScreen(new Vector2(x, y));
-            _window.WindowInfo.MousePosition = new OpenTK.Mathematics.Vector2(pos.X, pos.Y);
+            _window.WindowInfo.MousePosition = new OpenTK.Mathematics.Vector2(x, y);
         }
     }
 }
