@@ -12,12 +12,16 @@ namespace engenious
     /// <inheritdoc />
     public abstract class Game : Game<Window>
     {
+        private readonly GameSettings _settings;
         private Icon[] _icons;
         private void CreateWindow()
         {
-            var nativeWindowSettings = new NativeWindowSettings();
-            nativeWindowSettings.Flags = ContextFlags;
-            nativeWindowSettings.Size = new Vector2i(1024, 768);
+            var nativeWindowSettings = new NativeWindowSettings
+            {
+                NumberOfSamples = _settings.NumberOfSamples,
+                Flags = ContextFlags,
+                Size = new Vector2i(1024, 768)
+            };
             var baseWindow = new GameWindow(GameWindowSettings.Default, nativeWindowSettings);
             //GraphicsContext.ShareContexts = true;
             Window = new Window(baseWindow);
@@ -30,8 +34,9 @@ namespace engenious
         }
 
         /// <inheritdoc />
-        protected Game()
+        protected Game(GameSettings settings = null)
         {
+            _settings = settings;
             CreateWindow();
             
             InitializeControl(Window);
