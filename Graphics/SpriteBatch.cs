@@ -63,6 +63,7 @@ namespace engenious.Graphics
         private DepthStencilState _depthStencilState;
         private RasterizerState _rasterizerState;
         private IModelEffect _effect;
+        private bool _useScreenSpace;
         private readonly BasicEffect _defaultEffect;
         private readonly SpriteBatcher _batcher;
 
@@ -95,7 +96,8 @@ namespace engenious.Graphics
         /// <param name="rasterizerState">The rasterizer state to use for drawing.</param>
         /// <param name="effect">A custom effect to use for rendering the sprites.</param>
         /// <param name="transformMatrix">A transformation to apply to all sprites.</param>
-        public void Begin(SpriteSortMode sortMode = SpriteSortMode.Deffered, BlendState blendState = null, SamplerState samplerState = null, DepthStencilState depthStencilState = null, RasterizerState rasterizerState = null, IModelEffect effect = null, Matrix? transformMatrix = null)
+        /// <param name="useScreenSpace">A value indicating whether the sprites should be rendered in screenspace.</param>
+        public void Begin(SpriteSortMode sortMode = SpriteSortMode.Deffered, BlendState blendState = null, SamplerState samplerState = null, DepthStencilState depthStencilState = null, RasterizerState rasterizerState = null, IModelEffect effect = null, Matrix? transformMatrix = null, bool useScreenSpace = true)
         {
             _sortMode = sortMode;
             _blendState = blendState;
@@ -105,13 +107,15 @@ namespace engenious.Graphics
             else
                 _depthStencilState = depthStencilState;
             _rasterizerState = rasterizerState;
-            //TODO: this.effect = effect;
+
             if (transformMatrix.HasValue)
                 _matrix = transformMatrix.Value;
             else
                 _matrix = Matrix.Identity;
 
             _effect = effect ?? _defaultEffect;
+
+            _useScreenSpace = useScreenSpace;
 
             _batcher.Begin(sortMode);
         }
@@ -463,9 +467,16 @@ namespace engenious.Graphics
             GraphicsDevice.DepthStencilState = _depthStencilState;
             _batcher.SamplerState = _samplerState;
 
-            var projection = Matrix.CreateOrthographicOffCenter(0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 0, 0, -1);
+            if (_useScreenSpace)
+            {
+                var projection = Matrix.CreateOrthographicOffCenter(0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 0, 0, -1);
 
-            _effect.World = projection * _matrix;
+                _effect.World = projection * _matrix;
+            }
+            else
+            {
+                _effect.World = _matrix;
+            }
             
             _batcher.End(_effect);
 
@@ -476,6 +487,10 @@ namespace engenious.Graphics
         public override void Dispose()
         {
             _batcher.Dispose();
+            if (_effect is IDisposable disp)
+            {
+                disp.Dispose();
+            }
             base.Dispose();
         }
     }
