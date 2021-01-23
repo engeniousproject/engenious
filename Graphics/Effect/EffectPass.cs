@@ -40,9 +40,22 @@ namespace engenious.Graphics
             var total = -1;
             GraphicsDevice.ValidateGraphicsThread();
             GL.GetProgram(Program, GetProgramParameterName.ActiveUniforms, out total);
+            Span<int> lengths = stackalloc int[total];
+            Span<int> uniformIndices = stackalloc int[total];
+            for (int i = 0; i < total; ++i)
+            {
+                uniformIndices[i] = i;
+            }
+
+            unsafe
+            {
+                fixed(int* uniformIndicesPtr = uniformIndices)
+                fixed (int* lengthsPtr = lengths)
+                    GL.GetActiveUniforms(Program, total, uniformIndicesPtr, ActiveUniformParameter.UniformNameLength,  lengthsPtr);
+            }
             for (var i = 0; i < total; ++i)
             {
-                var name = GL.GetActiveUniform(Program, i, out _, out var type);
+                GL.GetActiveUniform(Program, i, lengths[i],out _, out _,  out var type, out var name);
                 var location = GetUniformLocation(name);
                 Parameters.Add(new EffectPassParameter(this, name, location, (EffectParameterType)type));
             }
