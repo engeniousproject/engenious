@@ -33,10 +33,16 @@ namespace engenious
 
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Game"/> class.
+        /// </summary>
+        /// <param name="settings">
+        /// The settings with which the rendering environment should be initialized.
+        /// <c>null</c> is equivalent to <see cref="GameSettings.Default"/>.
+        /// </param>
         protected Game(GameSettings settings = null)
         {
-            _settings = settings;
+            _settings = settings ?? GameSettings.Default;
             CreateWindow();
             
             InitializeControl(Window);
