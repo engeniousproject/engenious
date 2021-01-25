@@ -16,21 +16,24 @@ namespace engenious.Graphics
         /// </summary>
         public readonly struct PassRestorer : IDisposable
         {
+            private readonly GraphicsDevice _graphicsDevice;
             private readonly EffectPass _oldValue;
 
             /// <summary>
             /// Restores the active <see cref="GraphicsDevice.EffectPass"/> to the given value on dispose.
             /// </summary>
+            /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> to restore on.</param>
             /// <param name="oldValue">The <see cref="EffectPass"/> to restore to.</param>
-            public PassRestorer(EffectPass oldValue)
+            public PassRestorer(GraphicsDevice graphicsDevice, EffectPass oldValue)
             {
+                _graphicsDevice = graphicsDevice;
                 _oldValue = oldValue;
             }
 
             /// <inheritdoc />
             public void Dispose()
             {
-                _oldValue.GraphicsDevice.EffectPass = _oldValue;
+                _graphicsDevice.EffectPass = _oldValue;
             }
         }
         internal readonly int Program;
@@ -168,7 +171,7 @@ namespace engenious.Graphics
         public PassRestorer Apply()
         {
             GraphicsDevice.ValidateGraphicsThread();
-            var passRestorer = new PassRestorer(GraphicsDevice.EffectPass);
+            var passRestorer = new PassRestorer(GraphicsDevice, GraphicsDevice.EffectPass);
             GraphicsDevice.EffectPass = this;
 
             return passRestorer;
