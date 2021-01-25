@@ -24,7 +24,8 @@ namespace engenious.Graphics
         internal readonly IGraphicsContext _context;
 
         private readonly Thread _graphicsThread;
-        
+
+        private EffectPass _effectPass;
         private VertexBuffer _vertexBuffer;
         private IndexBuffer _indexBuffer;
         
@@ -564,6 +565,21 @@ namespace engenious.Graphics
                 }
             }
         }
+        
+        /// <summary>
+        /// Gets or sets the currently active <see cref="engenious.Graphics.EffectPass"/>.
+        /// </summary>
+        public EffectPass EffectPass
+        {
+            get => _effectPass;
+            set
+            {
+                if (_effectPass == value) return;
+                _effectPass = value;
+                GL.UseProgram(value?.Program ?? 0);
+            }
+        }
+        
         /// <summary>
         /// Gets or sets the currently active <see cref="engenious.Graphics.VertexBuffer"/>.
         /// </summary>

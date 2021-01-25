@@ -11,6 +11,28 @@ namespace engenious.Graphics
     /// </summary>
     public class EffectPass : GraphicsResource, IDisposable
     {
+        /// <summary>
+        /// Class that restores the active <see cref="GraphicsDevice.EffectPass"/> on dispose.
+        /// </summary>
+        public readonly struct PassRestorer : IDisposable
+        {
+            private readonly EffectPass _oldValue;
+
+            /// <summary>
+            /// Restores the active <see cref="GraphicsDevice.EffectPass"/> to the given value on dispose.
+            /// </summary>
+            /// <param name="oldValue">The <see cref="EffectPass"/> to restore to.</param>
+            public PassRestorer(EffectPass oldValue)
+            {
+                _oldValue = oldValue;
+            }
+
+            /// <inheritdoc />
+            public void Dispose()
+            {
+                _oldValue.GraphicsDevice.EffectPass = _oldValue;
+            }
+        }
         internal readonly int Program;
 
         /// <summary>
@@ -140,10 +162,16 @@ namespace engenious.Graphics
         /// <summary>
         /// Applies this render pass.
         /// </summary>
-        public void Apply()
+        /// <returns>
+        /// A <see cref="PassRestorer"/> which can be used to restore to the previous <see cref="EffectPass"/>.
+        /// </returns>
+        public PassRestorer Apply()
         {
             GraphicsDevice.ValidateGraphicsThread();
-            GL.UseProgram(Program);
+            var passRestorer = new PassRestorer(GraphicsDevice.EffectPass);
+            GraphicsDevice.EffectPass = this;
+
+            return passRestorer;
         }
 
         /// <summary>
@@ -155,8 +183,7 @@ namespace engenious.Graphics
         /// <param name="z">The z count of groups.</param>
         public void Compute(int x,int y=1,int z=1)
         {
-            GraphicsDevice.ValidateGraphicsThread();
-            GL.UseProgram(Program);
+            Apply();
             GL.DispatchCompute(x, y, z);
         }
 

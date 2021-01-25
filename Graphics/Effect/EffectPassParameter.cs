@@ -13,7 +13,8 @@ namespace engenious.Graphics
         internal EffectPass Pass;
         internal EffectParameterType Type;
 
-        internal EffectPassParameter(EffectPass pass, string name, int location,EffectParameterType type=(EffectParameterType)0x7FFFFFFF)
+        internal EffectPassParameter(EffectPass pass, string name, int location,
+            EffectParameterType type = (EffectParameterType) 0x7FFFFFFF)
         {
             Pass = pass;
             Location = location;
@@ -24,16 +25,16 @@ namespace engenious.Graphics
         /// <summary>
         /// Gets the name of the parameter.
         /// </summary>
-        public string Name{ get; private set; }
-        
+        public string Name { get; private set; }
+
         /// <summary>
         /// Sets the value of this parameter.
         /// </summary>
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(bool value)
         {
-            Pass.Apply();
-            GL.Uniform1(Location, value ? 1 : 0);
+            using (Pass.Apply())
+                GL.Uniform1(Location, value ? 1 : 0);
         }
 
         /// <summary>
@@ -42,8 +43,8 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(bool[] values)
         {
-            Pass.Apply();
-            GL.Uniform1(Location, values.Length, values.Cast<int>().ToArray());
+            using (Pass.Apply())
+                GL.Uniform1(Location, values.Length, values.Cast<int>().ToArray());
         }
 
         /// <summary>
@@ -52,8 +53,8 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(int value)
         {
-            Pass.Apply();
-            GL.Uniform1(Location, value);
+            using (Pass.Apply())
+                GL.Uniform1(Location, value);
         }
 
         /// <summary>
@@ -62,8 +63,8 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(int[] values)
         {
-            Pass.Apply();
-            GL.Uniform1(Location, values.Length, values);
+            using (Pass.Apply())
+                GL.Uniform1(Location, values.Length, values);
         }
 
         /// <summary>
@@ -72,7 +73,8 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(uint value)
         {
-            GL.Uniform1(Location, value);
+            using (Pass.Apply())
+                GL.Uniform1(Location, value);
         }
 
         /// <summary>
@@ -81,7 +83,8 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(uint[] values)
         {
-            GL.Uniform1(Location, values.Length, values);
+            using (Pass.Apply())
+                GL.Uniform1(Location, values.Length, values);
         }
 
         /// <summary>
@@ -90,7 +93,8 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(float value)
         {
-            GL.Uniform1(Location, value);
+            using (Pass.Apply())
+                GL.Uniform1(Location, value);
         }
 
         /// <summary>
@@ -99,7 +103,8 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(float[] values)
         {
-            GL.Uniform1(Location, values.Length, values);
+            using (Pass.Apply())
+                GL.Uniform1(Location, values.Length, values);
         }
 
         /// <summary>
@@ -108,7 +113,8 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(double value)
         {
-            GL.Uniform1(Location,value);
+            using (Pass.Apply())
+                GL.Uniform1(Location, value);
         }
 
         /// <summary>
@@ -117,7 +123,8 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(double[] values)
         {
-            GL.Uniform1(Location,values.Length,values);
+            using (Pass.Apply())
+                GL.Uniform1(Location, values.Length, values);
         }
 
         /// <summary>
@@ -139,7 +146,9 @@ namespace engenious.Graphics
             var val = dev.Textures.InsertFree(value);
             if (val == -1)
                 throw new Exception("Out of textures");
-            GL.Uniform1(Location, val);
+            
+            using (Pass.Apply())
+                GL.Uniform1(Location, val);
         }
 
         /// <summary>
@@ -148,7 +157,8 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public unsafe void SetValue(Vector2 value)
         {
-            GL.Uniform2(Location, 1, (float*)&value);
+            using (Pass.Apply())
+                GL.Uniform2(Location, 1, (float*) &value);
         }
 
         /// <summary>
@@ -157,13 +167,14 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Vector2[] values)
         {
-            unsafe
-            {
-                fixed(Vector2* ptr = values)
+            using (Pass.Apply())
+                unsafe
                 {
-                    GL.Uniform2(Location, values.Length, (float*)ptr);//TODO: verify?
+                    fixed (Vector2* ptr = values)
+                    {
+                        GL.Uniform2(Location, values.Length, (float*) ptr); //TODO: verify?
+                    }
                 }
-            }
         }
 
         /// <summary>
@@ -172,7 +183,8 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public unsafe void SetValue(Vector2d value)
         {
-            GL.Uniform2(Location,1,(double*)&value);
+            using (Pass.Apply())
+                GL.Uniform2(Location, 1, (double*) &value);
         }
 
         /// <summary>
@@ -181,13 +193,14 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Vector2d[] values)
         {
-            unsafe
-            {
-                fixed(Vector2d* ptr = values)
+            using (Pass.Apply())
+                unsafe
                 {
-                    GL.Uniform2(Location, values.Length, (double*)ptr);//TODO: verify?
+                    fixed (Vector2d* ptr = values)
+                    {
+                        GL.Uniform2(Location, values.Length, (double*) ptr); //TODO: verify?
+                    }
                 }
-            }
         }
 
         /// <summary>
@@ -196,7 +209,8 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public unsafe void SetValue(Vector3 value)
         {
-            GL.Uniform3(Location, 1, (float*)&value);
+            using (Pass.Apply())
+                GL.Uniform3(Location, 1, (float*) &value);
         }
 
         /// <summary>
@@ -205,13 +219,14 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Vector3[] values)
         {
-            unsafe
-            {
-                fixed(Vector3* ptr = values)
+            using (Pass.Apply())
+                unsafe
                 {
-                    GL.Uniform3(Location, values.Length, (float*)ptr);//TODO: verify?
+                    fixed (Vector3* ptr = values)
+                    {
+                        GL.Uniform3(Location, values.Length, (float*) ptr); //TODO: verify?
+                    }
                 }
-            }
         }
 
         /// <summary>
@@ -220,7 +235,8 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public unsafe void SetValue(Vector3d value)
         {
-            GL.Uniform3(Location, 1, (double*)&value);
+            using (Pass.Apply())
+                GL.Uniform3(Location, 1, (double*) &value);
         }
 
         /// <summary>
@@ -229,13 +245,14 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Vector3d[] values)
         {
-            unsafe
-            {
-                fixed(Vector3d* ptr = values)
+            using (Pass.Apply())
+                unsafe
                 {
-                    GL.Uniform3(Location, values.Length, (double*)ptr);//TODO: verify?
+                    fixed (Vector3d* ptr = values)
+                    {
+                        GL.Uniform3(Location, values.Length, (double*) ptr); //TODO: verify?
+                    }
                 }
-            }
         }
 
         /// <summary>
@@ -244,7 +261,8 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public unsafe void SetValue(Vector4 value)
         {
-            GL.Uniform4(Location, 1, (float*)&value);
+            using (Pass.Apply())
+                GL.Uniform4(Location, 1, (float*) &value);
         }
 
         /// <summary>
@@ -253,10 +271,11 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public unsafe void SetValue(Vector4[] values)
         {
-            fixed(Vector4* ptr = values)
-            {
-                GL.Uniform4(Location, values.Length, (float*)ptr);//TODO: verify?
-            }
+            using (Pass.Apply())
+                fixed (Vector4* ptr = values)
+                {
+                    GL.Uniform4(Location, values.Length, (float*) ptr); //TODO: verify?
+                }
         }
 
         /// <summary>
@@ -265,7 +284,8 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public unsafe void SetValue(Vector4d value)
         {
-            GL.Uniform4(Location, 1, (double*)&value);
+            using (Pass.Apply())
+                GL.Uniform4(Location, 1, (double*) &value);
         }
 
         /// <summary>
@@ -274,10 +294,11 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public unsafe void SetValue(Vector4d[] values)
         {
-            fixed(Vector4d* ptr = values)
-            {
-                GL.Uniform4(Location, values.Length, (double*)ptr);//TODO: verify?
-            }
+            using (Pass.Apply())
+                fixed (Vector4d* ptr = values)
+                {
+                    GL.Uniform4(Location, values.Length, (double*) ptr); //TODO: verify?
+                }
         }
 
         /// <summary>
@@ -286,7 +307,8 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public unsafe void SetValue(Matrix value)
         {
-            GL.UniformMatrix4(Location, 1, false, (float*)&value);
+            using (Pass.Apply())
+                GL.UniformMatrix4(Location, 1, false, (float*) &value);
         }
 
         /// <summary>
@@ -295,10 +317,11 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public unsafe void SetValue(Matrix[] values)
         {
-            fixed(Matrix* ptr = values)
-            {
-                GL.UniformMatrix4(Location, values.Length, false, (float*)ptr);//TODO: verify?
-            }
+            using (Pass.Apply())
+                fixed (Matrix* ptr = values)
+                {
+                    GL.UniformMatrix4(Location, values.Length, false, (float*) ptr); //TODO: verify?
+                }
         }
 
         /// <summary>
@@ -307,7 +330,8 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public unsafe void SetValue(Quaternion value)
         {
-            GL.Uniform4(Location, 1, (float*)&value);
+            using (Pass.Apply())
+                GL.Uniform4(Location, 1, (float*) &value);
         }
 
         /// <summary>
@@ -316,13 +340,14 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Quaternion[] values)
         {
-            unsafe
-            {
-                fixed(Quaternion* ptr = values)
+            using (Pass.Apply())
+                unsafe
                 {
-                    GL.Uniform4(Location, values.Length, (float*)ptr);//TODO: verify?
+                    fixed (Quaternion* ptr = values)
+                    {
+                        GL.Uniform4(Location, values.Length, (float*) ptr); //TODO: verify?
+                    }
                 }
-            }
         }
 
         /// <summary>
@@ -331,8 +356,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(ConstantBuffer value)
         {
-            GL.UniformBlockBinding(Pass.Program,Location,value.Ubo);
+            GL.UniformBlockBinding(Pass.Program, Location, value.Ubo);
         }
     }
 }
-

@@ -41,7 +41,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(value);
             }
         }
@@ -55,7 +54,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(values);
             }
         }
@@ -69,7 +67,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(value);
             }
         }
@@ -83,7 +80,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(values);
             }
         }
@@ -97,7 +93,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(value);
             }
         }
@@ -111,7 +106,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(values);
             }
         }
@@ -125,7 +119,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(value);
             }
         }
@@ -139,7 +132,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(values);
             }
         }
@@ -153,7 +145,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(value);
             }
         }
@@ -167,7 +158,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(values);
             }
         }
@@ -181,7 +171,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(value);
             }
         }
@@ -195,7 +184,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(value);
             }
         }
@@ -209,7 +197,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(value);
             }
         }
@@ -223,7 +210,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(values);
             }
         }
@@ -237,7 +223,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(value);
             }
         }
@@ -251,7 +236,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(values);
             }
         }
@@ -265,7 +249,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(value);
             }
         }
@@ -279,7 +262,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(values);
             }
         }
@@ -293,7 +275,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(value);
             }
         }
@@ -307,7 +288,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(values);
             }
         }
@@ -321,7 +301,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(value);
             }
         }
@@ -335,7 +314,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(values);
             }
         }
@@ -349,7 +327,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(value);
             }
         }
@@ -363,7 +340,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(values);
             }
         }
@@ -377,7 +353,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(value);
             }
         }
@@ -391,7 +366,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(values);
             }
         }
@@ -405,7 +379,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(value);
             }
         }
@@ -419,7 +392,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(values);
             }
         }
@@ -433,7 +405,6 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
             foreach (var param in _parameters)
             {
-                param.Pass.Apply();
                 param.SetValue(value);
             }
         }
