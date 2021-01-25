@@ -13,6 +13,8 @@ namespace engenious.Graphics
         internal EffectPass Pass;
         internal EffectParameterType Type;
 
+        private TextureCollection.TextureSlotReference? _currentTextureSlotReferene;
+
         internal EffectPassParameter(EffectPass pass, string name, int location,
             EffectParameterType type = (EffectParameterType) 0x7FFFFFFF)
         {
@@ -20,6 +22,7 @@ namespace engenious.Graphics
             Location = location;
             Name = name;
             Type = type;
+            _currentTextureSlotReferene = null;
         }
 
         /// <summary>
@@ -135,20 +138,29 @@ namespace engenious.Graphics
         {
             throw new NotImplementedException();
         }
-
+        
         /// <summary>
         /// Sets the value of this parameter.
         /// </summary>
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(Texture value)
         {
-            var dev = value.GraphicsDevice;
+            var dev = Pass.GraphicsDevice;
+            _currentTextureSlotReferene?.Release();
+            if (value == null)
+            {
+                using (Pass.Apply())
+                    GL.Uniform1(Location, 0);
+                return;
+            }
             var val = dev.Textures.InsertFree(value);
-            if (val == -1)
+            if (val == null)
                 throw new Exception("Out of textures");
             
+            val.Acquire();
+            _currentTextureSlotReferene = val;
             using (Pass.Apply())
-                GL.Uniform1(Location, val);
+                GL.Uniform1(Location, val.Slot);
         }
 
         /// <summary>

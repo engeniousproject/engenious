@@ -9,7 +9,41 @@ namespace engenious.Graphics
     /// </summary>
     public sealed class TextureCollection : ICollection<Texture>
     {
+        public class TextureSlotReference
+        {
+            private readonly TextureCollection _collection;
+            private int _refCount;
+            public int Slot { get; }
+
+            public TextureSlotReference(TextureCollection collection, int slot)
+            {
+                _collection = collection;
+                Slot = slot;
+                _refCount = 0;
+            }
+
+            /// <summary>
+            /// Aquires one reference.
+            /// </summary>
+            public void Acquire()
+            {
+                _refCount++;
+            }
+
+            /// <summary>
+            /// Releases one reference.
+            /// </summary>
+            public void Release()
+            {
+                _refCount--;
+                if (_refCount == 0)
+                {
+                    _collection[Slot] = null;
+                }
+            }
+        }
         private readonly Texture[] _textures;
+        private readonly TextureSlotReference[] _textureSlotReferences;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TextureCollection"/> class.
@@ -18,6 +52,11 @@ namespace engenious.Graphics
         {
             var maxTextures = GL.GetInteger(GetPName.MaxTextureImageUnits);
             _textures = new Texture[maxTextures];
+            _textureSlotReferences = new TextureSlotReference[maxTextures];
+            for (int i = 0; i < _textureSlotReferences.Length; i++)
+            {
+                _textureSlotReferences[i] = new TextureSlotReference(this, i);
+            }
         }
 
         /// <summary>
@@ -54,16 +93,16 @@ namespace engenious.Graphics
         /// </summary>
         /// <param name="item">The texture to insert.</param>
         /// <returns>The insert position, or -1 if no free slot was available.</returns>
-        public int InsertFree(Texture item)
+        public TextureSlotReference? InsertFree(Texture item)
         {
             var ind = IndexOf(item);
             if (ind != -1)
-                return ind;
+                return _textureSlotReferences[ind];
             ind = IndexOf(null);
             if (ind == -1)
-                return -1;
+                return null;
             this[ind] = item;
-            return ind;
+            return _textureSlotReferences[ind];
         }
 
         /// <inheritdoc />
