@@ -58,7 +58,7 @@ namespace engenious.Graphics
 
             if (isDepthTarget)
             {
-                GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, TextureTarget.Texture2D, Texture, 0);
+                GL.FramebufferTexture(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, Texture, 0);
                 Bind();
                 SetDefaultTextureParameters();
                 

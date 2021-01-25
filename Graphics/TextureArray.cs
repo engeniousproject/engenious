@@ -62,6 +62,15 @@ namespace engenious.Graphics
             GL.BindImageTexture(unit, Texture, 0, false, 0, TextureAccess.WriteOnly,
                 (SizedInternalFormat) _internalFormat);
         }
+        
+        
+        /// <inheritdoc />
+        public override bool Equals(Texture other)
+        {
+            if (!(other is TextureArray otherTex))
+                return false;
+            return (Texture == otherTex.Texture);
+        }
         #endregion
     }
 }

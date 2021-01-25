@@ -93,6 +93,14 @@ namespace engenious.Graphics
                 (SizedInternalFormat) _internalFormat);
         }
 
+        /// <inheritdoc />
+        public override bool Equals(Texture other)
+        {
+            if (!(other is Texture2D otherTex))
+                return false;
+            return (Texture == otherTex.Texture);
+        }
+
         internal override TextureTarget Target => TextureTarget.Texture2D;
 
         /// <summary>

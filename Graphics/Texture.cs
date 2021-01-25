@@ -1,11 +1,12 @@
-﻿using OpenTK.Graphics.OpenGL;
+﻿using System;
+using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
     /// <summary>
     /// Abstract base class for GPU textures.
     /// </summary>
-    public abstract class Texture:GraphicsResource
+    public abstract class Texture : GraphicsResource, IEquatable<Texture>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Texture"/> class.
@@ -59,6 +60,9 @@ namespace engenious.Graphics
         /// </summary>
         /// <param name="unit">The unit to bind this texture to.</param>
         public abstract void BindComputation(int unit=0);
+
+        /// <inheritdoc />
+        public abstract bool Equals(Texture other);
     }
 }
 
