@@ -79,7 +79,7 @@ namespace engenious.Graphics
                         GL.BindTexture(TextureTarget.Texture2D, 0);
                     else
                         value.Bind();
-
+                    GL.ActiveTexture(TextureUnit.Texture0);
                 }
 
             }
