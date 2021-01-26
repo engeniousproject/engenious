@@ -140,5 +140,59 @@
         /// </summary>
         LinearClipmapNearestSgix = 33871, // 0x0000844F
     }
+
+    /// <summary>
+    /// Specifies the comparison mode to use for a depth texture.
+    /// </summary>
+    public enum TextureCompareMode
+    {
+        /// <summary>
+        /// The r-channel is the value read from the depth texture.
+        /// </summary>
+        None = 0,
+        /// <summary>
+        /// The interpolated and clamped r-texture coordinate should be compared according to the given <see cref="TextureCompareFunc"/>.
+        /// </summary>
+        CompareRefToTexture = 34894, // 0x0000884E
+    }
+
+    /// <summary>
+    /// Specifies the comparison function used when <see cref="TextureCompareMode.CompareRefToTexture"/> is set.
+    /// </summary>
+    public enum TextureCompareFunc
+    {
+        /// <summary>
+        /// The result is always <c>0.0</c>.
+        /// </summary>
+        Never = 512, // 0x00000200
+        /// <summary>
+        /// The result is <c>1.0</c> when the depth value is less than the given value; otherwise <c>0.0</c>.
+        /// </summary>
+        Less = 513, // 0x00000201
+        /// <summary>
+        /// The result is <c>1.0</c> when the depth value is equal to the given value; otherwise <c>0.0</c>.
+        /// </summary>
+        Equal = 514, // 0x00000202
+        /// <summary>
+        /// The result is <c>1.0</c> when the depth value is less than or equal to the given value; otherwise <c>0.0</c>.
+        /// </summary>
+        LessOrEequal = 515, // 0x00000203
+        /// <summary>
+        /// The result is <c>1.0</c> when the depth value is greater than the given value; otherwise <c>0.0</c>.
+        /// </summary>
+        Greater = 516, // 0x00000204
+        /// <summary>
+        /// The result is <c>1.0</c> when the depth value is not equal to the given value; otherwise <c>0.0</c>.
+        /// </summary>
+        NotEqual = 517, // 0x00000205
+        /// <summary>
+        /// The result is <c>1.0</c> when the depth value is greater than or equal to the given value; otherwise <c>0.0</c>.
+        /// </summary>
+        GreaterOrEqual = 518, // 0x00000206
+        /// <summary>
+        /// The result is always <c>1.0</c>.
+        /// </summary>
+        Always = 519, // 0x00000207
+    }
 }
 

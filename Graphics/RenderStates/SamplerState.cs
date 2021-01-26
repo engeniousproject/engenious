@@ -207,6 +207,68 @@ namespace engenious.Graphics
         }
 
         /// <summary>
+        /// Gets or sets the compare mode used for depth texture sampling.
+        /// </summary>
+        public TextureCompareMode TextureCompareMode
+        {
+            get => _textureCompareMode;
+            set
+            {
+                ThrowIfReadOnly();
+                if (_textureCompareMode == value)
+                    return;
+                _textureCompareMode = value;
+                if (_boundTexture != null)
+                    ApplyTextureCompareMode();
+            }
+        }
+
+        private void ApplyTextureCompareMode()
+        {
+            GraphicsDevice.ValidateGraphicsThread();
+
+            BeginApply();
+            ApplyTextureCompareModeGl();
+            EndApply();
+        }
+
+        private void ApplyTextureCompareModeGl()
+        {
+            GL.TexParameter(_boundTexture.Target, TextureParameterName.TextureCompareMode,(int)TextureCompareMode);
+        }
+
+        /// <summary>
+        /// Gets or sets the compare mode used for depth texture sampling.
+        /// </summary>
+        public TextureCompareFunc TextureCompareFunction
+        {
+            get => _textureCompareFunction;
+            set
+            {
+                ThrowIfReadOnly();
+                if (_textureCompareFunction == value)
+                    return;
+                _textureCompareFunction = value;
+                if (_boundTexture != null)
+                    ApplyTextureCompareFunc();
+            }
+        }
+
+        private void ApplyTextureCompareFunc()
+        {
+            GraphicsDevice.ValidateGraphicsThread();
+
+            BeginApply();
+            ApplyTextureCompareFuncGl();
+            EndApply();
+        }
+
+        private void ApplyTextureCompareFuncGl()
+        {
+            GL.TexParameter(_boundTexture.Target, TextureParameterName.TextureCompareFunc,(int)TextureCompareFunction);
+        }
+
+        /// <summary>
         /// Gets or sets the maximum anisotropy.
         /// </summary>
         public int MaxAnisotropy
@@ -289,6 +351,9 @@ namespace engenious.Graphics
                     ApplyMipMapLevelOfDetailBias();
             }
         }
+
+        
+        
         private void ApplyMipMapLevelOfDetailBias()
         {
             GraphicsDevice.ValidateGraphicsThread();
@@ -374,6 +439,8 @@ namespace engenious.Graphics
         private TextureWrapMode _addressU = TextureWrapMode.ClampToEdge;
         private TextureWrapMode _addressV = TextureWrapMode.ClampToEdge;
         private TextureWrapMode _addressW = TextureWrapMode.ClampToEdge;
+        private TextureCompareMode _textureCompareMode = TextureCompareMode.None;
+        private TextureCompareFunc _textureCompareFunction = TextureCompareFunc.Never;
 
         private void BeginApply()
         {
@@ -401,23 +468,29 @@ namespace engenious.Graphics
 
             if (oldState == null || oldState.MipMapLevelOfDetailBias != MipMapLevelOfDetailBias)
                 ApplyMipMapLevelOfDetailBiasGl();
-            
-            if (oldState == null ||oldState.AddressU != AddressU)
+
+            if (oldState == null || oldState.AddressU != AddressU)
                 ApplyAddressUGl();
-            if (oldState == null ||oldState.AddressV != AddressV)
+            if (oldState == null || oldState.AddressV != AddressV)
                 ApplyAddressVGl();
-            if (oldState == null ||oldState.AddressW != AddressW)
+            if (oldState == null || oldState.AddressW != AddressW)
                 ApplyAddressWGl();
 
-            if (oldState == null ||oldState.MagFilter != MagFilter)
+            if (oldState == null || oldState.MagFilter != MagFilter)
                 ApplyMagFilterGl();
-            if (oldState == null ||oldState.MinFilter != MinFilter)
+            if (oldState == null || oldState.MinFilter != MinFilter)
                 ApplyMagFilterGl();
-            
-            if (GraphicsDevice.Capabilities.SupportsTextureMaxLevel && (oldState == null ||oldState.MaxMipLevel != MaxMipLevel))
+
+
+            if (oldState == null || oldState.TextureCompareMode != TextureCompareMode)
+                ApplyTextureCompareModeGl();
+            if (oldState == null || oldState.TextureCompareFunction != TextureCompareFunction)
+                ApplyTextureCompareFuncGl();
+
+            if (GraphicsDevice.Capabilities.SupportsTextureMaxLevel && (oldState == null || oldState.MaxMipLevel != MaxMipLevel))
                 ApplyMaxMipLevelGl();
-            
-            if (GraphicsDevice.Capabilities.SupportsTextureFilterAnisotropic && (oldState == null ||oldState.MaxAnisotropy != MaxAnisotropy))
+
+            if (GraphicsDevice.Capabilities.SupportsTextureFilterAnisotropic && (oldState == null || oldState.MaxAnisotropy != MaxAnisotropy))
                 ApplyMaxAnisotropyGl();
             
             
