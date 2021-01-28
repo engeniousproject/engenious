@@ -120,6 +120,8 @@ namespace engenious.Graphics
             Capabilities = new GraphicsCapabilities(this);
 
             Textures = new TextureCollection();
+
+            Debug = new DebugRendering(this);
             CheckError();
             //TODO: samplerstate
         }
@@ -208,7 +210,7 @@ namespace engenious.Graphics
             string filename = frame.GetFileName();
             int line = frame.GetFileLineNumber();
             string method = frame.GetMethod().Name;
-            Debug.WriteLine("[GL] " + filename + ":" + method + " - " + line.ToString() + ":" + code.ToString());
+            System.Diagnostics.Debug.WriteLine("[GL] " + filename + ":" + method + " - " + line.ToString() + ":" + code.ToString());
             /*var frame = new System.Diagnostics.StackTrace(true).GetFrame(1);
             ErrorCode code = ErrorCode.InvalidValue;
             ThreadingHelper.BlockOnUIThread(() =>
@@ -607,6 +609,11 @@ namespace engenious.Graphics
                 value?.Bind();
             }
         }
+
+        /// <summary>
+        /// Gets a class used for rendering helpful debug polygons(Not high performance).
+        /// </summary>
+        public DebugRendering Debug { get; }
 
         /// <inheritdoc />
         public void Dispose()
