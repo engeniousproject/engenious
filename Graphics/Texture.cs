@@ -20,6 +20,15 @@ namespace engenious.Graphics
             LevelCount = levelCount;
             Format = format;
         }
+        
+        /// <summary>
+        /// Regenerates mip maps from the level 0 texture data.
+        /// </summary>
+        public void RegenerateMipMaps()
+        {
+            Bind();
+            GL.GenerateMipmap((GenerateMipmapTarget) Target);
+        }
 
         private SamplerState _samplerState;
 
