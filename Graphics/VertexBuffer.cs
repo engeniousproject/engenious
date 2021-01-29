@@ -157,16 +157,25 @@ namespace engenious.Graphics
         /// </summary>
         /// <param name="data">The vertices.</param>
         /// <typeparam name="T">The vertex type.</typeparam>
-        public void SetData<T>(T[] data) where T:struct
+        public void SetData<T>(T[] data) where T : unmanaged
+        {
+            SetData<T>(data.AsSpan());
+        }
+
+        /// <summary>
+        /// Sets the <see cref="VertexBuffer"/> vertices data.
+        /// </summary>
+        /// <param name="data">The vertices.</param>
+        /// <typeparam name="T">The vertex type.</typeparam>
+        public unsafe void SetData<T>(ReadOnlySpan<T> data) where T : unmanaged
         {
             GraphicsDevice.ValidateGraphicsThread();
             
             GL.BindBuffer(BufferTarget.ArrayBuffer, Vbo);
 
-            var buffer = GCHandle.Alloc(data, GCHandleType.Pinned);
-            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, new IntPtr(data.Length * VertexDeclaration.VertexStride), buffer.AddrOfPinnedObject());
-                //TODO use bufferusage
-            buffer.Free();
+            fixed(T* buffer = &data.GetPinnableReference())
+                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, new IntPtr(data.Length * VertexDeclaration.VertexStride), (IntPtr)buffer);
+
             GraphicsDevice.CheckError();
         }
 
@@ -230,21 +239,35 @@ namespace engenious.Graphics
         /// <param name="elementCount">The count of vertices to copy.</param>
         /// <param name="vertexStride">The vertex stride used.</param>
         /// <typeparam name="T">The vertex type.</typeparam>
-        public void SetData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount, int vertexStride) where T : struct
+        public void SetData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount, int vertexStride) where T : unmanaged
+        {
+            SetData<T>(offsetInBytes, data.AsSpan(), startIndex, elementCount, vertexStride);
+        }
+
+        
+        /// <summary>
+        /// Sets the <see cref="VertexBuffer"/> vertices data.
+        /// </summary>
+        /// <param name="offsetInBytes">The offset destination to copy the vertices to.</param>
+        /// <param name="data">The vertices.</param>
+        /// <param name="startIndex">The offset to start copying vertices from.</param>
+        /// <param name="elementCount">The count of vertices to copy.</param>
+        /// <param name="vertexStride">The vertex stride used.</param>
+        /// <typeparam name="T">The vertex type.</typeparam>
+        public unsafe void SetData<T>(int offsetInBytes, ReadOnlySpan<T> data, int startIndex, int elementCount, int vertexStride) where T : unmanaged
         {
             GraphicsDevice.ValidateGraphicsThread();
 
             //vao.Bind();//TODO: verify
             GL.BindBuffer(BufferTarget.ArrayBuffer, Vbo);
 
-            var buffer = GCHandle.Alloc(data, GCHandleType.Pinned);
-            GL.BufferSubData(
-                BufferTarget.ArrayBuffer,
-                new IntPtr(offsetInBytes),
-                new IntPtr(elementCount * vertexStride),
-                buffer.AddrOfPinnedObject() + startIndex * vertexStride);
-
-            buffer.Free();
+            fixed(T* buffer = &data.GetPinnableReference())
+                GL.BufferSubData(
+                    BufferTarget.ArrayBuffer,
+                    new IntPtr(offsetInBytes),
+                    new IntPtr(elementCount * vertexStride),
+                    (IntPtr)buffer + startIndex * vertexStride);
+            
             GraphicsDevice.CheckError();
         }
 

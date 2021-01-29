@@ -1,3 +1,4 @@
+using System;
 using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
@@ -22,8 +23,7 @@ namespace engenious.Graphics
             _effect = new BasicEffect(graphicsDevice);
 
             _vertexBuffer = new VertexBuffer(graphicsDevice, VertexPosition.VertexDeclaration, 8);
-            _vertexBuffer.SetData(new []
-            {
+            Span<VertexPosition> vertexData = stackalloc [] {
                 new VertexPosition(new Vector3(-1f, +1f, +1f)),
                 new VertexPosition(new Vector3(+1f, +1f, +1f)),
                 new VertexPosition(new Vector3(-1f, -1f, +1f)),
@@ -32,10 +32,11 @@ namespace engenious.Graphics
                 new VertexPosition(new Vector3(+1f, +1f, -1f)),
                 new VertexPosition(new Vector3(-1f, -1f, -1f)),
                 new VertexPosition(new Vector3(+1f, -1f, -1f)),
-            });
+            };
+            _vertexBuffer.SetData<VertexPosition>(vertexData);
             
             _indexBuffer = new IndexBuffer(graphicsDevice, DrawElementsType.UnsignedShort, 24);
-            _indexBuffer.SetData(new ushort[]
+            _indexBuffer.SetData<ushort>(stackalloc ushort[]
             {
                 0, 1, 0, 2, 1, 3, 2, 3,
                 4, 5, 4, 6, 5, 7, 6, 7,

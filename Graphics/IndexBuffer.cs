@@ -97,24 +97,34 @@ namespace engenious.Graphics
         /// <param name="startIndex">The offset to start copying indices from.</param>
         /// <param name="elementCount">The count of indices to copy.</param>
         /// <typeparam name="T">The index type.</typeparam>
-        public void SetData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount) where T : struct //TODO: valuetype?
+        public void SetData<T>(int offsetInBytes, T[] data, int startIndex, int elementCount) where T : unmanaged
+        {
+            SetData<T>(offsetInBytes, data.AsSpan(), startIndex, elementCount);
+        }
+        
+        
+        /// <summary>
+        /// Sets the <see cref="IndexBuffer"/> indices data.
+        /// </summary>
+        /// <param name="offsetInBytes">The offset destination to copy the indices to.</param>
+        /// <param name="data">The indices.</param>
+        /// <param name="startIndex">The offset to start copying indices from.</param>
+        /// <param name="elementCount">The count of indices to copy.</param>
+        /// <typeparam name="T">The index type.</typeparam>
+        public unsafe void SetData<T>(int offsetInBytes, ReadOnlySpan<T> data, int startIndex, int elementCount) where T : unmanaged
         {
             if (elementCount == 0 || data.Length == 0)
                 return;
 
-
-
-            var elSize = Marshal.SizeOf(typeof(T));
-
-            var buffer = GCHandle.Alloc(data, GCHandleType.Pinned);
             GraphicsDevice.ValidateGraphicsThread();
             Bind();
-            GL.BufferSubData(
-                BufferTarget.ElementArrayBuffer,
-                new IntPtr(offsetInBytes),
-                new IntPtr(elementCount * elSize),
-                buffer.AddrOfPinnedObject() + startIndex * elSize); //TODO:
-            buffer.Free();
+            
+            fixed(T* buffer = &data.GetPinnableReference())
+                GL.BufferSubData(
+                    BufferTarget.ElementArrayBuffer,
+                    new IntPtr(offsetInBytes),
+                    new IntPtr(elementCount * sizeof(T)),
+                    (IntPtr)buffer + startIndex * sizeof(T)); //TODO:
             GraphicsDevice.CheckError();
             //Buffer.BlockCopy (data, startIndex, buffer, offsetInBytes, elementCount);
         }
@@ -126,7 +136,7 @@ namespace engenious.Graphics
         /// <param name="startIndex">The offset to start copying indices from.</param>
         /// <param name="elementCount">The count of indices to copy.</param>
         /// <typeparam name="T">The index type.</typeparam>
-        public void SetData<T>(T[] data, int startIndex, int elementCount) where T : struct
+        public unsafe void SetData<T>(T[] data, int startIndex, int elementCount) where T : unmanaged
         {
             if (elementCount == 0 || data.Length == 0)
                 return;
@@ -141,11 +151,11 @@ namespace engenious.Graphics
             GL.BufferSubData(
                 BufferTarget.ElementArrayBuffer,
                 IntPtr.Zero,
-                new IntPtr(elementCount * elSize),
-                buffer.AddrOfPinnedObject() + startIndex * elSize); //TODO:
+                new IntPtr(elementCount * sizeof(T)),
+                buffer.AddrOfPinnedObject() + startIndex * sizeof(T)); //TODO:
             buffer.Free();
             GraphicsDevice.CheckError();
-            //GL.BufferData<T> (BufferTarget.ElementArrayBuffer, new IntPtr (elementCount * Marshal.SizeOf(T)), data[startIndex], BufferUsageHint.StaticDraw);//TODO:
+            //GL.BufferData<T> (BufferTarget.ElementArrayBuffer, new IntPtr (elementCount * sizeof(T)), data[startIndex], BufferUsageHint.StaticDraw);//TODO:
             //Buffer.BlockCopy (data, startIndex, buffer, 0, elementCount);
         }
 
@@ -154,18 +164,30 @@ namespace engenious.Graphics
         /// </summary>
         /// <param name="data">The indices.</param>
         /// <typeparam name="T">The index type.</typeparam>
-        public void SetData<T>(T[] data) where T : struct
+        public void SetData<T>(T[] data) where T : unmanaged
+        {
+            SetData<T>(data.AsSpan());
+        }
+        
+        /// <summary>
+        /// Sets the <see cref="IndexBuffer"/> indices data.
+        /// </summary>
+        /// <param name="data">The indices.</param>
+        /// <typeparam name="T">The index type.</typeparam>
+        public unsafe void SetData<T>(ReadOnlySpan<T> data) where T : unmanaged
         {
             if (data.Length == 0)
                 return;
 
             GraphicsDevice.ValidateGraphicsThread();
             Bind();
-            GL.BufferSubData(BufferTarget.ElementArrayBuffer, IntPtr.Zero, new IntPtr(data.Length * Marshal.SizeOf(default(T))), data); //TODO:
+            fixed(T* buffer = &data.GetPinnableReference())
+                GL.BufferSubData(BufferTarget.ElementArrayBuffer, IntPtr.Zero, new IntPtr(data.Length * sizeof(T)), (IntPtr)buffer); //TODO:
 
             GraphicsDevice.CheckError();
             //Buffer.BlockCopy (data, 0, buffer, 0, data.Length);
         }
+
         /// <summary>
         /// Resizes the <see cref="IndexBuffer"/> to a new size with optionally keeping its data.
         /// </summary>

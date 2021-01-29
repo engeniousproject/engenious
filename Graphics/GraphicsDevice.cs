@@ -291,7 +291,7 @@ namespace engenious.Graphics
         /// <exception cref="ArgumentException">Thrown if <typeparamref name="T"/> is not a valid vertex type.</exception>
         [Obsolete("Do not use this function")]
         public void DrawUserPrimitives<T>(PrimitiveType primitiveType, T[] vertexData, int vertexOffset,
-            int primitiveCount) where T : struct
+            int primitiveCount) where T : unmanaged
         {
             var tp = Activator.CreateInstance<T>() as IVertexType;
             if (tp == null)
@@ -312,7 +312,7 @@ namespace engenious.Graphics
         /// <exception cref="ArgumentException">Thrown if <typeparamref name="T"/> is not a valid vertex type.</exception>
         [Obsolete("Do not use this function")]
         public void DrawUserPrimitives<T>(PrimitiveType primitiveType, T[] vertexData, int vertexOffset,
-            int primitiveCount, VertexDeclaration vertexDeclaration) where T : struct
+            int primitiveCount, VertexDeclaration vertexDeclaration) where T : unmanaged
         {
             var old = VertexBuffer;
             
