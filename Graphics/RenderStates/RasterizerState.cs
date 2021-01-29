@@ -30,6 +30,7 @@ namespace engenious.Graphics
         private bool _multiSampleAntiAlias = false;
         private float _slopeScaleDepthBias = 0.0f;
         private float _depthBias = 0.0f;
+        private DepthBiasMode _depthBiasMode = DepthBiasMode.None;
 
         static RasterizerState()
         {
@@ -59,6 +60,7 @@ namespace engenious.Graphics
             FillMode = PolygonMode.Fill;
         }
         private bool _isPredefined;
+
         internal void InitPredefined()
         {
             _isPredefined = true;
@@ -82,7 +84,7 @@ namespace engenious.Graphics
                 if (_cullMode == value)
                     return;
                 _cullMode = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.RasterizerState == this)
                     ApplyCullAndFill();
             }
         }
@@ -99,7 +101,7 @@ namespace engenious.Graphics
                 if (_fillMode == value)
                     return;
                 _fillMode = value; 
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.RasterizerState == this)
                     ApplyCullAndFill();
             }
         }
@@ -139,7 +141,7 @@ namespace engenious.Graphics
                 if (_multiSampleAntiAlias == value)
                     return;
                 _multiSampleAntiAlias = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.RasterizerState == this)
                     ApplyMultiSampleAntiAlias();
             }
         }
@@ -166,7 +168,7 @@ namespace engenious.Graphics
                 if (_scissorTestEnable == value)
                     return;
                 _scissorTestEnable = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.RasterizerState == this)
                     ApplyScissorTest();
             }
         }
@@ -193,7 +195,7 @@ namespace engenious.Graphics
                 if (_slopeScaleDepthBias == value)
                     return;
                 _slopeScaleDepthBias = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.RasterizerState == this)
                     ApplyPolygonOffset();
             }
         }
@@ -211,7 +213,7 @@ namespace engenious.Graphics
                 if (_depthBias == value)
                     return;
                 _depthBias = value; 
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.RasterizerState == this)
                     ApplyPolygonOffset();
             }
         }
@@ -221,6 +223,63 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateGraphicsThread();
 
             GL.PolygonOffset(_slopeScaleDepthBias, _depthBias);
+        }
+
+        /// <summary>
+        /// Gets or sets on which <see cref="FillMode"/> to apply the <see cref="DepthBias"/> and
+        /// <see cref="SlopeScaleDepthBias"/> values.
+        /// <remarks>This is a bit flag value and multiple modes can be specified at once.</remarks>
+        /// </summary>
+        public DepthBiasMode DepthBiasMode
+        {
+            get => _depthBiasMode;
+            set
+            {
+                ThrowIfReadOnly();
+                if (_depthBiasMode == value)
+                    return;
+                var old = _depthBiasMode;
+                _depthBiasMode = value;
+                if (GraphicsDevice != null && GraphicsDevice.RasterizerState == this)
+                    ApplyDepthBiasMode(old);
+            }
+        }
+
+        private void ApplyDepthBiasMode(DepthBiasMode oldMode)
+        {
+            var newMode = _depthBiasMode;
+            if ((newMode & DepthBiasMode.BiasFillMode) != 0)
+            {
+                if ((oldMode & DepthBiasMode.BiasFillMode) == 0)
+                    GL.Enable(EnableCap.PolygonOffsetFill);
+            }
+            else
+            {
+                if ((oldMode & DepthBiasMode.BiasFillMode) != 0)
+                    GL.Disable(EnableCap.PolygonOffsetFill);
+            }
+            
+            if ((newMode & DepthBiasMode.BiasLineMode) != 0)
+            {
+                if ((oldMode & DepthBiasMode.BiasLineMode) == 0)
+                    GL.Enable(EnableCap.PolygonOffsetLine);
+            }
+            else
+            {
+                if ((oldMode & DepthBiasMode.BiasLineMode) != 0)
+                    GL.Disable(EnableCap.PolygonOffsetLine);
+            }
+            
+            if ((newMode & DepthBiasMode.BiasPointMode) != 0)
+            {
+                if ((oldMode & DepthBiasMode.BiasPointMode) == 0)
+                    GL.Enable(EnableCap.PolygonOffsetPoint);
+            }
+            else
+            {
+                if ((oldMode & DepthBiasMode.BiasPointMode) != 0)
+                    GL.Disable(EnableCap.PolygonOffsetPoint);
+            }
         }
 
         internal void Bind(GraphicsDevice graphicsDevice)
@@ -254,6 +313,8 @@ namespace engenious.Graphics
             }
             if (oldState == null || oldState.SlopeScaleDepthBias != SlopeScaleDepthBias || oldState.DepthBias != DepthBias)
                 GL.PolygonOffset(_slopeScaleDepthBias, _depthBias);
+
+            ApplyDepthBiasMode(oldState?.DepthBiasMode ?? DepthBiasMode.None);
         }
 
         internal void Unbind()

@@ -89,7 +89,7 @@ namespace engenious.Graphics
                 if (_depthBufferEnable == value)
                     return;
                 _depthBufferEnable = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.DepthStencilState == this)
                     ApplyDepthBufferEnable();
             }
         }
@@ -116,7 +116,7 @@ namespace engenious.Graphics
                 if (_depthBufferWriteEnable == value)
                     return;
                 _depthBufferWriteEnable = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.DepthStencilState == this)
                     ApplyDepthBufferWriteEnable();
             }
         }
@@ -140,7 +140,7 @@ namespace engenious.Graphics
                 if (_depthBufferFunction == value)
                     return;
                 _depthBufferFunction = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.DepthStencilState == this)
                     ApplyDepthBufferFunction();
             }
         }
@@ -164,7 +164,7 @@ namespace engenious.Graphics
                 if (_stencilEnable == value)
                     return;
                 _stencilEnable = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.DepthStencilState == this)
                     ApplyStencilEnable();
             }
         }
@@ -191,7 +191,7 @@ namespace engenious.Graphics
                 if (_stencilFunction == value)
                     return;
                 _stencilFunction = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.DepthStencilState == this)
                     ApplyTwoSidedStencilMode();
             }
         }
@@ -208,7 +208,7 @@ namespace engenious.Graphics
                 if (_twoSidedStencilMode == value)
                     return;
                 _twoSidedStencilMode = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.DepthStencilState == this)
                     ApplyTwoSidedStencilMode();
             }
         }
@@ -283,7 +283,7 @@ namespace engenious.Graphics
                     return;
                 _referenceStencil = value;
 
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.DepthStencilState == this)
                     ApplyTwoSidedStencilMode();
             }
         }
@@ -300,7 +300,7 @@ namespace engenious.Graphics
                 if (_counterClockwiseStencilPass == value)
                     return;
                 _counterClockwiseStencilPass = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.DepthStencilState == this)
                     ApplyTwoSidedStencilMode();
             }
         }
@@ -319,7 +319,7 @@ namespace engenious.Graphics
                     return;
                 _counterClockwiseStencilDepthBufferFail = value;
 
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.DepthStencilState == this)
                     ApplyTwoSidedStencilMode();
             }
         }
@@ -336,7 +336,7 @@ namespace engenious.Graphics
                 if (_counterClockwiseStencilFail == value)
                     return;
                 _counterClockwiseStencilFail = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.DepthStencilState == this)
                     ApplyTwoSidedStencilMode();
             }
         }
@@ -353,7 +353,7 @@ namespace engenious.Graphics
                 if (_counterClockwiseStencilFunction == value)
                     return;
                 _counterClockwiseStencilFunction = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.DepthStencilState == this)
                     ApplyTwoSidedStencilMode();
             }
         }
@@ -370,7 +370,7 @@ namespace engenious.Graphics
                 if (_stencilMask == value)
                     return;
                 _stencilMask = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.DepthStencilState == this)
                     ApplyTwoSidedStencilMode();
             }
         }
@@ -387,7 +387,7 @@ namespace engenious.Graphics
                 if (_stencilDepthBufferFail == value)
                     return;
                 _stencilDepthBufferFail = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.DepthStencilState == this)
                     ApplyTwoSidedStencilMode();
             }
         }
@@ -404,7 +404,7 @@ namespace engenious.Graphics
                 if (_stencilFail == value)
                     return;
                 _stencilFail = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.DepthStencilState == this)
                     ApplyTwoSidedStencilMode();
             }
         }
@@ -421,7 +421,7 @@ namespace engenious.Graphics
                 if (_stencilPass == value)
                     return;
                 _stencilPass = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.DepthStencilState == this)
                     ApplyTwoSidedStencilMode();
             }
         }

@@ -1,4 +1,6 @@
-﻿namespace engenious.Graphics
+﻿using System;
+
+namespace engenious.Graphics
 {
     /// <summary>
     /// Specifies the cull modes.
@@ -36,6 +38,31 @@
         /// Renders the filled polygons.
         /// </summary>
         Fill = 6914
+    }
+
+    /// <summary>
+    /// Specifies modes to apply <see cref="RasterizerState.DepthBias"/> and
+    /// <see cref="RasterizerState.SlopeScaleDepthBias"/> to.
+    /// </summary>
+    [Flags]
+    public enum DepthBiasMode
+    {
+        /// <summary>
+        /// Do not apply any depth bias.
+        /// </summary>
+        None = 0,
+        /// <summary>
+        /// Apply depth bias to all polygons rendered in <see cref="PolygonMode.Fill"/>.
+        /// </summary>
+        BiasFillMode = 1,
+        /// <summary>
+        /// Apply depth bias to all polygons rendered in <see cref="PolygonMode.Line"/>.
+        /// </summary>
+        BiasLineMode = 2,
+        /// <summary>
+        /// Apply depth bias to all polygons rendered in <see cref="PolygonMode.Point"/>.
+        /// </summary>
+        BiasPointMode = 4
     }
 }
 

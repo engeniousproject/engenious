@@ -113,7 +113,7 @@ namespace engenious.Graphics
                 if (_colorSourceBlend == value)
                     return;
                 _colorSourceBlend = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.BlendState == this)
                     ApplyBlends();
             }
         }
@@ -130,7 +130,7 @@ namespace engenious.Graphics
                 if (_alphaSourceBlend == value)
                     return;
                 _alphaSourceBlend = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.BlendState == this)
                     ApplyBlends();
             }
         }
@@ -147,7 +147,7 @@ namespace engenious.Graphics
                 if (_colorDestinationBlend == value)
                     return;
                 _colorDestinationBlend = value; 
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.BlendState == this)
                     ApplyBlends();
             }
         }
@@ -164,7 +164,7 @@ namespace engenious.Graphics
                 if (_alphaDestinationBlend == value)
                     return;
                 _alphaDestinationBlend = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.BlendState == this)
                     ApplyBlends();
             }
         }
@@ -181,7 +181,7 @@ namespace engenious.Graphics
                 if (_alphaBlendFunction == value)
                     return;
                 _alphaBlendFunction = value; 
-                if(GraphicsDevice != null)
+                if(GraphicsDevice != null && GraphicsDevice.BlendState == this)
                     ApplyBlendFuncs();    
             }
         }
@@ -198,7 +198,7 @@ namespace engenious.Graphics
                 if (_colorBlendFunction == value)
                     return;
                 _colorBlendFunction = value; 
-                if(GraphicsDevice != null)
+                if(GraphicsDevice != null && GraphicsDevice.BlendState == this)
                     ApplyBlendFuncs();   
             }
         }
@@ -216,7 +216,7 @@ namespace engenious.Graphics
                 if (_colorWriteChannels == value)
                     return;
                 _colorWriteChannels = value; 
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.BlendState == this)
                     ApplyColorWriteChannels();
             }
         }
@@ -256,7 +256,7 @@ namespace engenious.Graphics
                 if (_colorWriteChannels1 == value)
                     return;
                 _colorWriteChannels1 = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.BlendState == this)
                     ApplyColorWriteChannels(0);
                 
             }
@@ -275,7 +275,7 @@ namespace engenious.Graphics
                 if (_colorWriteChannels2 == value)
                     return;
                 _colorWriteChannels2 = value;
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.BlendState == this)
                     ApplyColorWriteChannels(1);
             }
         }
@@ -293,7 +293,7 @@ namespace engenious.Graphics
                 if (_colorWriteChannels3 == value)
                     return;
                 _colorWriteChannels3 = value; 
-                if (GraphicsDevice != null)
+                if (GraphicsDevice != null && GraphicsDevice.BlendState == this)
                     ApplyColorWriteChannels(2);
             }
         }
