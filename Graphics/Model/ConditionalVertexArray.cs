@@ -86,7 +86,7 @@ namespace engenious.Graphics
         /// </summary>
         /// <typeparam name="T">The type to get the array as.</typeparam>
         /// <returns>The underlying array.</returns>
-        public T[] GetVertices<T>() where T : struct, IVertexType
+        public T[] GetVertices<T>() where T : unmanaged, IVertexType
         {
             return (T[]) _shit;
         }
@@ -105,7 +105,7 @@ namespace engenious.Graphics
         /// </summary>
         /// <param name="vertices">The vertices to set the this array to.</param>
         /// <typeparam name="T">The type of the input vertex array.</typeparam>
-        public void SetVertices<T>(T[] vertices) where T : struct, IVertexType
+        public void SetVertices<T>(T[] vertices) where T : unmanaged, IVertexType
         {
             SetVertices(vertices,vertices.Length > 0 ? vertices[0].VertexDeclaration : (VertexDeclaration)typeof(T).GetField("VertexDeclaration", BindingFlags.Public | BindingFlags.Static)?.GetValue(null));
         }
@@ -116,7 +116,7 @@ namespace engenious.Graphics
         /// <param name="vertices">The vertices to set the this array to.</param>
         /// <param name="vertexDeclaration">The <see cref="VertexDeclaration"/> of the given vertex array.</param>
         /// <typeparam name="T">The type of the input vertex array.</typeparam>
-        public void SetVertices<T>(T[] vertices, VertexDeclaration vertexDeclaration) where T : struct, IVertexType
+        public void SetVertices<T>(T[] vertices, VertexDeclaration vertexDeclaration) where T : unmanaged, IVertexType
         {
             _shit = vertices;
 

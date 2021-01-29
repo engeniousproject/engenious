@@ -48,7 +48,7 @@ namespace engenious.Graphics
         /// </summary>
         /// <param name="data">The data to copy.</param>
         /// <typeparam name="T">The data type.</typeparam>
-        public unsafe void Update<T>(T data) where T : struct
+        public unsafe void Update<T>(T data) where T : unmanaged
         {
             GraphicsDevice.ValidateGraphicsThread();
             GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
@@ -64,13 +64,30 @@ namespace engenious.Graphics
         /// </summary>
         /// <param name="data">The data array to copy.</param>
         /// <typeparam name="T">The data type.</typeparam>
-        public unsafe void Update<T>(T[] data) where T : struct
+        public unsafe void Update<T>(T[] data) where T : unmanaged
         {
             GraphicsDevice.ValidateGraphicsThread();
             GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
             var ptr = GL.MapBuffer(BufferTarget.UniformBuffer, BufferAccess.WriteOnly);
 
             System.Runtime.CompilerServices.Unsafe.Write((void*) ptr, data);
+
+            GL.UnmapBuffer(BufferTarget.UniformBuffer);
+        }
+
+        /// <summary>
+        /// Updates the buffer data.
+        /// </summary>
+        /// <param name="data">The data array to copy.</param>
+        /// <typeparam name="T">The data type.</typeparam>
+        public unsafe void Update<T>(ReadOnlySpan<T> data) where T : unmanaged
+        {
+            GraphicsDevice.ValidateGraphicsThread();
+            GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
+            var ptr = GL.MapBuffer(BufferTarget.UniformBuffer, BufferAccess.WriteOnly);
+            
+            fixed(T* buffer = &data.GetPinnableReference())
+                System.Runtime.CompilerServices.Unsafe.CopyBlock((void*)ptr, buffer, (uint)(data.Length * sizeof(T)));
 
             GL.UnmapBuffer(BufferTarget.UniformBuffer);
         }

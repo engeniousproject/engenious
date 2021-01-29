@@ -124,20 +124,39 @@ namespace engenious.Graphics
         /// <param name="data">The array containing the pixel data to write.</param>
         /// <param name="level">The mip map level to set the pixel data of.</param>
         /// <typeparam name="T">The type to write pixel data as.</typeparam>
+        public void SetData<T>(ReadOnlySpan<T> data, int level = 0)
+            where T : unmanaged
+        {
+            SetData(data,level,OpenTK.Graphics.OpenGL.PixelFormat.Bgra);
+        }
+        
+        /// <summary>
+        /// Sets the textures pixel data.
+        /// </summary>
+        /// <param name="data">The array containing the pixel data to write.</param>
+        /// <param name="level">The mip map level to set the pixel data of.</param>
+        /// <typeparam name="T">The type to write pixel data as.</typeparam>
         public void SetData<T>(T[] data, int level = 0)
-            where T : struct
+            where T : unmanaged
         {
             SetData(data,level,OpenTK.Graphics.OpenGL.PixelFormat.Bgra);
         }
 
-        internal void SetData<T>(T[] data, int level,OpenTK.Graphics.OpenGL.PixelFormat format)
-            where T : struct //ValueType
+        internal unsafe void SetData<T>(T[] data, int level,OpenTK.Graphics.OpenGL.PixelFormat format)
+            where T : unmanaged
+        {
+            SetData<T>(data.AsSpan(), level, format);
+        }
+
+
+        internal unsafe void SetData<T>(ReadOnlySpan<T> data, int level,OpenTK.Graphics.OpenGL.PixelFormat format)
+            where T : unmanaged
         {
             var hwCompressed =
                 format == (OpenTK.Graphics.OpenGL.PixelFormat) TextureContentFormat.DXT1 ||
                 format == (OpenTK.Graphics.OpenGL.PixelFormat) TextureContentFormat.DXT3 || format ==
                 (OpenTK.Graphics.OpenGL.PixelFormat) TextureContentFormat.DXT5;
-            if (!hwCompressed && Marshal.SizeOf(typeof(T)) * data.Length < Width * Height)
+            if (!hwCompressed && sizeof(T) * data.Length < Width * Height)
                 throw new ArgumentException("Not enough pixel data");
 
             int width = Width, height = Height;
@@ -148,7 +167,6 @@ namespace engenious.Graphics
                 if (width == 0 || height == 0)
                     return;
             }
-            var handle = GCHandle.Alloc(data, GCHandleType.Pinned);
             GraphicsDevice.ValidateGraphicsThread();
 
             Bind();
@@ -163,14 +181,15 @@ namespace engenious.Graphics
                     ? 8
                     : 16;
                 var mipSize = ((width + 3) / 4) * ((height + 3) / 4) * blockSize;
-                GL.CompressedTexSubImage2D(Target, level, 0, 0, width, height,
-                    format, mipSize, handle.AddrOfPinnedObject());
+                fixed(T* buffer = &data.GetPinnableReference())
+                    GL.CompressedTexSubImage2D(Target, level, 0, 0, width, height,
+                        format, mipSize, (IntPtr)buffer);
             }
             else
-                GL.TexSubImage2D(Target, level, 0, 0, width, height, format, pxType,
-                    handle.AddrOfPinnedObject());
+                fixed(T* buffer = &data.GetPinnableReference())
+                    GL.TexSubImage2D(Target, level, 0, 0, width, height, format, pxType,
+                        (IntPtr)buffer);
 
-            handle.Free();
             //GL.TexSubImage2D<T> (Target, 0, 0, 0, Width, Height, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, getPixelType (typeof(T)), data);
         }
 
@@ -181,10 +200,9 @@ namespace engenious.Graphics
         /// <param name="startIndex">The starting index to start reading from.</param>
         /// <param name="elementCount">The maximum number of elements to write.</param>
         /// <typeparam name="T">The type to write pixel data as.</typeparam>
-        public void SetData<T>(T[] data, int startIndex, int elementCount) where T : struct
+        public void SetData<T>(T[] data, int startIndex, int elementCount) where T : unmanaged
         {
-            throw new NotImplementedException("Need to implement offset");
-            //TODO:GL.TexSubImage2D<T> (Target, 0, 0, 0, Width, Height, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, data);
+            SetData<T>(data.AsSpan().Slice(startIndex, elementCount), 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra);
         }
 
         /// <summary>
@@ -197,7 +215,7 @@ namespace engenious.Graphics
         /// <param name="elementCount">The maximum number of elements to write.</param>
         /// <typeparam name="T">The type to write pixel data as.</typeparam>
         public void SetData<T>(int level, Rectangle? rect, T[] data, int startIndex, int elementCount)
-            where T : struct
+            where T : unmanaged
         {
             throw new NotImplementedException("Need to implement offset"); //TODO:
             /*if (rect.HasValue)
@@ -211,43 +229,32 @@ namespace engenious.Graphics
         /// Gets the textures pixel data.
         /// </summary>
         /// <param name="data">The array to write the pixel data into.</param>
+        /// <param name="level">The mip map level to set the pixel data of.</param>
         /// <typeparam name="T">The type to read pixel data as.</typeparam>
-        public void GetData<T>(T[] data) where T : struct //ValueType
+        public void GetData<T>(T[] data, int level = 0) where T : unmanaged
         {
             GraphicsDevice.ValidateGraphicsThread();
 
-                Bind();
+            Bind();
 
-                /*if (glFormat == All.CompressedTextureFormats) {
-            throw new NotImplementedException ();
-        } else {*/
-            var level = 0;
-            /*Rectangle? rect = new Rectangle?(); //new Rectangle? (new Rectangle (0, 0, Width, Height));
-            if (rect.HasValue)
-            {
-                //TODO:
-                var temp = new T[this.Width * this.Height];
-                GL.GetTexImage(Target, level, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
-                    PixelType.UnsignedByte, temp);
-                int z = 0, w = 0;
+            GL.GetTexImage(Target, level, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+                PixelType.UnsignedByte, data);
+        }
+                
+        /// <summary>
+        /// Gets the textures pixel data.
+        /// </summary>
+        /// <param name="data">The array to write the pixel data into.</param>
+        /// <param name="level">The mip map level to set the pixel data of.</param>
+        /// <typeparam name="T">The type to read pixel data as.</typeparam>
+        public unsafe void GetData<T>(Span<T> data, int level = 0) where T : unmanaged
+        {
+            GraphicsDevice.ValidateGraphicsThread();
 
-                for (int y = rect.Value.Y; y < rect.Value.Y + rect.Value.Height; ++y)
-                {
-                    for (int x = rect.Value.X; x < rect.Value.X + rect.Value.Width; ++x)
-                    {
-                        data[z * rect.Value.Width + w] = temp[(y * Width) + x];
-                        ++w;
-                    }
-                    ++z;
-                    w = 0;
-                }
-            }
-            else*/
-            {
+            Bind();
+            fixed(T* buffer = &data.GetPinnableReference())
                 GL.GetTexImage(Target, level, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
-                    PixelType.UnsignedByte, data);
-            }
-            //}
+                    PixelType.UnsignedByte, (IntPtr)buffer);
         }
 
         /// <summary>
@@ -260,7 +267,7 @@ namespace engenious.Graphics
         /// <param name="elementCount">The maximum number of elements to read.</param>
         /// <typeparam name="T">The type to read pixel data as.</typeparam>
         public void GetData<T>(int level, Rectangle? rect, T[] data, int startIndex, int elementCount)
-            where T : struct
+            where T : unmanaged
         {
             GraphicsDevice.ValidateGraphicsThread();
 
@@ -271,7 +278,7 @@ namespace engenious.Graphics
                 var temp = new T[Width * Height];
                 GL.GetTexImage(Target, level, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
                     PixelType.UnsignedByte, temp);
-                int z = 0, w = 0;
+                int z = 0, w = 0, index = 0;
 
                 for (var y = rect.Value.Y; y < rect.Value.Y + rect.Value.Height; ++y)
                 {
@@ -279,6 +286,7 @@ namespace engenious.Graphics
                     {
                         data[z * rect.Value.Width + w] = temp[(y * Width) + x];
                         ++w;
+                        ++index;
                     }
                     ++z;
                     w = 0;
