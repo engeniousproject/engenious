@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
 using engenious.Helper;
+using engenious.Utility;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Windowing.Common;
 
@@ -88,6 +89,7 @@ namespace engenious.Graphics
         {
             _graphicsThread = Thread.CurrentThread;
             _context = context;
+            _context.MakeCurrent();
             Game = game;
 
             int count;
@@ -122,8 +124,38 @@ namespace engenious.Graphics
             Textures = new TextureCollection();
 
             Debug = new DebugRendering(this);
+
+            UiThread = new GraphicsThread(this);
+
+            _fenceThread = new GraphicsThread(_context);
+            
+            // Make current again as GraphicsThread creates a new context.
+            _context.MakeCurrent();
+            
             CheckError();
             //TODO: samplerstate
+        }
+
+        private static void WaitForFence(IntPtr fence)
+        {
+            while (GL.ClientWaitSync(fence, ClientWaitSyncFlags.None, 100000000) ==
+                   WaitSyncStatus.TimeoutExpired)
+                Thread.Yield();
+        }
+        public unsafe AutoResetEvent CreateFence()
+        {
+            ValidateGraphicsThread();
+            
+            var fence = GL.FenceSync(SyncCondition.SyncGpuCommandsComplete, WaitSyncFlags.None);
+            GL.Flush();
+
+            return _fenceThread.QueueWork(CapturingDelegate.Create(&WaitForFence, fence));
+        }
+
+        private readonly GraphicsThread _fenceThread;
+        internal void SynchronizeUiThread()
+        {
+            UiThread.RunThread();
         }
 
         private void ReadOpenGlVersion()
@@ -256,6 +288,11 @@ namespace engenious.Graphics
         /// Gets the graphics capabilities of this <see cref="GraphicsDevice"/>.
         /// </summary>
         public GraphicsCapabilities Capabilities { get; }
+
+        /// <summary>
+        /// Gets the uis' <see cref="GraphicsThread"/> used for synchronization.
+        /// </summary>
+        public GraphicsThread UiThread { get; }
 
         /// <summary>
         /// Gets or sets the current <see cref="Viewport"/>.
@@ -618,7 +655,8 @@ namespace engenious.Graphics
         /// <inheritdoc />
         public void Dispose()
         {
-            
+            UiThread.Dispose();
+            _fenceThread.Dispose();
         }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using engenious.Utility;
 
 namespace engenious.Helper
 {
-    internal sealed class GlSynchronizationContext : SynchronizationContext
+    public sealed class GlSynchronizationContext : SynchronizationContext
     {
         private Thread _currentThread;
 
@@ -14,19 +15,20 @@ namespace engenious.Helper
             {
                 WaitHandle = new AutoResetEvent(false);
                 DoWait = false;
+                HasOwnership = false;
                 Callback = default;
-                UserState = default;
             }
-            public SendOrPostCallback Callback;
-            public object UserState;
+            public CapturingDelegate Callback;
             public AutoResetEvent WaitHandle;
+            public bool HasOwnership;
             public bool DoWait;
         }
 
-        private readonly object _syncRoot = new object();
+        private readonly object _syncRoot = new();
 
         private int _count, _head, _tail;
-        private readonly List<CallbackState> _array = new List<CallbackState>();
+        private readonly List<CallbackState> _array = new();
+        private AutoResetEvent _resetEvent = new AutoResetEvent(false);
 
         public GlSynchronizationContext()
         {
@@ -36,7 +38,11 @@ namespace engenious.Helper
             }
         }
 
-        public override void Send(SendOrPostCallback callback, object state)
+        private static void SendOrPostCallbackCaller(SendOrPostCallback callback, object state)
+        {
+            callback(state);
+        }
+        public override unsafe void Send(SendOrPostCallback callback, object state)
         {
             if (Thread.CurrentThread == _currentThread)
             {
@@ -44,15 +50,31 @@ namespace engenious.Helper
             }
             else
             {
-                Add(callback, state, true).WaitOne();
+                Add(CapturingDelegate.Create<SendOrPostCallback, object>(&SendOrPostCallbackCaller, callback, state), true, true).WaitOne();
             }
         }
-        public override void Post(SendOrPostCallback callback, object state)
+        public override unsafe void Post(SendOrPostCallback callback, object state)
         {
-            Add(callback, state);
+            Add(CapturingDelegate.Create<SendOrPostCallback, object>(&SendOrPostCallbackCaller, callback, state), true);
         }
-
-        private AutoResetEvent Add(SendOrPostCallback callback, object state, bool wait = false)
+        public void Send(CapturingDelegate callback, bool passOwnership)
+        {
+            if (Thread.CurrentThread == _currentThread)
+            {
+                callback.Call();
+                if (passOwnership)
+                    callback.Capture.Dispose();
+            }
+            else
+            {
+                Add(callback, passOwnership, true).WaitOne();
+            }
+        }
+        public AutoResetEvent Post(CapturingDelegate callback, bool passOwnership)
+        {
+            return Add(callback, passOwnership, true);
+        }
+        private AutoResetEvent Add(CapturingDelegate callback, bool passOwnership, bool wait = false)
         {
             lock (_syncRoot)
             {
@@ -73,12 +95,13 @@ namespace engenious.Helper
                 }
                 var item = _array[_tail];
                 item.Callback = callback;
-                item.UserState = state;
                 item.DoWait = wait;
+                item.HasOwnership = passOwnership;
                 _array[_tail] = item;
                 _tail = (_tail + 1) % _array.Count;
                 _count++;
 
+                _resetEvent.Set();
                 return item.WaitHandle;
             }
         }
@@ -105,11 +128,23 @@ namespace engenious.Helper
             {
                 var callbackState = workItem;
 
-                callbackState.Callback(callbackState.UserState);
+                callbackState.Callback.Call();
                 if (callbackState.DoWait)
                     callbackState.WaitHandle.Set();
+                if (callbackState.HasOwnership)
+                    callbackState.Callback.Capture.Dispose();
             }
 
+        }
+
+        public void WaitForWork()
+        {
+            _resetEvent.WaitOne();
+        }
+
+        internal void CancelWait()
+        {
+            _resetEvent.Set();
         }
     }
 }

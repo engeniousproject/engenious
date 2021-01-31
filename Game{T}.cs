@@ -63,10 +63,11 @@ namespace engenious
         /// <summary>
         /// Assigns a context to a given <see cref="IWindowInfo"/>.
         /// </summary>
-        /// <param name="windowInfo">The <see cref="IWindowInfo"/>.</param>
+        /// <param name="control">The control.</param>
         /// <param name="context">The context.</param>
-        protected void ConstructContext(INativeWindow windowInfo, IGraphicsContext context)
+        protected void ConstructContext(TControl control, IGraphicsContext context)
         {
+            Control = control;
             _context = context;
 
             _context.MakeCurrent();
@@ -75,24 +76,6 @@ namespace engenious
             
         }
 
-        /// <summary>
-        /// Creates a shared context for a given <see cref="IWindowInfo"/>.
-        /// </summary>
-        /// <param name="windowInfo">The <see cref="IWindowInfo"/>.</param>
-        protected void CreateSharedContext(NativeWindow windowInfo)
-        {
-            if (GraphicsDevice?.DriverVendor == null || GraphicsDevice.DriverVendor.IndexOf("amd", StringComparison.InvariantCultureIgnoreCase) != -1)
-            {
-                // TODO: context sharing needs shared context
-                var secondwindow = new GameWindow(GameWindowSettings.Default, NativeWindowSettings.Default);
-                ThreadingHelper.Initialize(_context,secondwindow);
-            }
-            else
-            {
-                ThreadingHelper.Initialize(_context,windowInfo);
-            }
-            _context.MakeCurrent();
-        }
         void Window_FocusedChanged(FocusedChangedEventArgs e)
         {
             if (e.IsFocused)
@@ -103,16 +86,15 @@ namespace engenious
 
         private void OnRenderFrame(GameTime gameTime)
         {
-            ThreadingHelper.RunUiThread();
+            GraphicsDevice.SynchronizeUiThread();
             GraphicsDevice.Clear(Color.CornflowerBlue);
             Draw(gameTime);
 
             GraphicsDevice.Present();
         }
 
-        protected void InitializeControl(TControl control)
+        protected void InitializeControl()
         {
-            Control = control;
             GraphicsDevice.Viewport = new Viewport(new Rectangle(new Point(), Control.ClientSize));
 
             Input.Mouse.UpdateWindow(Control);
@@ -293,6 +275,7 @@ namespace engenious
         public override void Dispose()
         {
             Control.Dispose();
+            GraphicsDevice.Dispose();
             _audio.Dispose();
             SoundSourceManager.Instance.Dispose();
             base.Dispose();

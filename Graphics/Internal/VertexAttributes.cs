@@ -1,17 +1,20 @@
 ﻿using System;
 using engenious.Helper;
+using engenious.Utility;
 using OpenTK.Graphics.OpenGL;
 
 namespace engenious.Graphics
 {
     internal class VertexAttributes:IDisposable
     {
+        private readonly GraphicsDevice _graphicsDevice;
         internal int Vbo;
         private readonly int _vao;
 
-        public VertexAttributes()
+        public VertexAttributes(GraphicsDevice graphicsDevice)
         {
-            
+            _graphicsDevice = graphicsDevice;
+
             _vao = GL.GenVertexArray();
         }
 
@@ -63,15 +66,14 @@ namespace engenious.Graphics
 
         public bool IsDisposed{ get; private set; }
 
-        private static void DeleteVertexArray(object that)
+        private static void DeleteVertexArray(VertexAttributes va)
         {
-            var va = (VertexAttributes) that;
             GL.DeleteVertexArray(va._vao);
         }
-        public void Dispose()
+        public unsafe void Dispose()
         {
             if (!IsDisposed)
-                ThreadingHelper.OnUiThread(DeleteVertexArray,this);
+                _graphicsDevice.UiThread.QueueWork(CapturingDelegate.Create(&DeleteVertexArray, this));
             IsDisposed = true;
         }
     }

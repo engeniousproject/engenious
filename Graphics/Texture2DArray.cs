@@ -100,6 +100,26 @@ namespace engenious.Graphics
                 (SizedInternalFormat) _internalFormat);
         }
 
+                
+        /// <summary>
+        /// Sets the textures pixel data.
+        /// </summary>
+        /// <param name="data">The array containing the pixel data to write.</param>
+        /// <param name="layer">The layer to write to.</param>
+        /// <param name="level">The mip-map level to write to.</param>
+        /// <typeparam name="T">The type to write pixel data as.</typeparam>
+        public unsafe void SetData<T>(ReadOnlySpan<T> data, int layer, int level=0) where T : unmanaged
+        {
+            GraphicsDevice.ValidateGraphicsThread();
+
+            Bind();
+            var pxType = PixelType.UnsignedByte;
+            if (typeof(T) == typeof(Color))
+                pxType = PixelType.Float;
+
+            fixed(T* buffer = &data.GetPinnableReference())
+                GL.TexSubImage3D(Target, level, 0, 0,layer, Width, Height,1, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, pxType, (IntPtr)buffer);
+        }
         
         /// <summary>
         /// Sets the textures pixel data.
@@ -108,19 +128,9 @@ namespace engenious.Graphics
         /// <param name="layer">The layer to write to.</param>
         /// <param name="level">The mip-map level to write to.</param>
         /// <typeparam name="T">The type to write pixel data as.</typeparam>
-        public void SetData<T>(T[] data,int layer,int level=0)where T : struct
+        public void SetData<T>(T[] data, int layer, int level=0) where T : unmanaged
         {
-            var handle = GCHandle.Alloc(data, GCHandleType.Pinned);
-            GraphicsDevice.ValidateGraphicsThread();
-
-            Bind();
-            var pxType = PixelType.UnsignedByte;
-            if (typeof(T) == typeof(Color))
-                pxType = PixelType.Float;
-
-            GL.TexSubImage3D(Target, level, 0, 0,layer, Width, Height,1, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, pxType, handle.AddrOfPinnedObject());
-
-            handle.Free();
+            SetData<T>(data.AsSpan(), layer, level);
         }
     }
 }

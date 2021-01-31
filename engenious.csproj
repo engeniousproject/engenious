@@ -29,6 +29,18 @@
             <DependentUpon>engenious.Nuget.props.template</DependentUpon>
         </None>
 
+        <None Update="Utility\Capture.tt">
+          <Generator>TextTemplatingFileGenerator</Generator>
+          <LastGenOutput>Capture.cs</LastGenOutput>
+        </None>
+
+    </ItemGroup>
+    <ItemGroup>
+      <Compile Update="Utility\Capture.cs">
+        <AutoGen>True</AutoGen>
+        <DesignTime>True</DesignTime>
+        <DependentUpon>Capture.tt</DependentUpon>
+      </Compile>
     </ItemGroup>
     <Import Project="engenious.Nuget.props" Condition="Exists('engenious.Nuget.props')" />
 

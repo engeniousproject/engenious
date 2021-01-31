@@ -1,0 +1,177 @@
+<#@ template hostspecific="false" language="C#" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="System" #>
+using System;
+namespace engenious.Utility
+{
+    /// <summary>
+    /// Interface for capture classes to be able to call a generic function pointer with its data.
+    /// </summary>
+    public interface ICapture : IDisposable
+    {
+        /// <summary>
+        /// Calls a function pointer using the capture data.
+        /// </summary>
+        /// <param name="funcPtr">The function pointer to call.</param>
+        void Call(IntPtr funcPtr);
+        /// <summary>
+        /// Calls a function pointer using the capture data and returns its return value.
+        /// </summary>
+        /// <param name="funcPtr">The function pointer to call.</param>
+        /// <typeparam name="T">The type of the delegates return value.</typeparam>
+        /// <returns>The return value returned by the function call.</returns>
+        T CallRet<T>(IntPtr funcPtr);
+    }
+    /// <summary>
+    /// A memory poolable capture class without parameters as a placeholder for delegates without parameters.
+    /// </summary>
+    public class Capture : ICapture
+    {
+        /// <summary>
+        /// A Capture instance for delegates without parameters.
+        /// </summary>
+        public static readonly Capture Instance = new Capture();
+        unsafe void ICapture.Call(IntPtr funcPtr)
+        {
+            Call((delegate* <void>)funcPtr);
+        }
+        unsafe T ICapture.CallRet<T>(IntPtr funcPtr)
+        {
+            return CallRet<T>((delegate* <T>)funcPtr);
+        }
+        internal unsafe void Call(delegate* <void> funcPtr)
+        {
+            funcPtr();
+        }
+        internal unsafe T CallRet<T>(delegate* <T> funcPtr)
+        {
+            return funcPtr();
+        }
+        /// <inheritdoc />
+        public void Dispose() { }
+    }
+<#
+    static string NumberToString(int number)
+    {
+        if (number == 1)
+            return $"{number}st";
+        if (number == 2)
+            return $"{number}nd";
+        if (number == 3)
+            return $"{number}rd";
+        return $"{number}th";
+    }
+    const int numParams = 4;
+
+    var paramNames = new List<string>();
+    var itemNames = new List<string>();
+    for (int i=0;i<numParams;i++)
+    {
+        paramNames.Add($"T{i + 1}");
+        itemNames.Add($"Item{i + 1}");
+        var genericParams = string.Join(", ", paramNames);
+#>
+    /// <summary>
+    /// A memory poolable capture class.
+    /// </summary>
+<#
+        for (int j = 0; j <= i; j++)
+        {
+#>
+    /// <typeparam name="<# Write(paramNames[j]);#>">The type of the <# Write(NumberToString(j + 2)); #> element to capture.</typeparam>
+<#
+        }
+#>
+    public class Capture<<# Write(genericParams);#>> : ICapture
+    {
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            MemoryPool<Capture<<# Write(genericParams);#>>>.Release(this);
+        }
+<#
+       for (int j = 0; j <= i; j++)
+       {
+#>
+        /// <summary>
+        /// Gets the <# Write(NumberToString(j + 1)); #> captured element.
+        /// </summary>
+        public <# Write(paramNames[j]); #> Item<# Write((j + 1).ToString()); #> { get; internal set; }
+<#
+        }
+#>
+        unsafe void ICapture.Call(IntPtr funcPtr)
+        {
+            Call((delegate* <<# Write(genericParams); #>, void>)funcPtr);
+        }
+        unsafe T ICapture.CallRet<T>(IntPtr funcPtr)
+        {
+            return CallRet<T>((delegate* <<# Write(genericParams); #>, T>)funcPtr);
+        }
+        internal unsafe void Call(delegate* <<# Write(genericParams); #>, void> funcPtr)
+        {
+            funcPtr(<# Write(string.Join(", ", itemNames)); #>);
+        }
+        internal unsafe T CallRet<T>(delegate* <<# Write(genericParams); #>, T> funcPtr)
+        {
+            return funcPtr(<# Write(string.Join(", ", itemNames)); #>);
+        }
+    }
+<#
+    }
+#>
+    public partial struct CapturingDelegate
+    {
+        public static unsafe CapturingDelegate Create(delegate*<void> functionPointer)
+        {
+            return new (Utility.Capture.Instance, (IntPtr)functionPointer);
+        }
+        public static unsafe CapturingDelegate CreateRet<TRet>(delegate*<TRet> functionPointer)
+        {
+            return new (Utility.Capture.Instance, (IntPtr)functionPointer);
+        }
+<#
+    paramNames.Clear();
+    itemNames.Clear();
+    for (int i = 0; i < numParams; i++)
+    {
+        void EmitParameters()
+        {
+            for (int j = 0; j <= i; j++)
+            {
+                Write($"{paramNames[j]} {itemNames[j]}");
+                if (j != i)
+                    Write(", ");
+            }
+        }
+        paramNames.Add($"T{i + 1}");
+        itemNames.Add($"item{i + 1}");
+        var genericParams = string.Join(", ", paramNames);
+        var paramItems = string.Join(", ", itemNames);
+        #>
+        private static Capture<<# Write(genericParams); #>> CreateCaptureWith<<# Write(genericParams); #>>(<# EmitParameters(); #>)
+        {
+            var capture = MemoryPool<Capture<<# Write(genericParams); #>>>.Acquire();
+<#
+            for (int j = 0; j <= i; j++)
+            {
+                var itemName = itemNames[j];
+                WriteLine($"            capture.{char.ToUpper(itemName[0])}{itemName.Substring(1)} = {itemName};");
+            }
+#>
+            return capture;
+        }
+        public static unsafe CapturingDelegate Create<<# Write(genericParams); #>>(delegate*<<# Write(genericParams); #>, void> functionPointer, <# EmitParameters(); #>)
+        {
+            return new (CreateCaptureWith(<# Write(paramItems); #>), (IntPtr)functionPointer);
+        }
+        public static unsafe CapturingDelegate CreateRet<<# Write(genericParams); #>, TRet>(delegate*<<# Write(genericParams); #>, TRet> functionPointer, <# EmitParameters(); #>)
+        {
+            return new (CreateCaptureWith(<# Write(paramItems); #>), (IntPtr)functionPointer);
+        }
+<#
+    }
+#>
+    }
+}

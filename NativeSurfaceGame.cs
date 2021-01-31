@@ -15,19 +15,5 @@ namespace engenious
             _context.MakeCurrent();
             
         }
-
-        private void CreateSharedContext()
-        {
-            if (GraphicsDevice?.DriverVendor == null || GraphicsDevice.DriverVendor.IndexOf("amd", StringComparison.InvariantCultureIgnoreCase) != -1)
-            {
-                var secondwindow = new GameWindow(GameWindowSettings.Default, NativeWindowSettings.Default);
-                ThreadingHelper.Initialize(_context,secondwindow);
-            }
-            else
-            {
-                ThreadingHelper.Initialize(_context,(NativeWindow)Control.WindowInfo);
-            }
-            _context.MakeCurrent();
-        }
     }
 }
