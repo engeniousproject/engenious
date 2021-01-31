@@ -25,9 +25,7 @@ namespace engenious
             var baseWindow = new GameWindow(GameWindowSettings.Default, nativeWindowSettings);
             //GraphicsContext.ShareContexts = true;
             Window = new Window(baseWindow);
-            ConstructContext(baseWindow, baseWindow.Context);
-
-            CreateSharedContext(baseWindow);
+            ConstructContext(Window, baseWindow.Context);
 
             baseWindow.Context.MakeCurrent();
 
@@ -45,7 +43,7 @@ namespace engenious
             _settings = settings ?? GameSettings.Default;
             CreateWindow();
             
-            InitializeControl(Window);
+            InitializeControl();
         }
 
         /// <summary>
