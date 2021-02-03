@@ -17,10 +17,10 @@ namespace engenious.Graphics
         internal VertexAttributes Vao;
         private readonly WaitCallback _waitForExchange;
 
-        private VertexBuffer(GraphicsDevice graphicsDevice, long vertexCount, BufferUsageHint usage = BufferUsageHint.StaticDraw)
+        private VertexBuffer(GraphicsDevice graphicsDevice, long vertexCapacity, BufferUsageHint usage = BufferUsageHint.StaticDraw)
             : base(graphicsDevice)
         {
-            VertexCount = vertexCount;
+            VertexCapacity = vertexCapacity;
             BufferUsage = usage;
 
             unsafe
@@ -50,11 +50,11 @@ namespace engenious.Graphics
         /// </summary>
         /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> to be created on.</param>
         /// <param name="vertexType">The type of the vertices.</param>
-        /// <param name="vertexCount">The count of vertices.</param>
+        /// <param name="vertexCapacity">The maximum count of vertices.</param>
         /// <param name="usage">The usage of this <see cref="VertexBuffer"/>.</param>
         /// <exception cref="ArgumentException"></exception>
-        public VertexBuffer(GraphicsDevice graphicsDevice, Type vertexType, long vertexCount, BufferUsageHint usage = BufferUsageHint.StaticDraw)
-            : this(graphicsDevice, vertexCount, usage)
+        public VertexBuffer(GraphicsDevice graphicsDevice, Type vertexType, long vertexCapacity, BufferUsageHint usage = BufferUsageHint.StaticDraw)
+            : this(graphicsDevice, vertexCapacity, usage)
         {
             var tp = Activator.CreateInstance(vertexType) as IVertexType;
             if (tp == null)
@@ -67,7 +67,7 @@ namespace engenious.Graphics
             GL.BindBuffer(BufferTarget.ArrayBuffer, Vbo);
             GL.BufferData(
                 BufferTarget.ArrayBuffer,
-                new IntPtr(vertexCount * VertexDeclaration.VertexStride),
+                new IntPtr(vertexCapacity * VertexDeclaration.VertexStride),
                 IntPtr.Zero,
                 (OpenTK.Graphics.OpenGL.BufferUsageHint) BufferUsage);
             ExchangeVao();
@@ -88,17 +88,17 @@ namespace engenious.Graphics
         /// </summary>
         /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> to be created on.</param>
         /// <param name="vertexDeclaration">A vertex declaration describing the structure of the buffer.</param>
-        /// <param name="vertexCount">The count of vertices.</param>
+        /// <param name="vertexCapacity">The maximum count of vertices.</param>
         /// <param name="usage">The usage of this <see cref="VertexBuffer"/>.</param>
-        public VertexBuffer(GraphicsDevice graphicsDevice, VertexDeclaration vertexDeclaration, int vertexCount, BufferUsageHint usage = BufferUsageHint.StaticDraw)
-            : this(graphicsDevice, vertexCount, usage)
+        public VertexBuffer(GraphicsDevice graphicsDevice, VertexDeclaration vertexDeclaration, int vertexCapacity, BufferUsageHint usage = BufferUsageHint.StaticDraw)
+            : this(graphicsDevice, vertexCapacity, usage)
         {
             VertexDeclaration = vertexDeclaration;
             GraphicsDevice.ValidateUiGraphicsThread();
         
             Vbo = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, Vbo);
-            GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(vertexCount * VertexDeclaration.VertexStride), IntPtr.Zero, (OpenTK.Graphics.OpenGL.BufferUsageHint)BufferUsage);
+            GL.BufferData(BufferTarget.ArrayBuffer, new IntPtr(vertexCapacity * VertexDeclaration.VertexStride), IntPtr.Zero, (OpenTK.Graphics.OpenGL.BufferUsageHint)BufferUsage);
 
             ExchangeVao();
             GraphicsDevice.CheckError();
@@ -107,17 +107,17 @@ namespace engenious.Graphics
         /// <summary>
         /// Resizes the <see cref="VertexBuffer"/> to a new size with optionally keeping its data.
         /// </summary>
-        /// <param name="vertexCount">The new count of vertices needed.</param>
+        /// <param name="vertexCapacity">The new maximum count of vertices needed.</param>
         /// <param name="keepData">Whether to keep the old data or not.</param>
         /// <exception cref="NotImplementedException"></exception>
-        public void Resize(int vertexCount, bool keepData = false)
+        public void Resize(int vertexCapacity, bool keepData = false)
         {
-            var tempVbo = ResizeInternal(vertexCount, keepData);
+            var tempVbo = ResizeInternal(vertexCapacity, keepData);
             GL.DeleteBuffer(Vbo);
             Vbo = tempVbo;
-            VertexCount = vertexCount;
+            VertexCapacity = vertexCapacity;
         }
-        private int ResizeInternal(long vertexCount, bool keepData = false)
+        private int ResizeInternal(long vertexCapacity, bool keepData = false)
         {
             GraphicsDevice.ValidateUiGraphicsThread();
             
@@ -126,7 +126,7 @@ namespace engenious.Graphics
             GL.BindBuffer(BufferTarget.ArrayBuffer, tempVbo);
             GL.BufferData(
                 BufferTarget.ArrayBuffer,
-                new IntPtr(vertexCount * VertexDeclaration.VertexStride),
+                new IntPtr(vertexCapacity * VertexDeclaration.VertexStride),
                 IntPtr.Zero,
                 (OpenTK.Graphics.OpenGL.BufferUsageHint) BufferUsage);
             GraphicsDevice.CheckError();
@@ -164,6 +164,11 @@ namespace engenious.Graphics
         public long VertexCount{ get; private set; }
 
         /// <summary>
+        /// Gets the number of vertices that can be written without resize.
+        /// </summary>
+        public long VertexCapacity{ get; private set; }
+
+        /// <summary>
         /// Gets the vertex declaration describing this vertex buffer.
         /// </summary>
         public VertexDeclaration VertexDeclaration{ get; private set; }
@@ -178,6 +183,14 @@ namespace engenious.Graphics
             SetData<T>(data.AsSpan());
         }
 
+        /// <summary>
+        /// Resets <see cref="VertexCount"/> to 0.
+        /// </summary>
+        public void Clear()
+        {
+            VertexCount = 0;
+        }
+
         private static void DoExchange(VertexBuffer that)
         {
             var newVbo = Interlocked.Exchange(ref that.NextVbo, -1);
@@ -186,6 +199,7 @@ namespace engenious.Graphics
             var oldVbo = that.Vbo;
 
             that.Vbo = newVbo;
+            that.VertexCapacity = that.NextVertexCount;
             that.VertexCount = that.NextVertexCount;
             GL.DeleteBuffer(oldVbo);
         }
@@ -245,8 +259,9 @@ namespace engenious.Graphics
         /// <param name="ptr">Pointer to copy data from.</param>
         /// <param name="offsetInBytes">The offset destination to copy the vertices to.</param>
         /// <param name="sizeInBytes">The number of bytes to copy from the source pointer.</param>
-        public void SetData(IntPtr ptr,long offsetInBytes,long sizeInBytes)
+        public void SetData(IntPtr ptr, long offsetInBytes, long sizeInBytes)
         {
+            VertexCount = sizeInBytes / VertexDeclaration.VertexStride;
             GraphicsDevice.ValidateUiGraphicsThread();
             
             GL.BindBuffer(BufferTarget.ArrayBuffer, Vbo);
@@ -265,19 +280,6 @@ namespace engenious.Graphics
         public void SetData<T>(T[] data, int startIndex, int elementCount) where T : unmanaged
         {
             SetData<T>(data.AsSpan(startIndex, elementCount));
-            GraphicsDevice.ValidateUiGraphicsThread();
-            
-            GL.BindBuffer(BufferTarget.ArrayBuffer, Vbo);
-
-            var buffer = GCHandle.Alloc(data, GCHandleType.Pinned);
-            GL.BufferSubData(
-                BufferTarget.ArrayBuffer,
-                IntPtr.Zero,
-                new IntPtr(elementCount * VertexDeclaration.VertexStride),
-                buffer.AddrOfPinnedObject() + startIndex * VertexDeclaration.VertexStride); //TODO use bufferusage
-
-            buffer.Free();
-            GraphicsDevice.CheckError();
         }
 
         /// <summary>
