@@ -38,7 +38,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(bool value)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(value);
@@ -51,7 +51,7 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(bool[] values)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(values);
@@ -64,7 +64,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(int value)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(value);
@@ -77,7 +77,7 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(int[] values)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(values);
@@ -90,7 +90,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(uint value)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(value);
@@ -103,7 +103,7 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(uint[] values)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(values);
@@ -116,7 +116,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(float value)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(value);
@@ -129,7 +129,7 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(float[] values)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(values);
@@ -142,7 +142,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(double value)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(value);
@@ -155,7 +155,7 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(double[] values)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(values);
@@ -168,7 +168,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(string value)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(value);
@@ -181,7 +181,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(Texture value)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(value);
@@ -194,7 +194,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(Vector2 value)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(value);
@@ -207,7 +207,7 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Vector2[] values)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(values);
@@ -220,7 +220,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(Vector2d value)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(value);
@@ -233,7 +233,7 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Vector2d[] values)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(values);
@@ -246,7 +246,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(Vector3 value)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(value);
@@ -259,7 +259,7 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Vector3[] values)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(values);
@@ -272,7 +272,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(Vector3d value)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(value);
@@ -285,7 +285,7 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Vector3d[] values)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(values);
@@ -298,7 +298,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(Vector4 value)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(value);
@@ -311,7 +311,7 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Vector4[] values)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(values);
@@ -324,7 +324,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(Vector4d value)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(value);
@@ -337,7 +337,7 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Vector4d[] values)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(values);
@@ -350,7 +350,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(Matrix value)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(value);
@@ -363,7 +363,7 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Matrix[] values)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(values);
@@ -376,7 +376,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(Quaternion value)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(value);
@@ -389,7 +389,7 @@ namespace engenious.Graphics
         /// <param name="values">The value to set the parameter to.</param>
         public void SetValue(Quaternion[] values)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(values);
@@ -402,7 +402,7 @@ namespace engenious.Graphics
         /// <param name="value">The value to set the parameter to.</param>
         public void SetValue(ConstantBuffer value)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
             {
                 param.SetValue(value);

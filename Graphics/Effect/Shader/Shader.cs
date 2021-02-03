@@ -44,7 +44,7 @@ namespace engenious.Graphics
         public Shader(GraphicsDevice graphicsDevice, ShaderType type, string source)
         {
             _graphicsDevice = graphicsDevice;
-            _graphicsDevice.ValidateGraphicsThread();
+            _graphicsDevice.ValidateUiGraphicsThread();
             BaseShader = GL.CreateShader((OpenTK.Graphics.OpenGL.ShaderType) type);
             if (!source.Contains("#version"))
                 source = $"#version {(graphicsDevice.GlslVersion.Major*100+graphicsDevice.GlslVersion.Minor).ToString()}\r\n#line 1\r\n"+source;
@@ -54,7 +54,7 @@ namespace engenious.Graphics
 
         internal void Compile()
         {
-            _graphicsDevice.ValidateGraphicsThread();
+            _graphicsDevice.ValidateUiGraphicsThread();
             GL.CompileShader(BaseShader);
 
             int compiled;
@@ -68,7 +68,7 @@ namespace engenious.Graphics
 
         public void Dispose()
         {
-            _graphicsDevice.ValidateGraphicsThread();
+            _graphicsDevice.ValidateUiGraphicsThread();
             GL.DeleteProgram(BaseShader);
         }
 

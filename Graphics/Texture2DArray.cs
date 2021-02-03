@@ -24,7 +24,7 @@ namespace engenious.Graphics
         public Texture2DArray(GraphicsDevice graphicsDevice, int levels, int width, int height, int layers)
             : base(graphicsDevice)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             _texture = GL.GenTexture();
             
@@ -48,7 +48,7 @@ namespace engenious.Graphics
         public Texture2DArray(GraphicsDevice graphicsDevice,int levels,int width,int height,Texture2D[] textures)
             :this(graphicsDevice,levels,width,height,textures.Length)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             var layer=0;
 
@@ -110,7 +110,7 @@ namespace engenious.Graphics
         /// <typeparam name="T">The type to write pixel data as.</typeparam>
         public unsafe void SetData<T>(ReadOnlySpan<T> data, int layer, int level=0) where T : unmanaged
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             Bind();
             var pxType = PixelType.UnsignedByte;

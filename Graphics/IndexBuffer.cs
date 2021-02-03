@@ -36,7 +36,7 @@ namespace engenious.Graphics
 			
             IndexCount = indexCount;
             BufferUsage = usage;
-            graphicsDevice.ValidateGraphicsThread();
+            graphicsDevice.ValidateUiGraphicsThread();
             _ibo = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _ibo);
             GL.BufferData(
@@ -61,7 +61,7 @@ namespace engenious.Graphics
             IndexElementSize = indexElementSize;
             IndexCount = indexCount;
             BufferUsage = usage;
-            graphicsDevice.ValidateGraphicsThread();
+            graphicsDevice.ValidateUiGraphicsThread();
             _ibo = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _ibo);
             _elementSize = (indexElementSize == DrawElementsType.UnsignedByte ? 1 : (indexElementSize == DrawElementsType.UnsignedShort ? 2 : 4));
@@ -116,7 +116,7 @@ namespace engenious.Graphics
             if (elementCount == 0 || data.Length == 0)
                 return;
 
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             Bind();
             
             fixed(T* buffer = &data.GetPinnableReference())
@@ -145,7 +145,7 @@ namespace engenious.Graphics
             var elSize = Marshal.SizeOf(typeof(T));
 
             var buffer = GCHandle.Alloc(data, GCHandleType.Pinned);
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             Bind();
 
             GL.BufferSubData(
@@ -179,7 +179,7 @@ namespace engenious.Graphics
             if (data.Length == 0)
                 return;
 
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             Bind();
             fixed(T* buffer = &data.GetPinnableReference())
                 GL.BufferSubData(BufferTarget.ElementArrayBuffer, IntPtr.Zero, new IntPtr(data.Length * sizeof(T)), (IntPtr)buffer); //TODO:
@@ -198,7 +198,7 @@ namespace engenious.Graphics
         {
             
             int tempIBO;
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             tempIBO = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, tempIBO);
             GL.BufferData(
@@ -231,7 +231,7 @@ namespace engenious.Graphics
         /// <inheritdoc />
         public override void Dispose()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             GL.DeleteBuffer(_ibo);
             base.Dispose();
         }

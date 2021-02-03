@@ -12,15 +12,26 @@ namespace engenious.Graphics
     /// </summary>
     public class VertexBuffer : GraphicsResource
     {
-        internal int Vbo;
-        internal int TempVbo = -1;
+        internal int Vbo, NextVbo = -1;
+        internal long NextVertexCount;
         internal VertexAttributes Vao;
+        private readonly WaitCallback _waitForExchange;
 
         private VertexBuffer(GraphicsDevice graphicsDevice, long vertexCount, BufferUsageHint usage = BufferUsageHint.StaticDraw)
             : base(graphicsDevice)
         {
             VertexCount = vertexCount;
             BufferUsage = usage;
+
+            unsafe
+            {
+                _waitForExchange = (userData) =>
+                {
+                    ((AutoResetEvent) userData).WaitOne();
+
+                    GraphicsDevice.UiThread.QueueWork(CapturingDelegate.Create(&DoExchange, this));
+                };
+            }
         }
 
         private void ExchangeVao()
@@ -51,7 +62,7 @@ namespace engenious.Graphics
 			
             VertexDeclaration = tp.VertexDeclaration;
             
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             Vbo = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, Vbo);
             GL.BufferData(
@@ -83,7 +94,7 @@ namespace engenious.Graphics
             : this(graphicsDevice, vertexCount, usage)
         {
             VertexDeclaration = vertexDeclaration;
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
         
             Vbo = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, Vbo);
@@ -106,9 +117,9 @@ namespace engenious.Graphics
             Vbo = tempVbo;
             VertexCount = vertexCount;
         }
-        private int ResizeInternal(int vertexCount, bool keepData = false)
+        private int ResizeInternal(long vertexCount, bool keepData = false)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             
             GL.BindVertexArray(0);
             var tempVbo = GL.GenBuffer();
@@ -167,45 +178,54 @@ namespace engenious.Graphics
             SetData<T>(data.AsSpan());
         }
 
-        private static void ExchangeVbo(VertexBuffer that, int newVbo, int newVertexCount)
+        private static void DoExchange(VertexBuffer that)
         {
+            var newVbo = Interlocked.Exchange(ref that.NextVbo, -1);
+            if (newVbo == -1)
+                return;
             var oldVbo = that.Vbo;
+
             that.Vbo = newVbo;
-            that.VertexCount = newVertexCount;
+            that.VertexCount = that.NextVertexCount;
             GL.DeleteBuffer(oldVbo);
         }
+
+        /// <summary>
+        /// Sets the <see cref="VertexBuffer"/> vertices data resizes the buffer if necessary
+        /// and exchanges the data with the current vertex data seamlessly.
+        /// </summary>
+        /// <param name="data">The vertices.</param>
+        /// <typeparam name="T">The vertex type.</typeparam>
+        public unsafe void ExchangeData<T>(ReadOnlySpan<T> data) where T : unmanaged
+        {
+            GraphicsDevice.ValidateUiGraphicsThread();
+            int newLength = data.Length;
+            var tempVbo = ResizeInternal(newLength, false);
+            
+            GL.BindBuffer(BufferTarget.ArrayBuffer, tempVbo);
+
+            fixed(T* buffer = &data.GetPinnableReference())
+                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, new IntPtr(data.Length * VertexDeclaration.VertexStride), (IntPtr)buffer);
+
+            var fence = GraphicsDevice.CreateFenceAsync();
+            NextVertexCount = newLength;
+            NextVbo = tempVbo;
+
+            ThreadPool.QueueUserWorkItem(_waitForExchange, fence);
+
+
+            GraphicsDevice.CheckError();
+        }
+
         /// <summary>
         /// Sets the <see cref="VertexBuffer"/> vertices data.
         /// </summary>
         /// <param name="data">The vertices.</param>
         /// <typeparam name="T">The vertex type.</typeparam>
-        public unsafe void SetData<T>(ReadOnlySpan<T> data, bool resize = false) where T : unmanaged
+        public unsafe void SetData<T>(ReadOnlySpan<T> data) where T : unmanaged
         {
-            if (resize && data.Length > VertexCount)
-            {
-                GraphicsDevice.ValidateGraphicsThread();
-
-                var tempVbo = ResizeInternal(data.Length, false);
-                GL.BindBuffer(BufferTarget.ArrayBuffer, tempVbo);
-
-                fixed(T* buffer = &data.GetPinnableReference())
-                    GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, new IntPtr(data.Length * VertexDeclaration.VertexStride), (IntPtr)buffer);
-
-                var fence = GraphicsDevice.CreateFence();
-                int newLength = data.Length;
-                ThreadPool.QueueUserWorkItem((userData) =>
-                {
-                    ((AutoResetEvent)userData).WaitOne();
-                    
-                    GraphicsDevice.UiThread.QueueWork(CapturingDelegate.Create(&ExchangeVbo, this, tempVbo, newLength));
-                }, fence);
-                
-                GraphicsDevice.CheckError();
-            }
-            else
-                fixed(T* buffer = &data.GetPinnableReference())
-                    SetData((IntPtr)buffer, 0, data.Length * VertexDeclaration.VertexStride);
-
+            fixed(T* buffer = &data.GetPinnableReference())
+                SetData((IntPtr)buffer, 0, data.Length * VertexDeclaration.VertexStride);
         }
 
         /// <summary>
@@ -227,7 +247,7 @@ namespace engenious.Graphics
         /// <param name="sizeInBytes">The number of bytes to copy from the source pointer.</param>
         public void SetData(IntPtr ptr,long offsetInBytes,long sizeInBytes)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             
             GL.BindBuffer(BufferTarget.ArrayBuffer, Vbo);
 
@@ -245,7 +265,7 @@ namespace engenious.Graphics
         public void SetData<T>(T[] data, int startIndex, int elementCount) where T : unmanaged
         {
             SetData<T>(data.AsSpan(startIndex, elementCount));
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             
             GL.BindBuffer(BufferTarget.ArrayBuffer, Vbo);
 
@@ -293,7 +313,7 @@ namespace engenious.Graphics
         /// <inheritdoc />
         public override void Dispose()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             GL.DeleteBuffer(Vbo);
             Vao.Dispose();

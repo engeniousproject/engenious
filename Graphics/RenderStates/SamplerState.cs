@@ -74,7 +74,7 @@ namespace engenious.Graphics
 
         private void ApplyAddressU()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             BeginApply();
             ApplyAddressUGl();
@@ -104,7 +104,7 @@ namespace engenious.Graphics
 
         private void ApplyAddressV()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             BeginApply();
             ApplyAddressVGl();
@@ -134,7 +134,7 @@ namespace engenious.Graphics
 
         private void ApplyAddressW()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             BeginApply();
             ApplyAddressWGl();
@@ -164,7 +164,7 @@ namespace engenious.Graphics
 
         private void ApplyMinFilter()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             BeginApply();
             ApplyMinFilterGl();
@@ -194,7 +194,7 @@ namespace engenious.Graphics
 
         private void ApplyMagFilter()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             BeginApply();
             ApplyMagFilterGl();
@@ -225,7 +225,7 @@ namespace engenious.Graphics
 
         private void ApplyTextureCompareMode()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             BeginApply();
             ApplyTextureCompareModeGl();
@@ -256,7 +256,7 @@ namespace engenious.Graphics
 
         private void ApplyTextureCompareFunc()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             BeginApply();
             ApplyTextureCompareFuncGl();
@@ -288,7 +288,7 @@ namespace engenious.Graphics
         {
             if (!GraphicsDevice.Capabilities.SupportsTextureFilterAnisotropic)
                 return;
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             BeginApply();
             ApplyMaxAnisotropyGl();
@@ -321,7 +321,7 @@ namespace engenious.Graphics
         {
             if (!GraphicsDevice.Capabilities.SupportsTextureMaxLevel)
                 return;
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             BeginApply();
 
@@ -356,7 +356,7 @@ namespace engenious.Graphics
         
         private void ApplyMipMapLevelOfDetailBias()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             BeginApply();
 
@@ -461,7 +461,7 @@ namespace engenious.Graphics
         }
         private void Apply()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             BeginApply();
             var oldState = _boundTexture.SamplerState;

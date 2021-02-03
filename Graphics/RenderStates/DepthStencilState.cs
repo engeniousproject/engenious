@@ -96,7 +96,7 @@ namespace engenious.Graphics
 
         private void ApplyDepthBufferEnable()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             if (DepthBufferEnable)
                 GL.Enable(EnableCap.DepthTest);
@@ -123,7 +123,7 @@ namespace engenious.Graphics
 
         private void ApplyDepthBufferWriteEnable()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             GL.DepthMask(_depthBufferWriteEnable);
         }
@@ -147,7 +147,7 @@ namespace engenious.Graphics
 
         private void ApplyDepthBufferFunction()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             GL.DepthFunc((OpenTK.Graphics.OpenGL.DepthFunction) _depthBufferFunction);
         }
@@ -171,7 +171,7 @@ namespace engenious.Graphics
 
         private void ApplyStencilEnable()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             if (_stencilEnable)
                 GL.Enable(EnableCap.StencilTest);
@@ -215,7 +215,7 @@ namespace engenious.Graphics
 
         private void ApplyTwoSidedStencilMode()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             ApplyTwoSidedStencilModeGl();
         }
@@ -434,7 +434,7 @@ namespace engenious.Graphics
 
         private void Apply()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             var oldState = GraphicsDevice.DepthStencilState;
 

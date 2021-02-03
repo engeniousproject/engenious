@@ -223,7 +223,7 @@ namespace engenious.Graphics
 
         private void ApplyColorWriteChannels()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             GL.ColorMask(
                 (ColorWriteChannels & ColorWriteChannels.Red) != 0,
@@ -233,7 +233,7 @@ namespace engenious.Graphics
         }
         private void ApplyColorWriteChannels(uint index)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             var colorWriteChannels = _colorWriteChannelList[index];
             GL.ColorMask(index,
@@ -319,7 +319,7 @@ namespace engenious.Graphics
 
         private void ApplyBlends()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             GL.BlendFuncSeparate(
                 (OpenTK.Graphics.OpenGL.BlendingFactorSrc) ColorSourceBlend,
@@ -330,7 +330,7 @@ namespace engenious.Graphics
 
         private void ApplyBlendFuncs()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             GL.BlendEquationSeparate(
                 (OpenTK.Graphics.OpenGL.BlendEquationMode) ColorBlendFunction,
@@ -345,7 +345,7 @@ namespace engenious.Graphics
         
         private void Apply()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             //TODO:(BlendFactor+MultisampleMask)?
             var oldState = GraphicsDevice.BlendState;

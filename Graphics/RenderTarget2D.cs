@@ -37,7 +37,7 @@ namespace engenious.Graphics
         public RenderTarget2D(GraphicsDevice graphicsDevice, int width, int height, PixelInternalFormat surfaceFormat)
             : base(graphicsDevice, width, height,1,surfaceFormat)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             var isDepthTarget = ((int) surfaceFormat >= (int) PixelInternalFormat.DepthComponent16 &&
                                   (int) surfaceFormat <= (int) PixelInternalFormat.DepthComponent32Sgix);
@@ -117,7 +117,7 @@ namespace engenious.Graphics
         /// <inheritdoc />
         public override void Dispose()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             GL.DeleteFramebuffer(_fbo);
             base.Dispose();

@@ -88,7 +88,7 @@ void main(void)
         {
             var technique = new EffectTechnique("Basic");
 
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             Shader[] shaders = {
                 new Shader(graphicsDevice,ShaderType.VertexShader, VertexShader),
                 new Shader(graphicsDevice,ShaderType.FragmentShader, PixelShader)

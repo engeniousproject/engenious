@@ -34,7 +34,7 @@ namespace engenious.Graphics
             Width = width;
             Height = height;
             Bounds = new Rectangle(0, 0, width, height);
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             Texture = GL.GenTexture();
 
@@ -81,7 +81,7 @@ namespace engenious.Graphics
 
         internal override void Bind()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             GL.BindTexture(Target, Texture);
         }
@@ -167,7 +167,7 @@ namespace engenious.Graphics
                 if (width == 0 || height == 0)
                     return;
             }
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             Bind();
             var pxType = PixelType.UnsignedByte;
@@ -233,7 +233,7 @@ namespace engenious.Graphics
         /// <typeparam name="T">The type to read pixel data as.</typeparam>
         public void GetData<T>(T[] data, int level = 0) where T : unmanaged
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             Bind();
 
@@ -249,7 +249,7 @@ namespace engenious.Graphics
         /// <typeparam name="T">The type to read pixel data as.</typeparam>
         public unsafe void GetData<T>(Span<T> data, int level = 0) where T : unmanaged
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             Bind();
             fixed(T* buffer = &data.GetPinnableReference())
@@ -269,7 +269,7 @@ namespace engenious.Graphics
         public void GetData<T>(int level, Rectangle? rect, T[] data, int startIndex, int elementCount)
             where T : unmanaged
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             Bind();
             if (rect.HasValue)
@@ -342,7 +342,7 @@ namespace engenious.Graphics
             text = new Texture2D(graphicsDevice, bmp.Width, bmp.Height, mipMaps);
             var bmpData = bmp.LockBits(new System.Drawing.Rectangle(0, 0, text.Width, text.Height),
                 ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            graphicsDevice.ValidateGraphicsThread();
+            graphicsDevice.ValidateUiGraphicsThread();
 
             text.Bind();
             GL.TexSubImage2D(text.Target, 0, 0, 0, text.Width, text.Height,
@@ -363,7 +363,7 @@ namespace engenious.Graphics
             var bmp = new Bitmap(text.Width, text.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             var bmpData = bmp.LockBits(new System.Drawing.Rectangle(0, 0, text.Width, text.Height),
                 ImageLockMode.WriteOnly, bmp.PixelFormat);
-            text.GraphicsDevice.ValidateGraphicsThread();
+            text.GraphicsDevice.ValidateUiGraphicsThread();
 
             text.Bind();
             GL.GetTexImage(text.Target, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
@@ -404,7 +404,7 @@ namespace engenious.Graphics
         /// <inheritdoc />
         public override void Dispose()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
 
             GL.DeleteTexture(Texture);
 

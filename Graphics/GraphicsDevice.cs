@@ -66,7 +66,7 @@ namespace engenious.Graphics
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void ValidateGraphicsThread()
+        internal void ValidateUiGraphicsThread()
         {
             if (!IsOnGraphicsThread)
             {
@@ -141,15 +141,25 @@ namespace engenious.Graphics
             while (GL.ClientWaitSync(fence, ClientWaitSyncFlags.None, 100000000) ==
                    WaitSyncStatus.TimeoutExpired)
                 Thread.Yield();
+            GL.DeleteSync(fence);
         }
-        public unsafe AutoResetEvent CreateFence()
+        public unsafe AutoResetEvent CreateFenceAsync()
         {
-            ValidateGraphicsThread();
+            ValidateUiGraphicsThread();
             
             var fence = GL.FenceSync(SyncCondition.SyncGpuCommandsComplete, WaitSyncFlags.None);
             GL.Flush();
 
             return _fenceThread.QueueWork(CapturingDelegate.Create(&WaitForFence, fence));
+        }
+        public unsafe IntPtr CreateFence()
+        {
+            ValidateUiGraphicsThread();
+            
+            var fence = GL.FenceSync(SyncCondition.SyncGpuCommandsComplete, WaitSyncFlags.None);
+            GL.Flush();
+
+            return fence;
         }
 
         private readonly GraphicsThread _fenceThread;
@@ -212,7 +222,7 @@ namespace engenious.Graphics
         /// <param name="mask">A value indicating which buffers to clear.</param>
         public void Clear(ClearBufferMask mask)
         {
-            ValidateGraphicsThread();
+            ValidateUiGraphicsThread();
             
             GL.Clear((OpenTK.Graphics.OpenGL.ClearBufferMask) mask);
         }
@@ -224,7 +234,7 @@ namespace engenious.Graphics
         /// <param name="color">A value indicating the color with which to clear the color buffer.</param>
         public void Clear(ClearBufferMask mask, System.Drawing.Color color)
         {
-            ValidateGraphicsThread();
+            ValidateUiGraphicsThread();
 
             GL.ClearColor(color);
             GL.Clear((OpenTK.Graphics.OpenGL.ClearBufferMask) mask);
@@ -234,7 +244,7 @@ namespace engenious.Graphics
         {
             //return;
 #if DEBUG
-            ValidateGraphicsThread();
+            ValidateUiGraphicsThread();
             var code = GL.GetError();
             if (code == ErrorCode.NoError)
                 return;
@@ -266,7 +276,7 @@ namespace engenious.Graphics
         /// <param name="color">A value indicating the color with which to clear the color buffer.</param>
         public void Clear(Color color)
         {
-            ValidateGraphicsThread();
+            ValidateUiGraphicsThread();
             GL.ClearColor(color.R, color.G, color.B, color.A);
             GL.Clear(OpenTK.Graphics.OpenGL.ClearBufferMask.ColorBufferBit |
                      OpenTK.Graphics.OpenGL.ClearBufferMask.DepthBufferBit);
@@ -279,7 +289,7 @@ namespace engenious.Graphics
         /// </summary>
         public void Present()
         {
-            ValidateGraphicsThread();
+            ValidateUiGraphicsThread();
             CheckError();
             _context.SwapBuffers();
         }
@@ -305,7 +315,7 @@ namespace engenious.Graphics
                 if (_viewport.Bounds != value.Bounds)
                 {
                     _viewport = value;
-                    ValidateGraphicsThread();
+                    ValidateUiGraphicsThread();
                     //GL.Viewport(viewport.X, game.Window.ClientSize.Height - viewport.Y - viewport.Height, viewport.Width, viewport.Height);
                     GL.Scissor(_scissorRectangle.X, Viewport.Height - _scissorRectangle.Bottom,
                         _scissorRectangle.Width, _scissorRectangle.Height);
@@ -353,7 +363,7 @@ namespace engenious.Graphics
         {
             var old = VertexBuffer;
             
-            ValidateGraphicsThread();
+            ValidateUiGraphicsThread();
             
             if (!_userBuffers.TryGetValue(vertexDeclaration, out var current))
             {
@@ -504,7 +514,7 @@ namespace engenious.Graphics
         /// <param name="target">The render target to render to or <c>null</c> to use the default render target.</param>
         public void SetRenderTarget(RenderTarget2D target)
         {
-            ValidateGraphicsThread();
+            ValidateUiGraphicsThread();
             if (target == null)
             {
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
@@ -596,7 +606,7 @@ namespace engenious.Graphics
                 if (_scissorRectangle != value)
                 {
                     _scissorRectangle = value;
-                    ValidateGraphicsThread();
+                    ValidateUiGraphicsThread();
                     GL.Scissor(_scissorRectangle.X, Viewport.Height - _scissorRectangle.Bottom,
                         _scissorRectangle.Width, _scissorRectangle.Height);
 

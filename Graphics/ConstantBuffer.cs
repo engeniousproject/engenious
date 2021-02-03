@@ -21,7 +21,7 @@ namespace engenious.Graphics
             : base(graphicsDevice)
         {
             GraphicsDevice = graphicsDevice;
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             Ubo = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
             GL.BufferData(BufferTarget.UniformBuffer, new IntPtr(size), IntPtr.Zero, OpenTK.Graphics.OpenGL.BufferUsageHint.DynamicDraw);
@@ -34,7 +34,7 @@ namespace engenious.Graphics
         /// <param name="size">The size to copy to the <see cref="ConstantBuffer"/>.</param>
         public unsafe void Update(IntPtr data, uint size)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
             var ptr = GL.MapBuffer(BufferTarget.UniformBuffer, BufferAccess.WriteOnly);
 
@@ -50,7 +50,7 @@ namespace engenious.Graphics
         /// <typeparam name="T">The data type.</typeparam>
         public unsafe void Update<T>(T data) where T : unmanaged
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
             var ptr = GL.MapBuffer(BufferTarget.UniformBuffer, BufferAccess.WriteOnly);
 
@@ -66,7 +66,7 @@ namespace engenious.Graphics
         /// <typeparam name="T">The data type.</typeparam>
         public unsafe void Update<T>(T[] data) where T : unmanaged
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
             var ptr = GL.MapBuffer(BufferTarget.UniformBuffer, BufferAccess.WriteOnly);
 
@@ -82,7 +82,7 @@ namespace engenious.Graphics
         /// <typeparam name="T">The data type.</typeparam>
         public unsafe void Update<T>(ReadOnlySpan<T> data) where T : unmanaged
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
             var ptr = GL.MapBuffer(BufferTarget.UniformBuffer, BufferAccess.WriteOnly);
             

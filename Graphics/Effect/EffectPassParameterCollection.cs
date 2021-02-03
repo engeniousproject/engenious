@@ -30,7 +30,7 @@ namespace engenious.Graphics
 		private EffectPassParameter CacheParameter (string name)
 		{
             EffectPassParameter param;
-            _pass.GraphicsDevice.ValidateGraphicsThread();
+            _pass.GraphicsDevice.ValidateUiGraphicsThread();
 
 	        var location = _pass.GetUniformLocation(name);
 	        param = new EffectPassParameter(_pass, name, location);

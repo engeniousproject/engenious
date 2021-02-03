@@ -47,13 +47,13 @@ namespace engenious.Graphics
             : base(graphicsDevice)
         {
             Name = name;
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             Program = GL.CreateProgram();
         }
 
         internal void BindAttribute(VertexElementUsage usage, string name)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             GL.BindAttribLocation(Program, (int) usage, name);
         }
 
@@ -63,7 +63,7 @@ namespace engenious.Graphics
         protected internal virtual void CacheParameters()
         {
             var total = -1;
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             GL.GetProgram(Program, GetProgramParameterName.ActiveUniforms, out total);
             Span<int> lengths = stackalloc int[total];
             Span<int> uniformIndices = stackalloc int[total];
@@ -108,7 +108,7 @@ namespace engenious.Graphics
 
         internal void AttachShaders(IEnumerable<Shader> shaders)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var shader in shaders)
             {
                 AttachShader(shader);
@@ -117,7 +117,7 @@ namespace engenious.Graphics
 
         internal void AttachShader(Shader shader)
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             GL.AttachShader(Program, shader.BaseShader);
         }
 
@@ -125,7 +125,7 @@ namespace engenious.Graphics
         {
             if (Attached == null)
                 throw new Exception("Already linked");
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             
             GL.LinkProgram(Program);
             int linked;
@@ -144,7 +144,7 @@ namespace engenious.Graphics
             
             Attached.Clear();
             Attached = null;
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             Parameters = new EffectPassParameterCollection(this);
         }
 
@@ -170,7 +170,7 @@ namespace engenious.Graphics
         /// </returns>
         public PassRestorer Apply()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             var passRestorer = new PassRestorer(GraphicsDevice, GraphicsDevice.EffectPass);
             GraphicsDevice.EffectPass = this;
 
@@ -196,14 +196,14 @@ namespace engenious.Graphics
         /// <remarks>Only works on compute shaders.</remarks>
         public void WaitForImageCompletion()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             GL.MemoryBarrier(MemoryBarrierFlags.ShaderImageAccessBarrierBit);
         }
 
         /// <inheritdoc />
         public void Dispose()
         {
-            GraphicsDevice.ValidateGraphicsThread();
+            GraphicsDevice.ValidateUiGraphicsThread();
             GL.DeleteProgram(Program);
         }
 

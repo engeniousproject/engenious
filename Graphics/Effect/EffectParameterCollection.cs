@@ -21,7 +21,7 @@ namespace engenious.Graphics
 		public EffectParameterCollection (GraphicsDevice graphicsDevice, EffectTechniqueCollection techniques)
 			: base(graphicsDevice)
 		{
-			GraphicsDevice.ValidateGraphicsThread();
+			GraphicsDevice.ValidateUiGraphicsThread();
 	        _parameters = new Dictionary<string, EffectParameter>();
 	        _parameterList = new List<EffectParameter>();
 
