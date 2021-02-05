@@ -24,7 +24,7 @@ namespace engenious.Graphics
         private Viewport _viewport;
         internal readonly IGraphicsContext _context;
 
-        private readonly Thread _graphicsThread;
+        private Thread _graphicsThread;
 
         private EffectPass _effectPass;
         private VertexBuffer _vertexBuffer;
@@ -128,13 +128,27 @@ namespace engenious.Graphics
             UiThread = new GraphicsThread(this);
 
             _fenceThread = new GraphicsThread(_context);
-            
+
+            Threads = new List<GraphicsThread>();
             // Make current again as GraphicsThread creates a new context.
             _context.MakeCurrent();
             
             CheckError();
             //TODO: samplerstate
         }
+
+        internal void SwitchUiThread()
+        {
+            _graphicsThread = Thread.CurrentThread;
+            _context.MakeCurrent();
+        }
+
+        public void AddGraphicsThread()
+        {
+            Threads.Add(new GraphicsThread(_context));
+        }
+        
+        public List<GraphicsThread> Threads { get; }
 
         private static void WaitForFence(IntPtr fence)
         {
@@ -667,6 +681,8 @@ namespace engenious.Graphics
         {
             UiThread.Dispose();
             _fenceThread.Dispose();
+            foreach(var graphicsThread in Threads)
+                graphicsThread.Dispose();
         }
     }
 }

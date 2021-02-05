@@ -18,6 +18,7 @@ namespace engenious
         {
             var nativeWindowSettings = new NativeWindowSettings
             {
+                StartVisible = !_settings.Offscreen,
                 NumberOfSamples = _settings.NumberOfSamples,
                 Flags = ContextFlags,
                 Size = new Vector2i(1024, 768)

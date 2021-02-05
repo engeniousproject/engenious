@@ -15,9 +15,9 @@
         <PackageReference Include="LitGit" Version="0.2.0.18-alpha" PrivateAssets="all" />
         <PackageReference Include="NVorbis" Version="0.10.1" Exclude="compile" PrivateAssets="compile" />
         <PackageReference Include="OpenTK" Version="4.0.0-pre9.7" />
-        <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
-        <PackageReference Include="System.Memory" Version="4.5.3" />
-        <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" PrivateAssets="compile" />
+        <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+        <PackageReference Include="System.Memory" Version="4.5.4" />
+        <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0" PrivateAssets="compile" />
     </ItemGroup>
     <ItemGroup>
         <LitGitTemplateReference Include="Properties\AssemblyInfo.cs.template" />

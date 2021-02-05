@@ -41,7 +41,10 @@ namespace engenious.Graphics
             _windowInfo = graphicsDevice.Game.RenderingSurface.WindowInfo;
             _sync = new GlSynchronizationContext();
             _context = graphicsDevice._context;
-            _cancellationToken.Register(() => CancellationTokenSource.Dispose());
+            _cancellationToken.Register(() =>
+            {
+                _sync.CancelWait();
+            });
             
             SynchronizationContext.SetSynchronizationContext(_sync);
             _thread = Thread.CurrentThread;
