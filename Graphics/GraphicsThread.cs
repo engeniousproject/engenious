@@ -45,8 +45,9 @@ namespace engenious.Graphics
             {
                 _sync.CancelWait();
             });
-            
-            SynchronizationContext.SetSynchronizationContext(_sync);
+
+            if (SynchronizationContext.Current == null)
+                SynchronizationContext.SetSynchronizationContext(_sync);
             _thread = Thread.CurrentThread;
         }
         public GraphicsThread(NativeWindow windowInfo)
