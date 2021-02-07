@@ -470,11 +470,12 @@ namespace engenious.Graphics
             if (_useScreenSpace)
             {
                 var projection = Matrix.CreateOrthographicOffCenter(0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 0, 0, -1);
-
-                _effect.World = projection * _matrix;
+                _effect.Projection = projection;
+                _effect.World = _matrix;
             }
             else
             {
+                _effect.Projection = Matrix.Identity;
                 _effect.World = _matrix;
             }
             

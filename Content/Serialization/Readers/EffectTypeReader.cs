@@ -63,7 +63,7 @@ namespace engenious.Content.Serialization
         }
 
         /// <inheritdoc />
-        public override Effect Read(ContentManager manager, ContentReader reader, Type customType = null)
+        public override Effect Read(ContentManagerBase managerBase, ContentReader reader, Type customType = null)
         {
             var useCustomType = reader.ReadBoolean();
             bool canUseCustomType = false;
@@ -82,7 +82,7 @@ namespace engenious.Content.Serialization
             {
                 try
                 {
-                    effect = (Effect) Activator.CreateInstance(customType, manager.GraphicsDevice);
+                    effect = (Effect) Activator.CreateInstance(customType, managerBase.GraphicsDevice);
                     //effectType = customType;
                     useCustomType = true;
                 }
@@ -96,7 +96,7 @@ namespace engenious.Content.Serialization
             {
                 try
                 {
-                    effect = (Effect) Activator.CreateInstance(effectType, manager.GraphicsDevice);
+                    effect = (Effect) Activator.CreateInstance(effectType, managerBase.GraphicsDevice);
                 }
                 catch (Exception)
                 {
@@ -105,7 +105,7 @@ namespace engenious.Content.Serialization
             }
 
             if (effect == null)
-                effect= new Effect(manager.GraphicsDevice);
+                effect= new Effect(managerBase.GraphicsDevice);
 
             var techniqueCount = reader.ReadInt32();
             for (var techniqueIndex = 0; techniqueIndex < techniqueCount; techniqueIndex++)
@@ -142,7 +142,7 @@ namespace engenious.Content.Serialization
                             string customTypeName = technique.GetType().FullName + "+" + passName + "Impl";
 
                             var passType = _effectTypes[customTypeName];
-                            pass = (EffectPass) Activator.CreateInstance(passType, manager.GraphicsDevice, passName);
+                            pass = (EffectPass) Activator.CreateInstance(passType, managerBase.GraphicsDevice, passName);
                         }
                         catch (Exception)
                         {
@@ -150,15 +150,15 @@ namespace engenious.Content.Serialization
                         }
                     }
                     if (pass == null)
-                        pass = new EffectPass(manager.GraphicsDevice, passName);
-                    pass.BlendState = reader.Read<BlendState>(manager);
-                    pass.DepthStencilState = reader.Read<DepthStencilState>(manager);
-                    pass.RasterizerState = reader.Read<RasterizerState>(manager);
+                        pass = new EffectPass(managerBase.GraphicsDevice, passName);
+                    pass.BlendState = reader.Read<BlendState>(managerBase);
+                    pass.DepthStencilState = reader.Read<DepthStencilState>(managerBase);
+                    pass.RasterizerState = reader.Read<RasterizerState>(managerBase);
                     int shaderCount = reader.ReadByte();
                     
                     for (var shaderIndex = 0; shaderIndex < shaderCount; shaderIndex++)
                     {
-                        var shader = new Shader(manager.GraphicsDevice,(ShaderType)reader.ReadUInt16(), reader.ReadString());
+                        var shader = new Shader(managerBase.GraphicsDevice,(ShaderType)reader.ReadUInt16(), reader.ReadString());
                         shader.Compile();
                         pass.AttachShader(shader);
                     }

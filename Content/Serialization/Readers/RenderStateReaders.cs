@@ -13,7 +13,7 @@ namespace engenious.Content.Serialization
         #region implemented abstract members of ContentTypeReader
 
         /// <inheritdoc />
-        public override RasterizerState Read(ContentManager manager, ContentReader reader, Type customType = null)
+        public override RasterizerState Read(ContentManagerBase managerBase, ContentReader reader, Type customType = null)
         {
             if (reader.ReadBoolean())
                 return null;
@@ -40,7 +40,7 @@ namespace engenious.Content.Serialization
         #region implemented abstract members of ContentTypeReader
 
         /// <inheritdoc />
-        public override DepthStencilState Read(ContentManager manager, ContentReader reader, Type customType = null)
+        public override DepthStencilState Read(ContentManagerBase managerBase, ContentReader reader, Type customType = null)
         {
             if (reader.ReadBoolean())
                 return null;
@@ -78,7 +78,7 @@ namespace engenious.Content.Serialization
         #region implemented abstract members of ContentTypeReader
 
         /// <inheritdoc />
-        public override BlendState Read(ContentManager manager, ContentReader reader, Type customType = null)
+        public override BlendState Read(ContentManagerBase managerBase, ContentReader reader, Type customType = null)
         {
             if (reader.ReadBoolean())
                 return null;

@@ -12,7 +12,7 @@ namespace engenious.Content.Serialization
     public class Texture2DTypeReader:ContentTypeReader<Texture2D>
     {
         /// <inheritdoc />
-        public override Texture2D Read(ContentManager manager, ContentReader reader, Type customType = null)
+        public override Texture2D Read(ContentManagerBase managerBase, ContentReader reader, Type customType = null)
         {
             var genMipMaps = reader.ReadBoolean();
             var mipCount = reader.ReadInt32();
@@ -25,7 +25,7 @@ namespace engenious.Content.Serialization
             var buffer = reader.ReadBytes(size);
             if (hwCompressed)
             {
-                text = new Texture2D(manager.GraphicsDevice,width,height,mipCount,(PixelInternalFormat)format);
+                text = new Texture2D(managerBase.GraphicsDevice,width,height,mipCount,(PixelInternalFormat)format);
 
                 text.SetData(buffer,0,(OpenTK.Graphics.OpenGL.PixelFormat)format);
                 //TODO:...
@@ -34,7 +34,7 @@ namespace engenious.Content.Serialization
             {
                 //text = new Texture2D(manager.GraphicsDevice,width,height,mipCount);
                 using (var stream = new MemoryStream(buffer))
-                    text = Texture2D.FromBitmap(manager.GraphicsDevice,new Bitmap(stream),mipCount);
+                    text = Texture2D.FromBitmap(managerBase.GraphicsDevice,new Bitmap(stream),mipCount);
             }
 
             if (genMipMaps)

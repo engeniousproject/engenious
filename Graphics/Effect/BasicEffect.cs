@@ -23,7 +23,7 @@ uniform mat4 Proj;
 
 void main(void)
 {
-   gl_Position = Proj*View*World*vec4(position, 1.0);
+   gl_Position = Proj*(View*(World*vec4(position, 1.0)));
    psColor = color;
    psTexCoord = textureCoordinate;
 }
@@ -39,7 +39,7 @@ uniform mat4 View;
 uniform mat4 Proj;
 void main(void)
 {
-   gl_Position = Proj*View*World*vec4(position, 1.0);
+   gl_Position = Proj*(View*(World*vec4(position, 1.0)));
    psColor = color;
    psTexCoord = textureCoordinate;
 }
@@ -128,7 +128,7 @@ void main(void)
             }
             set
             {
-                if (_projection != value)
+                // if (_projection != value)
                 {
                     _projection = value;
                     Parameters["Proj"].SetValue(value);
@@ -145,7 +145,7 @@ void main(void)
             }
             set
             {
-                if (_view != value)
+                // if (_view != value)
                 {
                     _view = value;
                     Parameters["View"].SetValue(value);
@@ -162,7 +162,7 @@ void main(void)
             }
             set
             {
-                if (_world != value)
+                // if (_world != value)
                 {
                     _world = value;
                     Parameters["World"].SetValue(value);

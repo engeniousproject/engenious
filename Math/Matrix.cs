@@ -686,7 +686,7 @@ namespace engenious
             return new Matrix(1 - (yy + zz), xy - wz, xz + wy, 0,
                 xy + wz, 1 - (xx + zz), yz - wx, 0,
                 xz - wy, yz + wx, 1 - (xx + yy), 0,
-                0, 0, 0, 1);
+                0, 0, 0, 1).Transposed();
         }
 
         /// <summary>

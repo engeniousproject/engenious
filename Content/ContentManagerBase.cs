@@ -15,7 +15,7 @@ namespace engenious.Content
     /// <summary>
     /// A manager for content files.
     /// </summary>
-    public class ContentManager
+    public abstract class ContentManagerBase
     {
         private readonly Dictionary<string ,IContentTypeReader> _typeReaders;
         private readonly Dictionary<string ,IContentTypeReader> _typeReadersOutput;
@@ -23,29 +23,12 @@ namespace engenious.Content
         private readonly IFormatter _formatter;
         internal GraphicsDevice GraphicsDevice;
 
-        private static string GetDefaultDirectory()
-        {
-            var entryAssembly = Assembly.GetEntryAssembly();
-            var dirName = entryAssembly == null ? null : Path.GetDirectoryName(entryAssembly.Location);
-            return dirName == null ? Path.GetFullPath("Content") : Path.Combine(dirName, "Content");
-        }
-
         /// <summary>
-        /// Initializes a new instance of the <see cref="ContentManager"/> class.
-        /// </summary>
-        /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> to use.</param>
-        public ContentManager(GraphicsDevice graphicsDevice)
-            : this(graphicsDevice, GetDefaultDirectory())
-        {
-			
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ContentManager"/> class.
+        /// Initializes a new instance of the <see cref="ContentManagerBase"/> class.
         /// </summary>
         /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> to use.</param>
         /// <param name="rootDirectory">The root directory to load content files from.</param>
-        public ContentManager(GraphicsDevice graphicsDevice, string rootDirectory)
+        public ContentManagerBase(GraphicsDevice graphicsDevice, string rootDirectory)
         {
             RootDirectory = rootDirectory;
             GraphicsDevice = graphicsDevice;
@@ -73,21 +56,38 @@ namespace engenious.Content
                 }
             }
         }
+        internal IContentTypeReader GetReaderByType<T>()
+        {
+            return GetReaderByOutput(typeof(T).FullName);
+        }
         internal IContentTypeReader GetReaderByOutput(string outputType)
         {
-            IContentTypeReader res;
-            if (!_typeReadersOutput.TryGetValue(outputType, out res))
+            if (!_typeReadersOutput.TryGetValue(outputType, out var res))
                 return null;
             return res;
         }
         internal IContentTypeReader GetReader(string reader)
         {
-            IContentTypeReader res;
-            if (!_typeReaders.TryGetValue(reader, out res))
+            if (!_typeReaders.TryGetValue(reader, out var res))
                 return null;
             return res;
         }
-
+        
+        /// <summary>
+        /// Test whether a stream contains a content file.
+        /// </summary>
+        /// <param name="stream">The stream to test.</param>
+        /// <param name="tp">The content type reader to test with.</param>
+        /// <returns>Whether the stream contains a matching content file.</returns>
+        protected bool TestContentFile(Stream stream, IContentTypeReader tp)
+        {
+            var res = ReadContentFileHead(stream, false);
+            if (res == null)
+                return false;
+            Console.WriteLine(res.FileType);
+            return res.FileType == tp.GetType().FullName; // TODO: inheritance
+        }
+        
         /// <summary>
         /// Gets or sets the root directory.
         /// </summary>
@@ -99,8 +99,7 @@ namespace engenious.Content
         /// <param name="assetName">The asset to unload.</param>
         public void Unload(string assetName)
         {
-            object asset;
-            if (_assets.TryGetValue(assetName, out asset))
+            if (_assets.TryGetValue(assetName, out var asset))
             {
                 var disp = asset as IDisposable;
                 disp?.Dispose();
@@ -114,8 +113,7 @@ namespace engenious.Content
         /// <typeparam name="T">The asset type.</typeparam>
         public void Unload<T>(string assetName) where T : IDisposable
         {
-            object asset;
-            if (_assets.TryGetValue(assetName, out asset))
+            if (_assets.TryGetValue(assetName, out var asset))
             {
                 if (asset is T)
                 {
@@ -129,40 +127,33 @@ namespace engenious.Content
         /// Loads an asset by name and type.
         /// </summary>
         /// <param name="assetName">The asset to load.</param>
+        /// <param name="useCache">Whether to try loading from cache or not.</param>
         /// <typeparam name="T">The asset type.</typeparam>
         /// <returns>The loaded asset.</returns>
-        public T Load<T>(string assetName) where T : IDisposable
+        public T Load<T>(string assetName, bool useCache = true) where T : IDisposable
         {
-            object asset;
-            var containsName =false;
-            if (_assets.TryGetValue(assetName, out asset))
+            if (useCache && _assets.TryGetValue(assetName, out var asset))
             {
-                containsName = true;
-                if (asset is T)
+                if (asset is T value)
                 {
-                    return (T)asset;
+                    return value;
                 }
             }
             var tmp = ReadAsset<T>(assetName);
             if (tmp != null)
             {
-                if (!containsName)
-                    _assets.Add(assetName, tmp);
+                _assets[assetName] = tmp;
             }
             return tmp;
         }
-
+        
         /// <summary>
         /// List the content files in <see cref="RootDirectory"/>.
         /// </summary>
         /// <param name="path">The subpath to list the contents of.</param>
         /// <param name="recursive">Whether to recursively search for content files.</param>
         /// <returns>Enumerable of content files in given path.</returns>
-        public IEnumerable<string> ListContent(string path,bool recursive=false)
-        {
-            path = Path.Combine(RootDirectory, path);
-            return Directory.GetFiles(path,"*.ego",recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
-        }
+        public abstract IEnumerable<string> ListContent(Uri path, bool recursive = false);
 
         /// <summary>
         /// List the content files in <see cref="RootDirectory"/> with given type.
@@ -171,21 +162,25 @@ namespace engenious.Content
         /// <param name="recursive">Whether to recursively search for content files.</param>
         /// <typeparam name="T">The asset type.</typeparam>
         /// <returns>Enumerable of matching content files in given path.</returns>
-        public IEnumerable<string> ListContent<T>(string path,bool recursive=false)//rather slow(needs to load part of files)
-        {
-            var tp = GetReaderByOutput(typeof(T).FullName);
-            foreach(var file in ListContent(path)){
-                using (var fs = new FileStream(file, FileMode.Open, FileAccess.Read))
-                {
-                    var res = ReadContentFileHead(fs, false);
-                    if (res == null)
-                        continue;
-                    Console.WriteLine(res.FileType);
-                    if (res.FileType == tp.GetType().FullName)//TODO inheritance
-                        yield return file;
-                }
-            }
-        }
+        public abstract IEnumerable<string> ListContent<T>(Uri path, bool recursive = false);
+
+        /// <summary>
+        /// List the content files in <see cref="RootDirectory"/>.
+        /// </summary>
+        /// <param name="path">The subpath to list the contents of.</param>
+        /// <param name="recursive">Whether to recursively search for content files.</param>
+        /// <returns>Enumerable of content files in given path.</returns>
+        public abstract IEnumerable<string> ListContent(string path, bool recursive = false);
+
+        /// <summary>
+        /// List the content files in <see cref="RootDirectory"/> with given type.
+        /// </summary>
+        /// <param name="path">The subpath to list the contents of.</param>
+        /// <param name="recursive">Whether to recursively search for content files.</param>
+        /// <typeparam name="T">The asset type.</typeparam>
+        /// <returns>Enumerable of matching content files in given path.</returns>
+        public abstract IEnumerable<string> ListContent<T>(string path, bool recursive = false);
+
         /// <summary>
         /// Reads an asset by given name and type.
         /// </summary>
@@ -193,23 +188,31 @@ namespace engenious.Content
         /// <typeparam name="T">The asset type.</typeparam>
         /// <returns>The read asset.</returns>
         /// <exception cref="Exception">Not an actual content file, or corrupt content file.</exception>
-        protected T ReadAsset<T>(string assetName)
-        {
-            using (var fs = new FileStream(Path.Combine(RootDirectory, assetName + ".ego"), FileMode.Open, FileAccess.Read))
-            {
-                var res = ReadContentFileHead(fs);
+        internal abstract T ReadAsset<T>(Uri assetName);
 
-                return (T)res.Load(this, fs,typeof(T));
-            }
-            //return default(T);
-        }
-        private ContentFile ReadContentFileHead(FileStream fs, bool throwsOnError = true)
+        /// <summary>
+        /// Reads an asset by given name and type.
+        /// </summary>
+        /// <param name="assetName">The asset name.</param>
+        /// <typeparam name="T">The asset type.</typeparam>
+        /// <returns>The read asset.</returns>
+        /// <exception cref="Exception">Not an actual content file, or corrupt content file.</exception>
+        internal abstract T ReadAsset<T>(string assetName);
+
+        /// <summary>
+        /// Reads the header of a content file
+        /// </summary>
+        /// <param name="stream">The stream to read the header from.</param>
+        /// <param name="throwsOnError">Whether the method should throw an exception on failure.</param>
+        /// <returns></returns>
+        /// <exception cref="Exception">Thrown when the file could not be loaded.</exception>
+        protected ContentFile ReadContentFileHead(Stream stream, bool throwsOnError = true)
         {
             ContentFile res;
-            var magic = ReadMagic(fs);
-            if (magic == ContentFile.MAGIC)
+            var magic = ReadMagic(stream);
+            if (magic == ContentFile.Magic)
             {
-                res = ReadNewContentFile(fs, throwsOnError);
+                res = ReadNewContentFile(stream, throwsOnError);
                 if (res == null)
                 {
                     if (!throwsOnError)
@@ -219,8 +222,8 @@ namespace engenious.Content
             }
             else
             {
-                fs.Position -= 4;
-                res = ReadDeprecatedContentFile(fs, throwsOnError);
+                stream.Position -= 4;
+                res = ReadDeprecatedContentFile(stream, throwsOnError);
                 if (res == null)
                 {
                     if (!throwsOnError)

@@ -21,26 +21,26 @@ namespace engenious.Content.Serialization
         /// <summary>
         /// Reads a generic content type.
         /// </summary>
-        /// <param name="manager">The content manager to use for reading.</param>
+        /// <param name="managerBase">The content manager to use for reading.</param>
         /// <typeparam name="T">The content type to read.</typeparam>
         /// <returns>The read content type.</returns>
-        public T Read<T>(ContentManager manager)
+        public T Read<T>(ContentManagerBase managerBase)
         {
             var name = ReadString();
-            var typeReader = manager.GetReader(name);
-            return typeReader == null ? default(T) : Read<T>(manager, typeReader);
+            var typeReader = managerBase.GetReader(name);
+            return typeReader == null ? default(T) : Read<T>(managerBase, typeReader);
         }
 
         /// <summary>
         /// Reads a generic content type using a specific <see cref="IContentTypeReader"/>.
         /// </summary>
-        /// <param name="manager">The content manager to use for reading.</param>
+        /// <param name="managerBase">The content manager to use for reading.</param>
         /// <param name="typeReader">The type reader to use for reading.</param>
         /// <typeparam name="T">The content type to read.</typeparam>
         /// <returns>The read content type.</returns>
-        public T Read<T>(ContentManager manager, IContentTypeReader typeReader)
+        public T Read<T>(ContentManagerBase managerBase, IContentTypeReader typeReader)
         {
-            return (T)typeReader.Read(manager, this, typeof(T));
+            return (T)typeReader.Read(managerBase, this, typeof(T));
 
         }
 

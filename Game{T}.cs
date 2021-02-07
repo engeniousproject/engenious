@@ -100,7 +100,7 @@ namespace engenious
             Input.Mouse.UpdateWindow(Control);
             Input.Keyboard.UpdateWindow(Control);
             
-            Content = new ContentManager(GraphicsDevice);
+            Content = new AggregateContentManager(GraphicsDevice, "Content");
             Components = new GameComponentCollection();
             
             Control.FocusedChanged += Window_FocusedChanged;
@@ -178,9 +178,9 @@ namespace engenious
         }
 
         /// <summary>
-        /// Gets a <see cref="ContentManager"/> for basic game content management.
+        /// Gets a <see cref="ContentManagerBase"/> for basic game content management.
         /// </summary>
-        public ContentManager Content{ get; private set; }
+        public ContentManagerBase Content{ get; private set; }
 
         /// <summary>
         /// Gets a rendering view associated with this <see cref="Game"/>.

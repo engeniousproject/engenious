@@ -23,7 +23,7 @@ namespace engenious.Content.Serialization
         }
 
         /// <inheritdoc />
-        public override ModelContent Read(ContentManager manager, ContentReader reader, Type customType = null)
+        public override ModelContent Read(ContentManagerBase managerBase, ContentReader reader, Type customType = null)
         {
             var model = new ModelContent();
             var meshCount = reader.ReadInt32();

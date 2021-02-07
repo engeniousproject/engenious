@@ -44,19 +44,21 @@
         /// <returns>The resulting transformation <see cref="Matrix"/>.</returns>
         public Matrix ToMatrix()
         {
-            var res = Matrix.CreateFromQuaternion(Rotation.X, Rotation.Y, Rotation.Z, Rotation.W);
-            res.M11 *= Scale.X;
-            res.M21 *= Scale.X;
-            res.M31 *= Scale.X;
-            res.M12 *= Scale.Y;
-            res.M22 *= Scale.Y;
-            res.M32 *= Scale.Y;
-            res.M13 *= Scale.Z;
-            res.M23 *= Scale.Z;
-            res.M33 *= Scale.Z;
-            res.M14 = Location.X;
-            res.M24 = Location.Y;
-            res.M34 = Location.Z;
+            var res = Matrix.CreateScaling(Scale) * Matrix.CreateTranslation(Location) *  Matrix.CreateFromQuaternion(Rotation.X, Rotation.Y, Rotation.Z, Rotation.W);
+            //res *= ;
+            // res *= Matrix.CreateScaling(Scale);
+            // res.M11 *= Scale.X;
+            // res.M12 *= Scale.X;
+            // res.M13 *= Scale.X;
+            // res.M21 *= Scale.Y;
+            // res.M22 *= Scale.Y;
+            // res.M23 *= Scale.Y;
+            // res.M31 *= Scale.Z;
+            // res.M32 *= Scale.Z;
+            // res.M33 *= Scale.Z;
+            // res.M14 += Location.X;
+            // res.M24 += Location.Y;
+            // res.M34 += Location.Z;
             return res;
         }
 

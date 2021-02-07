@@ -4,26 +4,42 @@ using engenious.Content.Serialization;
 
 namespace engenious.Content
 {
+    /// <summary>
+    /// A class for describing a content file.
+    /// </summary>
     [Serializable]
-    internal sealed class ContentFile
+    public sealed class ContentFile
     {
-        public const uint MAGIC = 0x45474f43;
+        /// <summary>
+        /// The magic header for content files.
+        /// </summary>
+        public const uint Magic = 0x45474f43;
 
         internal ContentFile(string type)
         {
             FileType = type;
         }
 
+        /// <summary>
+        /// Gets the type of the file.
+        /// </summary>
         public string FileType{ get; private set; }
 
-        public object Load(ContentManager manager, Stream stream,Type type)
+        /// <summary>
+        /// Tries to load the content file as a specified type from a stream.
+        /// </summary>
+        /// <param name="managerBase">The content manager to read the file with.</param>
+        /// <param name="stream">The stream to read the file from.</param>
+        /// <param name="type">The type to try to read the file as.</param>
+        /// <returns>The read content file.</returns>
+        public object Load(ContentManagerBase managerBase, Stream stream, Type type)
         {
             var reader = new ContentReader(stream);
             var readName = reader.ReadString();
-            var tp = manager.GetReaderByOutput(type.FullName);
+            var tp = managerBase.GetReaderByOutput(type.FullName);
             if (tp == null)
-                tp = manager.GetReader(readName);
-            return tp.Read(manager, reader, type);
+                tp = managerBase.GetReader(readName);
+            return tp.Read(managerBase, reader, type);
         }
     }
 }

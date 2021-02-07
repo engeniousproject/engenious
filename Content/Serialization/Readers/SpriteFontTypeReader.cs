@@ -10,9 +10,9 @@ namespace engenious.Content.Serialization
     public class SpriteFontTypeReader:ContentTypeReader<SpriteFont>
     {
         /// <inheritdoc />
-        public override SpriteFont Read(ContentManager manager, ContentReader reader, Type customType = null)
+        public override SpriteFont Read(ContentManagerBase managerBase, ContentReader reader, Type customType = null)
         {
-            var texture = reader.Read<Texture2D>(manager);
+            var texture = reader.Read<Texture2D>(managerBase);
             var font = new SpriteFont(texture);
 
             font.Spacing = reader.ReadSingle();

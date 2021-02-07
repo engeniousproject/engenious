@@ -33,9 +33,9 @@ namespace engenious
         event EventHandler Resized;
 
         /// <summary>
-        /// Gets a <see cref="ContentManager"/> for basic game content management.
+        /// Gets a <see cref="ContentManagerBase"/> for basic game content management.
         /// </summary>
-        ContentManager Content { get; }
+        ContentManagerBase Content { get; }
 
         /// <summary>
         /// Gets or sets whether the mouse cursor is visible while on the rendering view.

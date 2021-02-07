@@ -25,9 +25,9 @@ namespace engenious.Content.Serialization
         }
 
         /// <inheritdoc />
-        public override Model Read(ContentManager manager, ContentReader reader, Type customType = null)
+        public override Model Read(ContentManagerBase managerBase, ContentReader reader, Type customType = null)
         {
-            var model = new Model(manager.GraphicsDevice);
+            var model = new Model(managerBase.GraphicsDevice);
             var meshCount = reader.ReadInt32();
             model.Meshes = new Mesh[meshCount];
             for (var meshIndex = 0; meshIndex < meshCount; meshIndex++)
