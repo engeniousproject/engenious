@@ -29,16 +29,18 @@ namespace engenious.Graphics
             Bind();
             GL.GenerateMipmap((GenerateMipmapTarget) Target);
         }
+        
+        
+        /// <inheritdoc cref="GraphicsResource.GraphicsDevice"/>
+        public new GraphicsDevice GraphicsDevice => base.GraphicsDevice!;
 
-        private SamplerState _samplerState;
+        private SamplerState? _samplerState;
 
         /// <summary>
         /// Gets or sets the sampler state to use for rendering of this texture.
         /// </summary>
-        public SamplerState SamplerState{
-            get{
-                return _samplerState;
-            }
+        public SamplerState? SamplerState{
+            get => _samplerState;
             set
             {
                 if (_samplerState == value)
@@ -71,7 +73,7 @@ namespace engenious.Graphics
         public abstract void BindComputation(int unit=0);
 
         /// <inheritdoc />
-        public abstract bool Equals(Texture other);
+        public abstract bool Equals(Texture? other);
     }
 }
 

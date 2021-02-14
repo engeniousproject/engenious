@@ -1,9 +1,11 @@
-﻿namespace engenious
+﻿using System;
+
+namespace engenious
 {
     /// <summary>
     /// Defines a 2D size.
     /// </summary>
-    public struct Size
+    public struct Size : IEquatable<Size>
     {
         /// <summary>
         /// Initializes a new <see cref="Size"/> struct from a point.
@@ -49,14 +51,15 @@
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public bool Equals(Size other)
         {
-            if (obj is Size)
-            {
-                var sec = (Size)obj;
-                return Width == sec.Width && Height == sec.Height;
-            }
-            return false;
+            return Width == other.Width && Height == other.Height;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
+        {
+            return obj is Size size && Equals(size);
         }
 
         /// <summary>
@@ -67,7 +70,7 @@
         /// <returns><c>true</c> if the rectangles are the same; otherwise <c>false</c>.</returns>
         public static bool operator ==(Size a, Size b)
         {
-            return a.Width == b.Width && a.Height == b.Height;
+            return a.Equals(b);
         }
 
         /// <summary>

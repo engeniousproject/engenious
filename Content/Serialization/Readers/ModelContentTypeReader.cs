@@ -15,7 +15,6 @@ namespace engenious.Content.Serialization
             var index = reader.ReadInt32();
             var node = model.Nodes[index];
             var childCount = reader.ReadInt32();
-            node.Children = new List<NodeContent>();
             for (var i = 0; i < childCount; i++)
                 node.Children.Add(ReadTree(model, reader));
 
@@ -23,11 +22,10 @@ namespace engenious.Content.Serialization
         }
 
         /// <inheritdoc />
-        public override ModelContent Read(ContentManagerBase managerBase, ContentReader reader, Type customType = null)
+        public override ModelContent Read(ContentManagerBase managerBase, ContentReader reader, Type? customType = null)
         {
-            var model = new ModelContent();
             var meshCount = reader.ReadInt32();
-            model.Meshes = new MeshContent[meshCount];
+            var model = new ModelContent(meshCount);
             for (var meshIndex = 0; meshIndex < meshCount; meshIndex++)
             {
                 var primCount = reader.ReadInt32();
@@ -48,7 +46,7 @@ namespace engenious.Content.Serialization
                     if (hasPositions)
                     {
                         var position = reader.ReadVector3();
-                        m.Vertices.AsPosition[vertexIndex] = position;
+                        m.Vertices.AsPosition![vertexIndex] = position;
                         if (position.X < minVertex.X)
                             minVertex.X = position.X;
                         else if(position.X > maxVertex.X)
@@ -67,31 +65,28 @@ namespace engenious.Content.Serialization
 
                     if (hasColors)
                     {
-                        m.Vertices.AsColor[vertexIndex] = reader.ReadColor();
+                        m.Vertices.AsColor![vertexIndex] = reader.ReadColor();
                     }
 
                     if (hasNormals)
                     {
-                        m.Vertices.AsNormal[vertexIndex] = reader.ReadVector3();
+                        m.Vertices.AsNormal![vertexIndex] = reader.ReadVector3();
                     }
 
                     if (hasTextureCoordinates)
                     {
-                        m.Vertices.AsTextureCoordinate[vertexIndex] = reader.ReadVector2();
+                        m.Vertices.AsTextureCoordinate![vertexIndex] = reader.ReadVector2();
                     }
                 }
                 //m.BoundingBox = new BoundingBox(minVertex,maxVertex);
                 model.Meshes[meshIndex] = m;
             }
             var nodeCount = reader.ReadInt32();
-            model.Nodes = new List<NodeContent>();
             for (var nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
             {
-                var node = new NodeContent();
-                node.Name = reader.ReadString();
+                var node = new NodeContent(reader.ReadString());
                 node.Transformation = reader.ReadMatrix();
                 var nodeMeshCount = reader.ReadInt32();
-                node.Meshes = new List<int>();
                 for (var meshIndex = 0; meshIndex < nodeMeshCount; meshIndex++)
                 {
                     node.Meshes.Add(reader.ReadInt32());
@@ -106,18 +101,18 @@ namespace engenious.Content.Serialization
                 var anim = new AnimationContent();
                 anim.MaxTime = reader.ReadSingle();
                 var channelCount = reader.ReadInt32();
-                anim.Channels = new List<AnimationNodeContent>();
                 for (var channel = 0; channel < channelCount; channel++)
                 {
-                    var node = new AnimationNodeContent();
-                    node.Node = model.Nodes[reader.ReadInt32()];
-                    node.Frames = new List<AnimationFrame>();
+                    var node = new AnimationNodeContent(model.Nodes[reader.ReadInt32()]);
                     var frameCount = reader.ReadInt32();
                     for (var i = 0; i < frameCount; i++)
                     {
-                        var f = new AnimationFrame();
-                        f.Frame = reader.ReadSingle();
-                        f.Transform = new AnimationTransform(node.Node.Name,reader.ReadVector3(),reader.ReadVector3(),reader.ReadQuaternion());
+                        var f = new AnimationFrame
+                        (
+                            reader.ReadSingle(),
+                            new AnimationTransform(node.Node.Name, reader.ReadVector3(), reader.ReadVector3(),
+                                reader.ReadQuaternion())
+                        );
                         node.Frames.Add(f);
                     }
                     anim.Channels.Add(node);

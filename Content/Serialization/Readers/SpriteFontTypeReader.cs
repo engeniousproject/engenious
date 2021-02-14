@@ -7,17 +7,21 @@ namespace engenious.Content.Serialization
     /// Content type reader to load <see cref="SpriteFont"/> instances.
     /// </summary>
     [ContentTypeReaderAttribute(typeof(SpriteFont))]
-    public class SpriteFontTypeReader:ContentTypeReader<SpriteFont>
+    public class SpriteFontTypeReader : ContentTypeReader<SpriteFont>
     {
         /// <inheritdoc />
-        public override SpriteFont Read(ContentManagerBase managerBase, ContentReader reader, Type customType = null)
+        public override SpriteFont? Read(ContentManagerBase managerBase, ContentReader reader, Type? customType = null)
         {
             var texture = reader.Read<Texture2D>(managerBase);
-            var font = new SpriteFont(texture);
+            if (texture == null)
+                return null;
+            var font = new SpriteFont(texture)
+            {
+                Spacing = reader.ReadSingle(),
+                LineSpacing = reader.ReadInt32(),
+                BaseLine = reader.ReadInt32()
+            };
 
-            font.Spacing = reader.ReadSingle();
-            font.LineSpacing = reader.ReadInt32();
-            font.BaseLine = reader.ReadInt32();
             var hasDefaultChar = reader.ReadBoolean();
             if (hasDefaultChar)
                 font.DefaultCharacter = reader.ReadChar();

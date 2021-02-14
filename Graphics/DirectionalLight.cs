@@ -1,4 +1,6 @@
-﻿namespace engenious.Graphics
+﻿using System;
+
+namespace engenious.Graphics
 {
 	/// <summary>
 	/// A directional light source.
@@ -26,10 +28,10 @@
 		/// <param name="directionParameter">The direction of the light source.</param>
 		/// <param name="diffuseColorParameter">The diffuse color of the light source.</param>
 		/// <param name="specularColorParameter">The specular color of the light source.</param>
-		public DirectionalLight (EffectParameter directionParameter,EffectParameter diffuseColorParameter,EffectParameter specularColorParameter)
+		public DirectionalLight (EffectParameter directionParameter, EffectParameter diffuseColorParameter, EffectParameter specularColorParameter)
 		{
 			DirectionParameter = directionParameter;
-			DirectionParameter = diffuseColorParameter;
+			DiffuseColorParameter = diffuseColorParameter;
 			SpecularColorParameter = specularColorParameter;
 		}
 

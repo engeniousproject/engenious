@@ -12,8 +12,9 @@ namespace engenious.Graphics
     public sealed class SpriteFont : IDisposable
     {
         internal Dictionary<int,int> Kernings;
-        internal Dictionary<char,FontCharacter> CharacterMap;
+        internal Dictionary<char, FontCharacter> CharacterMap;
         internal Texture2D Texture;
+        private ReadOnlyCollection<char>? _characters;
 
         internal SpriteFont(Texture2D texture)
         {
@@ -27,12 +28,11 @@ namespace engenious.Graphics
             return (first << 16) | second;
         }
 
-        private ReadOnlyCollection<char> _characters;
 
         /// <summary>
         /// Gets a list of supported characters.
         /// </summary>
-        public ReadOnlyCollection<char> Characters => _characters ?? (_characters = new ReadOnlyCollection<char>(CharacterMap.Keys.ToList()));
+        public ReadOnlyCollection<char> Characters => _characters ??= new ReadOnlyCollection<char>(CharacterMap.Keys.ToList());
 
         /// <summary>
         /// Gets or sets the default character to render if a specific character cannot be depicted by this <see cref="SpriteFont"/>.
@@ -147,8 +147,6 @@ namespace engenious.Graphics
         /// </summary>
         /// <remarks>Currently does not account for line breaks.</remarks>
         /// <param name="text">The text to measure.</param>
-        /// <param name="startIndex">The index to start measuring from.</param>
-        /// <param name="length">The length to measure.</param>
         /// <returns>The dimensions of the string when rendered with this <see cref="SpriteFont"/>.</returns>
         public Vector2 MeasureString(ReadOnlySpan<char> text)
         {
@@ -164,8 +162,6 @@ namespace engenious.Graphics
                     }
                 }
 
-                if (fontChar == null)
-                    continue;
                 width += fontChar.Advance;
                 if (i < text.Length - 1)
                 {

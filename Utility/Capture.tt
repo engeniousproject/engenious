@@ -1,7 +1,5 @@
 <#@ template hostspecific="false" language="C#" #>
-<#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#@ import namespace="System" #>
 using System;
 namespace engenious.Utility
 {
@@ -26,7 +24,7 @@ namespace engenious.Utility
     /// <summary>
     /// A memory poolable capture class without parameters as a placeholder for delegates without parameters.
     /// </summary>
-    public class Capture : ICapture
+    public sealed class Capture : ICapture
     {
         /// <summary>
         /// A Capture instance for delegates without parameters.
@@ -69,7 +67,7 @@ namespace engenious.Utility
     for (int i=0;i<numParams;i++)
     {
         paramNames.Add($"T{i + 1}");
-        itemNames.Add($"Item{i + 1}");
+        itemNames.Add($"Item{i + 1}!");
         var genericParams = string.Join(", ", paramNames);
 #>
     /// <summary>
@@ -83,7 +81,7 @@ namespace engenious.Utility
 <#
         }
 #>
-    public class Capture<<# Write(genericParams);#>> : ICapture
+    public sealed class Capture<<# Write(genericParams);#>> : ICapture
     {
         /// <inheritdoc />
         public void Dispose()
@@ -97,7 +95,7 @@ namespace engenious.Utility
         /// <summary>
         /// Gets the <# Write(NumberToString(j + 1)); #> captured element.
         /// </summary>
-        public <# Write(paramNames[j]); #> Item<# Write((j + 1).ToString()); #> { get; internal set; }
+        public <# Write(paramNames[j]); #>? Item<# Write((j + 1).ToString()); #> { get; internal set; }
 <#
         }
 #>
@@ -123,10 +121,21 @@ namespace engenious.Utility
 #>
     public partial struct CapturingDelegate
     {
+        /// <summary>
+        /// Creates a new instance of the <see cref="CapturingDelegate"/> struct without any parameters.
+        /// </summary>
+        /// <param name="functionPointer">The function pointer to call.</param>
+        /// <returns>The created <see cref="CapturingDelegate" />.</returns>
         public static unsafe CapturingDelegate Create(delegate*<void> functionPointer)
         {
             return new (Utility.Capture.Instance, (IntPtr)functionPointer);
         }
+        /// <summary>
+        /// Creates a new instance of the <see cref="CapturingDelegate"/> struct without any parameters and a return value.
+        /// </summary>
+        /// <param name="functionPointer">The function pointer to call.</param>
+        /// <typeparam name="TRet">The type of the return parameter of the function pointer.</typeparam>
+        /// <returns>The created <see cref="CapturingDelegate" />.</returns>
         public static unsafe CapturingDelegate CreateRet<TRet>(delegate*<TRet> functionPointer)
         {
             return new (Utility.Capture.Instance, (IntPtr)functionPointer);
@@ -145,27 +154,81 @@ namespace engenious.Utility
                     Write(", ");
             }
         }
+
         paramNames.Add($"T{i + 1}");
         itemNames.Add($"item{i + 1}");
         var genericParams = string.Join(", ", paramNames);
         var paramItems = string.Join(", ", itemNames);
-        #>
-        private static Capture<<# Write(genericParams); #>> CreateCaptureWith<<# Write(genericParams); #>>(<# EmitParameters(); #>)
+#>
+        private static Capture<<#
+        Write(genericParams);
+#>> CreateCaptureWith<<#
+        Write(genericParams);
+#>>(<#
+        EmitParameters();
+#>)
         {
-            var capture = MemoryPool<Capture<<# Write(genericParams); #>>>.Acquire();
+            var capture = MemoryPool<Capture<<#
+        Write(genericParams);
+#>>>.Acquire();
 <#
-            for (int j = 0; j <= i; j++)
-            {
-                var itemName = itemNames[j];
-                WriteLine($"            capture.{char.ToUpper(itemName[0])}{itemName.Substring(1)} = {itemName};");
-            }
+        for (int j = 0; j <= i; j++)
+        {
+            var itemName = itemNames[j];
+            WriteLine($"            capture.{char.ToUpper(itemName[0])}{itemName.Substring(1)} = {itemName};");
+        }
 #>
             return capture;
         }
+        /// <summary>
+        /// Creates a new instance of the <see cref="CapturingDelegate"/> struct with <# Write(genericParams.Length.ToString()); #> generic parameters and a return value.
+        /// </summary>
+        /// <param name="functionPointer">The function pointer to call.</param>
+<#
+        for (int pI = 0; pI < paramNames.Count; pI++)
+        {
+#>
+        /// <param name="<# Write(itemNames[pI]);#>">The <# Write(NumberToString(pI + 1)); #> parameter to capture with the created delegate.</param>
+<#
+        }
+#>
+<#
+        for (int pI = 0; pI < paramNames.Count; pI++)
+        {
+#>
+        /// <typeparam name="<# Write(paramNames[pI]);#>">The type of the <# Write(NumberToString(pI + 1)); #> parameter.</typeparam>
+<#
+        }
+#>
+        /// <returns>The created <see cref="CapturingDelegate" />.</returns>
         public static unsafe CapturingDelegate Create<<# Write(genericParams); #>>(delegate*<<# Write(genericParams); #>, void> functionPointer, <# EmitParameters(); #>)
         {
             return new (CreateCaptureWith(<# Write(paramItems); #>), (IntPtr)functionPointer);
         }
+        /// <summary>
+        /// Creates a new instance of the <see cref="CapturingDelegate"/> struct with <#
+        Write(genericParams.Length.ToString());
+#> generic parameters.
+        /// </summary>
+        /// <param name="functionPointer">The function pointer to call.</param>
+<#
+        for (int pI = 0; pI < paramNames.Count; pI++)
+        {
+#>
+        /// <param name="<# Write(itemNames[pI]);#>">The <# Write(NumberToString(pI + 1)); #> parameter to capture with the created delegate.</param>
+<#
+        }
+#>
+<#
+        for (int pI = 0; pI < paramNames.Count; pI++)
+        {
+#>
+        /// <typeparam name="<# Write(paramNames[pI]);#>">The type of the <# Write(NumberToString(pI + 1)); #> parameter.</typeparam>
+<#
+        }
+#>
+        /// <typeparam name="TRet">The type of the return parameter of the function pointer.</typeparam>
+        /// <returns>The created <see cref="CapturingDelegate" />.</returns>
         public static unsafe CapturingDelegate CreateRet<<# Write(genericParams); #>, TRet>(delegate*<<# Write(genericParams); #>, TRet> functionPointer, <# EmitParameters(); #>)
         {
             return new (CreateCaptureWith(<# Write(paramItems); #>), (IntPtr)functionPointer);

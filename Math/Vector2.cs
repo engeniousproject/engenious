@@ -137,11 +137,9 @@ namespace engenious
 
         /// <inheritdoc />
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (obj is Vector2)
-                return Equals((Vector2)obj);
-            return false;
+            return (obj is Vector2 vector2) && Equals(vector2);
         }
 
         /// <inheritdoc />

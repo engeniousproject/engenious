@@ -13,7 +13,7 @@ namespace engenious.Audio
         /// <summary>
         /// Event for requesting new buffer data.
         /// </summary>
-        public event EventHandler BufferNeeded;
+        public event EventHandler? BufferNeeded;
         private const int MinimumBufferCheck = 2;
 
         /// <summary>

@@ -5,13 +5,18 @@ namespace engenious.Graphics
 {
     internal class AnimationNodeContent
     {
-        public NodeContent Node{ get; set; }
+        public AnimationNodeContent(NodeContent node)
+        {
+            Frames = new List<AnimationFrame>();
+            Node = node;
+        }
+        public NodeContent Node { get; }
 
-        public List<AnimationFrame> Frames{ get; set; }
+        public List<AnimationFrame> Frames{ get; }
 
         public void Sort()
         {
-            Frames = Frames.OrderBy(f => f.Frame).ToList();
+            Frames.Sort((a, b) => a.Frame.CompareTo(b));
         }
     }
 }

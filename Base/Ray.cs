@@ -1,11 +1,12 @@
-﻿using OpenTK.Graphics.ES20;
+﻿using System;
+using OpenTK.Graphics.ES20;
 
 namespace engenious
 {
     /// <summary>
     /// Defines a 3D ray.
     /// </summary>
-    public struct Ray
+    public struct Ray : IEquatable<Ray>
     {
         /// <summary>
         /// The direction the ray points to.
@@ -46,14 +47,7 @@ namespace engenious
         /// <returns><c>true</c> if the rays are equal; otherwise <c>false</c>.</returns>
         public static bool operator ==(Ray ray1, Ray ray2)
         {
-            
-            bool posEqual = ray1.Position == ray2.Position;
-            if (!posEqual)
-                return false;
-            //ray1.Direction.Normalized() == ray2.Direction.Normalized();
-            // test if direction is the same
-            var div = ray1.Direction * (ray2.Direction.X * ray2.Direction.Y * ray2.Direction.Z) / ray2.Direction;
-            return div.X > 0 && (int)div.X == (int)div.Y && (int)div.Y == (int)div.Z;
+            return ray1.Equals(ray2);
         }
 
         /// <summary>
@@ -77,13 +71,21 @@ namespace engenious
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public bool Equals(Ray other)
         {
-            if (obj is Ray)
-            {
-                return (Ray)obj == this;
-            }
-            return false;
+            var posEqual = Position == other.Position;
+            if (!posEqual)
+                return false;
+            //Direction.Normalized() == other.Direction.Normalized();
+            // test if direction is the same
+            var div = Direction * (other.Direction.X * other.Direction.Y * other.Direction.Z) / other.Direction;
+            return div.X > 0 && (int)div.X == (int)div.Y && (int)div.Y == (int)div.Z;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
+        {
+            return obj is Ray ray && Equals(ray);
         }
 
         /// <inheritdoc />

@@ -56,9 +56,9 @@ namespace engenious.Input
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            return obj is GamePadState && Equals((GamePadState)obj);
+            return obj is GamePadState state && Equals(state);
         }
 
         /// <inheritdoc />

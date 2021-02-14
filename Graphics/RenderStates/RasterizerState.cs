@@ -108,7 +108,7 @@ namespace engenious.Graphics
 
         private void ApplyCullAndFill()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             ApplyCullAndFillGl();
         }
@@ -148,7 +148,7 @@ namespace engenious.Graphics
 
         private void ApplyMultiSampleAntiAlias()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             if (MultiSampleAntiAlias)
                 GL.Enable(EnableCap.Multisample);
@@ -175,7 +175,7 @@ namespace engenious.Graphics
 
         private void ApplyScissorTest()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             if (ScissorTestEnable)
                 GL.Enable(EnableCap.ScissorTest);
@@ -220,7 +220,7 @@ namespace engenious.Graphics
 
         private void ApplyPolygonOffset()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             GL.PolygonOffset(_slopeScaleDepthBias, _depthBias);
         }
@@ -290,7 +290,7 @@ namespace engenious.Graphics
 
         private void Apply()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             var oldState = GraphicsDevice.RasterizerState;
             if (oldState == null || oldState.CullMode != CullMode || oldState.FillMode != FillMode)

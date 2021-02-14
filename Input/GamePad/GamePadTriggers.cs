@@ -29,9 +29,9 @@ namespace engenious.Input
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            return obj is GamePadTriggers && Equals((GamePadTriggers)obj);
+            return obj is GamePadTriggers triggers && Equals(triggers);
         }
 
         /// <inheritdoc />

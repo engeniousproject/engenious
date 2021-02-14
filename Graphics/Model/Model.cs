@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace engenious.Graphics
 {
@@ -11,36 +12,42 @@ namespace engenious.Graphics
         /// Initializes a new instance of the <see cref="Model"/> class.
         /// </summary>
         /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/>.</param>
-        public Model(GraphicsDevice graphicsDevice)
+        /// <param name="meshCount">The number of meshes for this model.</param>
+        public Model(GraphicsDevice graphicsDevice, int meshCount)
             : base(graphicsDevice)
         {
+            Meshes = new IMesh[meshCount];
             Animations = new List<Animation>();
+            Nodes = new List<Node>();
             Transform = Matrix.Identity;
         }
+
+        /// <inheritdoc cref="GraphicsResource.GraphicsDevice"/>
+        public new GraphicsDevice GraphicsDevice => base.GraphicsDevice!;
 
         /// <summary>
         /// Gets or sets the meshes this <see cref="Model"/> consists of.
         /// </summary>
-        public IMesh[] Meshes{ get; set; }
+        public IMesh[] Meshes{ get; }
 
-        internal Node RootNode{ get; set; }
+        internal Node? RootNode{ get; set; }
 
-        internal List<Node> Nodes{ get; set; }
+        internal List<Node> Nodes{ get; }
 
         /// <summary>
         /// Gets or sets the animations available for this model.
         /// </summary>
-        public List<Animation> Animations{ get; set; }
+        public List<Animation> Animations{ get; }
 
         /// <summary>
         /// Gets or sets the current animation to animate.
         /// </summary>
-        public Animation CurrentAnimation{get;set;}
+        public Animation? CurrentAnimation { get; set; }
 
         /// <summary>
         /// Gets or sets the transform of this model.
         /// </summary>
-        public Matrix Transform{get;set;}
+        public Matrix Transform { get; set; }
 
         /// <summary>
         /// Advances the animation by a given amount.
@@ -48,12 +55,14 @@ namespace engenious.Graphics
         /// <param name="elapsed">The amount to advance the animation by.</param>
         public void UpdateAnimation(float elapsed)
         {
+            if (RootNode == null || CurrentAnimation == null)
+                return;
             CurrentAnimation.Update(elapsed);
 
             UpdateAnimation(null, RootNode);
         }
 
-        internal void UpdateAnimation(Node parent, Node node)
+        internal void UpdateAnimation(Node? parent, Node node)
         {
 
             if (parent == null)
@@ -85,6 +94,8 @@ namespace engenious.Graphics
         /// <param name="text">The texture to use for rendering.</param>
         public void Draw(IModelEffect effect, Texture2D text)
         {
+            if (RootNode == null)
+                return;
             DrawNode(RootNode, effect, text);
         }
 
@@ -93,6 +104,9 @@ namespace engenious.Graphics
             if (node.Meshes.Count == 0 && node.Children.Count == 0)
                 return;
             effect.Texture = text;
+
+            if (effect.CurrentTechnique == null)
+                throw new ArgumentException("The effect has no technique selected", nameof(effect));
 
             foreach (var pass in effect.CurrentTechnique.Passes)
             {

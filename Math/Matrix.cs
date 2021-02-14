@@ -341,17 +341,21 @@ namespace engenious
         #region IEquatable implementation
 
         /// <inheritdoc />
-        public override bool Equals(object other)
+        public override bool Equals(object? other)
         {
-            if (other is Matrix)
-                return Equals((Matrix)other);
-            return false;
+            return (other is Matrix matrix) && Equals(matrix);
         }
 
         /// <inheritdoc />
-        public bool Equals(Matrix other)
+        public unsafe bool Equals(Matrix other)
         {
-            return this == other;
+            for (var i = 0; i < 16; i++)
+            {
+                // ReSharper disable once CompareOfFloatsByEqualityOperator
+                if (items[i] != other.items[i])
+                    return false;
+            }
+            return true;
         }
 
         #endregion
@@ -364,13 +368,7 @@ namespace engenious
         /// <returns><c>true</c> if the matrices are equal; otherwise <c>false</c>.</returns>
         public static unsafe bool operator==(Matrix value1, Matrix value2)
         {
-            for (var i = 0; i < 16; i++)
-            {
-                // ReSharper disable once CompareOfFloatsByEqualityOperator
-                if (value1.items[i] != value2.items[i])
-                    return false;
-            }
-            return true;
+            return value1.Equals(value2);
         }
 
         /// <summary>

@@ -9,9 +9,9 @@ namespace engenious.Content.Serialization
 	public abstract class ContentTypeReader<T> : IContentTypeReader
 	{
 		/// <inheritdoc cref="IContentTypeReader.Read"/>
-	    public abstract T Read (ContentManagerBase managerBase, ContentReader reader,Type customType = null);
+	    public abstract T? Read (ContentManagerBase managerBase, ContentReader reader,Type? customType = null);
 
-		object IContentTypeReader.Read (ContentManagerBase managerBase, ContentReader reader,Type customType)
+		object? IContentTypeReader.Read (ContentManagerBase managerBase, ContentReader reader, Type? customType)
 		{
 			return Read (managerBase, reader,customType);
 		}

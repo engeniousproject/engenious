@@ -1,11 +1,14 @@
 ﻿// ReSharper disable CompareOfFloatsByEqualityOperator
+
+using System;
+
 namespace engenious
 {
     /// <summary>
     /// Defines a RGBA <see cref="float"/> Color.
     /// </summary>
     [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential, Pack = 1)]
-    public struct Color
+    public struct Color : IEquatable<Color>
     {
         private readonly Vector4 _color;
 
@@ -99,11 +102,15 @@ namespace engenious
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public bool Equals(Color other)
         {
-            if (!(obj is Color)) return false;
-            var sec = (Color)obj;
-            return A == sec.A && R == sec.R && G == sec.G && B == sec.B;
+            return A == other.A && R == other.R && G == other.G && B == other.B;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
+        {
+            return obj is Color color && Equals(color);
         }
 
         /// <summary>

@@ -17,14 +17,14 @@ namespace engenious.Graphics
         public readonly struct PassRestorer : IDisposable
         {
             private readonly GraphicsDevice _graphicsDevice;
-            private readonly EffectPass _oldValue;
+            private readonly EffectPass? _oldValue;
 
             /// <summary>
             /// Restores the active <see cref="GraphicsDevice.EffectPass"/> to the given value on dispose.
             /// </summary>
             /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> to restore on.</param>
             /// <param name="oldValue">The <see cref="EffectPass"/> to restore to.</param>
-            public PassRestorer(GraphicsDevice graphicsDevice, EffectPass oldValue)
+            public PassRestorer(GraphicsDevice graphicsDevice, EffectPass? oldValue)
             {
                 _graphicsDevice = graphicsDevice;
                 _oldValue = oldValue;
@@ -49,6 +49,7 @@ namespace engenious.Graphics
             Name = name;
             GraphicsDevice.ValidateUiGraphicsThread();
             Program = GL.CreateProgram();
+            Parameters = new EffectPassParameterCollection(this);
         }
 
         internal void BindAttribute(VertexElementUsage usage, string name)
@@ -143,9 +144,7 @@ namespace engenious.Graphics
             }
             
             Attached.Clear();
-            Attached = null;
             GraphicsDevice.ValidateUiGraphicsThread();
-            Parameters = new EffectPassParameterCollection(this);
         }
 
         /// <summary>
@@ -153,13 +152,16 @@ namespace engenious.Graphics
         /// </summary>
         protected internal EffectPassParameterCollection Parameters{ get; private set; }
 
+        /// <inheritdoc cref="GraphicsResource.GraphicsDevice"/>
+        public new GraphicsDevice GraphicsDevice => base.GraphicsDevice!;
+        
         /// <summary>
         /// Gets the passes name.
         /// </summary>
-        public string Name
+        public new string Name
         {
-            get;
-            private set;
+            get => base.Name!;
+            private init => base.Name = value;
         }
 
         /// <summary>
@@ -201,7 +203,7 @@ namespace engenious.Graphics
         }
 
         /// <inheritdoc />
-        public void Dispose()
+        public override void Dispose()
         {
             GraphicsDevice.ValidateUiGraphicsThread();
             GL.DeleteProgram(Program);
@@ -210,18 +212,18 @@ namespace engenious.Graphics
         /// <summary>
         /// Gets the <see cref="BlendState"/> associated with this pass.
         /// </summary>
-        public BlendState BlendState{ get; internal set; }
+        public BlendState? BlendState{ get; internal set; }
         //TODO: apply states
 
         /// <summary>
         /// Gets the <see cref="DepthStencilState"/> associated with this pass.
         /// </summary>
-        public DepthStencilState DepthStencilState{ get; internal set; }
+        public DepthStencilState? DepthStencilState{ get; internal set; }
 
         /// <summary>
         /// Gets the <see cref="RasterizerState"/> associated with this pass.
         /// </summary>
-        public RasterizerState RasterizerState{ get; internal set; }
+        public RasterizerState? RasterizerState{ get; internal set; }
     }
 }
 

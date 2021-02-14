@@ -1,4 +1,5 @@
-﻿using engenious.Graphics;
+﻿using System;
+using engenious.Graphics;
 
 namespace engenious
 {
@@ -14,7 +15,7 @@ namespace engenious
         protected DrawableGameComponent(IGame game)
             : base(game)
         {
-            GraphicsDevice = game.GraphicsDevice;
+            GraphicsDevice = game.GraphicsDevice ?? throw new ArgumentException("Game not yet initialized sufficiently", nameof(game));
             Visible = true;
         }
 

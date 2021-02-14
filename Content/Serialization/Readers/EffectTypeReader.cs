@@ -31,7 +31,7 @@ namespace engenious.Content.Serialization
                 _cachedAssemblies.Add(asm);
                 if (!asm.IsDynamic)
                 {
-                    Type[]? exportedTypes = null;
+                    Type?[]? exportedTypes = null;
                     try
                     {
                         exportedTypes = asm.GetExportedTypes();
@@ -41,21 +41,20 @@ namespace engenious.Content.Serialization
                         exportedTypes = e.Types;
                     }
 
-                    if (exportedTypes != null)
+                    foreach (var type in exportedTypes)
                     {
-                        foreach (var type in exportedTypes)
+                        if (type == null)
+                            continue;
+                        try
                         {
-                            try
+                            if (typeof(Effect).IsAssignableFrom(type) || typeof(EffectTechnique).IsAssignableFrom(type) || typeof(EffectPass).IsAssignableFrom(type))
                             {
-                                if (type != null && (typeof(Effect).IsAssignableFrom(type)||typeof(EffectTechnique).IsAssignableFrom(type)||typeof(EffectPass).IsAssignableFrom(type)))
-                                {
-                                    _effectTypes.Add(type.FullName ?? "", type);
-                                }
+                                _effectTypes.Add(type.FullName ?? "", type);
                             }
-                            catch (Exception)
-                            {
+                        }
+                        catch (Exception)
+                        {
                                 
-                            }
                         }
                     }
                 }
@@ -63,7 +62,7 @@ namespace engenious.Content.Serialization
         }
 
         /// <inheritdoc />
-        public override Effect Read(ContentManagerBase managerBase, ContentReader reader, Type customType = null)
+        public override Effect Read(ContentManagerBase managerBase, ContentReader reader, Type? customType = null)
         {
             var useCustomType = reader.ReadBoolean();
             bool canUseCustomType = false;
@@ -74,15 +73,15 @@ namespace engenious.Content.Serialization
                 canUseCustomType = true;
                 var customTypeName = reader.ReadString();
                 canUseCustomType = _effectTypes.TryGetValue(customTypeName, out effectType);
-                effectType = effectType ?? typeof(Effect);
+                effectType ??= typeof(Effect);
             }
             
-            Effect effect = null;
+            Effect? effect = null;
             if (customType != null && effectType.IsAssignableFrom(customType))
             {
                 try
                 {
-                    effect = (Effect) Activator.CreateInstance(customType, managerBase.GraphicsDevice);
+                    effect = (Effect?) Activator.CreateInstance(customType, managerBase.GraphicsDevice);
                     //effectType = customType;
                     useCustomType = true;
                 }
@@ -96,7 +95,7 @@ namespace engenious.Content.Serialization
             {
                 try
                 {
-                    effect = (Effect) Activator.CreateInstance(effectType, managerBase.GraphicsDevice);
+                    effect = (Effect?) Activator.CreateInstance(effectType, managerBase.GraphicsDevice);
                 }
                 catch (Exception)
                 {
@@ -104,13 +103,12 @@ namespace engenious.Content.Serialization
                 }
             }
 
-            if (effect == null)
-                effect= new Effect(managerBase.GraphicsDevice);
+            effect ??= new Effect(managerBase.GraphicsDevice);
 
             var techniqueCount = reader.ReadInt32();
             for (var techniqueIndex = 0; techniqueIndex < techniqueCount; techniqueIndex++)
             {
-                EffectTechnique technique = null;
+                EffectTechnique? technique = null;
                 string techniqueName = reader.ReadString();
 
                 if (useCustomType)
@@ -119,22 +117,23 @@ namespace engenious.Content.Serialization
                     {
                         string customTypeName = reader.ReadString();
 
-                        if (!_effectTypes.TryGetValue(customType.FullName + "+" + customTypeName, out var techniqueType))
+                        if (!_effectTypes.TryGetValue(customType == null ? string.Empty : customType.FullName + "+" + customTypeName, out var techniqueType))
                             techniqueType = _effectTypes[effectType.FullName + "+" + customTypeName];
-                        technique = (EffectTechnique) Activator.CreateInstance(techniqueType, techniqueName);
+                        technique = (EffectTechnique?) Activator.CreateInstance(techniqueType, techniqueName);
                     }
                     catch (Exception)
                     {
                         
                     }
                 }
-                if (technique == null)
-                    technique = new EffectTechnique(techniqueName);
+                
+                technique ??= new EffectTechnique(techniqueName);
+                
                 var passCount = reader.ReadInt32();
                 for (var passIndex = 0; passIndex < passCount; passIndex++)
                 {
                     var passName = reader.ReadString();
-                    EffectPass pass = null;
+                    EffectPass? pass = null;
                     if (useCustomType)
                     {
                         try
@@ -142,15 +141,16 @@ namespace engenious.Content.Serialization
                             string customTypeName = technique.GetType().FullName + "+" + passName + "Impl";
 
                             var passType = _effectTypes[customTypeName];
-                            pass = (EffectPass) Activator.CreateInstance(passType, managerBase.GraphicsDevice, passName);
+                            pass = (EffectPass?) Activator.CreateInstance(passType, managerBase.GraphicsDevice, passName);
                         }
                         catch (Exception)
                         {
                         
                         }
                     }
-                    if (pass == null)
-                        pass = new EffectPass(managerBase.GraphicsDevice, passName);
+                    
+                    pass ??= new EffectPass(managerBase.GraphicsDevice, passName);
+                    
                     pass.BlendState = reader.Read<BlendState>(managerBase);
                     pass.DepthStencilState = reader.Read<DepthStencilState>(managerBase);
                     pass.RasterizerState = reader.Read<RasterizerState>(managerBase);

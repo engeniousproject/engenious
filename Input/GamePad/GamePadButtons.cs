@@ -80,9 +80,9 @@ namespace engenious.Input
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            return obj is GamePadButtons && Equals((GamePadButtons)obj);
+            return obj is GamePadButtons buttons && Equals(buttons);
         }
 
         /// <summary>

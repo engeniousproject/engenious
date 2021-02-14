@@ -7,6 +7,9 @@ using OpenTK.Windowing.Desktop;
 
 namespace engenious.Graphics
 {
+    /// <summary>
+    /// A thread used for executing graphics commands in a threaded graphics context.
+    /// </summary>
     public class GraphicsThread : IDisposable
     {
         private readonly INativeWindow _windowInfo;
@@ -24,23 +27,29 @@ namespace engenious.Graphics
             window.Context.MakeNoneCurrent();
             return window;
         }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GraphicsThread"/> class.
+        /// </summary>
+        /// <param name="sharedContext">The graphics context to share the data with.</param>
         public GraphicsThread(IGraphicsContext sharedContext)
             : this(CreateSharedContext(sharedContext))
         {
         }
 
-        private GraphicsThread()
+        private GraphicsThread(INativeWindow windowInfo, IGraphicsContext context, Thread workingThread)
         {
             CancellationTokenSource = new CancellationTokenSource();
             _cancellationToken = CancellationTokenSource.Token;
+            _windowInfo = windowInfo;
+            _context = context;
+            
+            _sync = new GlSynchronizationContext();
+            _thread = workingThread;
         }
 
         internal GraphicsThread(GraphicsDevice graphicsDevice)
-            : this()
+            : this(graphicsDevice.Game.RenderingSurface.WindowInfo!, graphicsDevice.Context, Thread.CurrentThread)
         {
-            _windowInfo = graphicsDevice.Game.RenderingSurface.WindowInfo;
-            _sync = new GlSynchronizationContext();
-            _context = graphicsDevice._context;
             _cancellationToken.Register(() =>
             {
                 _sync.CancelWait();
@@ -48,14 +57,15 @@ namespace engenious.Graphics
 
             if (SynchronizationContext.Current == null)
                 SynchronizationContext.SetSynchronizationContext(_sync);
-            _thread = Thread.CurrentThread;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GraphicsThread"/> class.
+        /// </summary>
+        /// <param name="windowInfo">The native window to create the graphics thread for.</param>
         public GraphicsThread(NativeWindow windowInfo)
-            : this()
+            : this(windowInfo, windowInfo.Context, null!)
         {
-            _windowInfo = windowInfo;
-            _sync = new GlSynchronizationContext();
-            _context = windowInfo.Context;
             _cancellationToken.Register(() => _sync.CancelWait());
             _thread = new Thread(ThreadQueueLoop);
 
@@ -124,7 +134,7 @@ namespace engenious.Graphics
         /// An <see cref="AutoResetEvent"/> that gets set when the work is done.
         /// <remarks>Do not dispose this and only use it once. After that it will be reused by this API.</remarks>
         /// </returns>
-        public AutoResetEvent QueueWork(CapturingDelegate callback, bool passOwnership = true)
+        public AutoResetEvent? QueueWork(CapturingDelegate callback, bool passOwnership = true)
         {
             if (IsOnGraphicsThread())
             {

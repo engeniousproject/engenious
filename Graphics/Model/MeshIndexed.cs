@@ -6,14 +6,16 @@
     public class MeshIndexed : Mesh
     {
         /// <inheritdoc />
-        public MeshIndexed(GraphicsDevice graphicsDevice) : base(graphicsDevice)
+        public MeshIndexed(GraphicsDevice graphicsDevice, int primitiveCount, VertexBuffer vertexBuffer, IndexBuffer indexBuffer)
+            : base(graphicsDevice, primitiveCount, vertexBuffer)
         {
+            IB = indexBuffer;
         }
 
         /// <summary>
         /// Gets or sets the <see cref="IndexBuffer"/>.
         /// </summary>
-        public IndexBuffer IB{ get; set; }
+        public IndexBuffer IB{ get; }
 
         /// <inheritdoc />
         public override void Draw()

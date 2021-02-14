@@ -8,7 +8,7 @@ namespace engenious.Input
     /// </summary>
     public static class Keyboard
     {
-        private static IRenderingSurface _window;
+        private static IRenderingSurface? _window;
         static Keyboard()
         {
             // if (!WrappingHelper.ValidateStructs<OpenTK.Windowing.Common.Input.KeyboardState, KeyboardState>())
@@ -27,11 +27,8 @@ namespace engenious.Input
         /// <returns>The current keyboard state.</returns>
         public static unsafe KeyboardState GetState()
         {
-            var state = _window.WindowInfo.KeyboardState;
-            var actual = new KeyboardState();
+            var state = _window!.WindowInfo!.KeyboardState;
             return *(KeyboardState*)(&state);
-
-
         }
 
         /// <summary>
@@ -42,7 +39,7 @@ namespace engenious.Input
         public static unsafe KeyboardState GetState(int index)
         {
             throw new NotSupportedException();
-            /*var state = OpenTK.Input.Keyboard.GetState(index);
+            /*var state = Keyboard.GetState(index);
             return *(KeyboardState*)(&state);*/
 
 

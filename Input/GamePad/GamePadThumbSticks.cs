@@ -43,9 +43,9 @@ namespace engenious.Input
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            return obj is GamePadThumbSticks && Equals((GamePadThumbSticks)obj);
+            return obj is GamePadThumbSticks sticks && Equals(sticks);
         }
 
         /// <inheritdoc />

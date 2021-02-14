@@ -58,10 +58,10 @@ namespace engenious.Graphics
 
         private Matrix _matrix;
         private SpriteSortMode _sortMode;
-        private BlendState _blendState;
-        private SamplerState _samplerState;
-        private DepthStencilState _depthStencilState;
-        private RasterizerState _rasterizerState;
+        private BlendState? _blendState;
+        private SamplerState? _samplerState;
+        private DepthStencilState? _depthStencilState;
+        private RasterizerState? _rasterizerState;
         private IModelEffect _effect;
         private bool _useScreenSpace;
         private readonly BasicEffect _defaultEffect;
@@ -85,7 +85,10 @@ namespace engenious.Graphics
             _defaultEffect = effect;
             _effect = effect;
         }
-
+        
+        /// <inheritdoc cref="GraphicsResource.GraphicsDevice"/>
+        public new GraphicsDevice GraphicsDevice => base.GraphicsDevice!;
+        
         /// <summary>
         /// Begins batching of following draw calls to this <see cref="SpriteBatch"/>.
         /// </summary>
@@ -97,21 +100,15 @@ namespace engenious.Graphics
         /// <param name="effect">A custom effect to use for rendering the sprites.</param>
         /// <param name="transformMatrix">A transformation to apply to all sprites.</param>
         /// <param name="useScreenSpace">A value indicating whether the sprites should be rendered in screenspace.</param>
-        public void Begin(SpriteSortMode sortMode = SpriteSortMode.Deffered, BlendState blendState = null, SamplerState samplerState = null, DepthStencilState depthStencilState = null, RasterizerState rasterizerState = null, IModelEffect effect = null, Matrix? transformMatrix = null, bool useScreenSpace = true)
+        public void Begin(SpriteSortMode sortMode = SpriteSortMode.Deffered, BlendState? blendState = null, SamplerState? samplerState = null, DepthStencilState? depthStencilState = null, RasterizerState? rasterizerState = null, IModelEffect? effect = null, Matrix? transformMatrix = null, bool useScreenSpace = true)
         {
             _sortMode = sortMode;
             _blendState = blendState;
             _samplerState = samplerState;
-            if (depthStencilState == null)
-                _depthStencilState = DepthStencilState.None;
-            else
-                _depthStencilState = depthStencilState;
+            _depthStencilState = depthStencilState ?? DepthStencilState.None;
             _rasterizerState = rasterizerState;
 
-            if (transformMatrix.HasValue)
-                _matrix = transformMatrix.Value;
-            else
-                _matrix = Matrix.Identity;
+            _matrix = transformMatrix ?? Matrix.Identity;
 
             _effect = effect ?? _defaultEffect;
 

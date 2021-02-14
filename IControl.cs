@@ -4,6 +4,9 @@ using OpenTK.Windowing.Common;
 
 namespace engenious
 {
+    /// <summary>
+    /// Base interface for controls.
+    /// </summary>
     public interface IControl : IDisposable
     {
         /// <summary>
@@ -72,6 +75,6 @@ namespace engenious
         /// <summary>
         /// Gets a representation of native surface handle for this <see cref="IRenderingSurface"/>.
         /// </summary>
-        INativeWindow WindowInfo { get; }
+        INativeWindow? WindowInfo { get; }
     }
 }

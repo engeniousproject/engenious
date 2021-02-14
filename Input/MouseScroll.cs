@@ -77,16 +77,16 @@ namespace engenious.Input
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents the current <see cref="OpenTK.Input.MouseScroll"/>.
+        /// Returns a <see cref="System.String"/> that represents the current <see cref="MouseScroll"/>.
         /// </summary>
-        /// <returns>A <see cref="System.String"/> that represents the current <see cref="OpenTK.Input.MouseScroll"/>.</returns>
+        /// <returns>A <see cref="System.String"/> that represents the current <see cref="MouseScroll"/>.</returns>
         public override string ToString()
         {
             return $"[X={X:0.00}, Y={Y:0.00}]";
         }
 
         /// <summary>
-        /// Serves as a hash function for a <see cref="OpenTK.Input.MouseScroll"/> object.
+        /// Serves as a hash function for a <see cref="MouseScroll"/> object.
         /// </summary>
         /// <returns>A hash code for this instance that is suitable for use in hashing algorithms and data structures such as a
         /// hash table.</returns>
@@ -96,16 +96,14 @@ namespace engenious.Input
         }
 
         /// <summary>
-        /// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="OpenTK.Input.MouseScroll"/>.
+        /// Determines whether the specified <see cref="System.Object"/> is equal to the current <see cref="MouseScroll"/>.
         /// </summary>
-        /// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="OpenTK.Input.MouseScroll"/>.</param>
+        /// <param name="obj">The <see cref="System.Object"/> to compare with the current <see cref="MouseScroll"/>.</param>
         /// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to the current
-        /// <see cref="OpenTK.Input.MouseScroll"/>; otherwise, <c>false</c>.</returns>
-        public override bool Equals(object obj)
+        /// <see cref="MouseScroll"/>; otherwise, <c>false</c>.</returns>
+        public override bool Equals(object? obj)
         {
-            return
-                obj is MouseScroll &&
-            Equals((MouseScroll)obj);
+            return obj is MouseScroll scroll && Equals(scroll);
         }
 
         #endregion
@@ -113,11 +111,11 @@ namespace engenious.Input
         #region IEquatable Members
 
         /// <summary>
-        /// Determines whether the specified <see cref="OpenTK.Input.MouseScroll"/> is equal to the current <see cref="OpenTK.Input.MouseScroll"/>.
+        /// Determines whether the specified <see cref="MouseScroll"/> is equal to the current <see cref="MouseScroll"/>.
         /// </summary>
-        /// <param name="other">The <see cref="OpenTK.Input.MouseScroll"/> to compare with the current <see cref="OpenTK.Input.MouseScroll"/>.</param>
-        /// <returns><c>true</c> if the specified <see cref="OpenTK.Input.MouseScroll"/> is equal to the current
-        /// <see cref="OpenTK.Input.MouseScroll"/>; otherwise, <c>false</c>.</returns>
+        /// <param name="other">The <see cref="MouseScroll"/> to compare with the current <see cref="MouseScroll"/>.</param>
+        /// <returns><c>true</c> if the specified <see cref="MouseScroll"/> is equal to the current
+        /// <see cref="MouseScroll"/>; otherwise, <c>false</c>.</returns>
         public bool Equals(MouseScroll other)
         {
             return X == other.X && Y == other.Y;

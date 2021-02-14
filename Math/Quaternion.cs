@@ -17,10 +17,9 @@ namespace engenious
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            return obj is Quaternion && Equals((Quaternion) obj);
+            return obj is Quaternion quaternion && Equals(quaternion);
         }
 
         /// <inheritdoc />

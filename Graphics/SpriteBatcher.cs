@@ -50,6 +50,7 @@ namespace engenious.Graphics
             public BatchItem()
             {
                 Positions = new Vector3[4];
+                Texture = null!;
             }
 
             private void InitBatchItem(Vector2 position, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode, Vector4 tempText)
@@ -163,7 +164,7 @@ namespace engenious.Graphics
             _sortMode = sortMode;
         }
 
-        internal SamplerState SamplerState;
+        internal SamplerState? SamplerState;
 
         public void Flush(IModelEffect effect, Texture texture, int batch, int batchCount)
         {
@@ -180,6 +181,8 @@ namespace engenious.Graphics
             _graphicsDevice.IndexBuffer = _indexBuffer;
             _graphicsDevice.Textures[0] = texture;
             //graphicsDevice.SamplerStates[0] = samplerState;
+            if (effect.CurrentTechnique == null)
+                throw new Exception("Current technique not set");
             foreach (var pass in effect.CurrentTechnique.Passes)
             {
                 pass.Apply();

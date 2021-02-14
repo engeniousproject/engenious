@@ -1,23 +1,37 @@
 using System;
 using System.ComponentModel;
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
 
 namespace engenious
 {
+    /// <summary>
+    /// A wrapper for a native surface.
+    /// </summary>
     public class NativeSurfaceWrapper : IRenderingSurface
     {
         
+        /// <summary>
+        /// Initializes an new instance of the <see cref="NativeSurfaceWrapper"/> class.
+        /// </summary>
+        /// <param name="windowInfo">The native window info to wrap.</param>
+        /// <param name="contextFlags">Thre graphics context flags</param>
+        /// <exception cref="NotImplementedException">This class is currently not implemented.</exception>
         public NativeSurfaceWrapper(INativeWindow windowInfo, ContextFlags contextFlags)
         {
             //TODO implement
+            WindowInfo = windowInfo;
+            Context = windowInfo.Context;
+            Focused = false;
             throw new NotImplementedException();
-            //WindowInfo = windowInfo;
-            //Context = new GraphicsContext(GraphicsMode.Default, WindowInfo,0,0, contextFlags);
         }
 
         /// <inheritdoc />
         public INativeWindow WindowInfo { get; }
 
+        /// <summary>
+        /// Gets the graphics context for this surface wrapper.
+        /// </summary>
         public IGraphicsContext Context { get; }
         
         /// <inheritdoc />
@@ -62,6 +76,7 @@ namespace engenious
         /// <inheritdoc />
         public bool CursorVisible { get; set; }
 
+        /// <inheritdoc />
         public bool CursorGrabbed { get; set; }
 
         /// <inheritdoc />
@@ -72,27 +87,27 @@ namespace engenious
 
 
         /// <inheritdoc />
-        public event Action<FrameEventArgs> RenderFrame;
+        public event Action<FrameEventArgs>? RenderFrame;
 
         /// <inheritdoc />
-        public event Action<FrameEventArgs> UpdateFrame;
+        public event Action<FrameEventArgs>? UpdateFrame;
 
         /// <inheritdoc />
-        public event Action<CancelEventArgs> Closing;
+        public event Action<CancelEventArgs>? Closing;
 
         /// <inheritdoc />
-        public event Action<FocusedChangedEventArgs> FocusedChanged;
+        public event Action<FocusedChangedEventArgs>? FocusedChanged;
 
         /// <inheritdoc />
-        public event Action<TextInputEventArgs> KeyPress;
+        public event Action<TextInputEventArgs>? KeyPress;
 
         /// <inheritdoc />
-        public event Action<ResizeEventArgs> Resize;
+        public event Action<ResizeEventArgs>? Resize;
 
         /// <inheritdoc />
-        public event Action Load;
+        public event Action? Load;
 
         /// <inheritdoc />
-        public event Action<MouseWheelEventArgs> MouseWheel;
+        public event Action<MouseWheelEventArgs>? MouseWheel;
     }
 }

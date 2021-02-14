@@ -5,9 +5,12 @@ using engenious.Utility;
 
 namespace engenious.Helper
 {
+    /// <summary>
+    /// A synchronization context for opengl commands.
+    /// </summary>
     public sealed class GlSynchronizationContext : SynchronizationContext
     {
-        private Thread _currentThread;
+        private Thread? _currentThread;
 
         private struct CallbackState
         {
@@ -30,6 +33,7 @@ namespace engenious.Helper
         private readonly List<CallbackState> _array = new();
         private AutoResetEvent _resetEvent = new AutoResetEvent(false);
 
+        /// <inheritdoc />
         public GlSynchronizationContext()
         {
             for (int i = 0; i < 128; i++)
@@ -42,7 +46,9 @@ namespace engenious.Helper
         {
             callback(state);
         }
-        public override unsafe void Send(SendOrPostCallback callback, object state)
+
+        /// <inheritdoc />
+        public override unsafe void Send(SendOrPostCallback callback, object? state)
         {
             if (Thread.CurrentThread == _currentThread)
             {
@@ -50,13 +56,25 @@ namespace engenious.Helper
             }
             else
             {
-                Add(CapturingDelegate.Create<SendOrPostCallback, object>(&SendOrPostCallbackCaller, callback, state), true, true).WaitOne();
+                Add(CapturingDelegate.Create<SendOrPostCallback, object>(&SendOrPostCallbackCaller, callback, state!), true, true).WaitOne();
             }
         }
-        public override unsafe void Post(SendOrPostCallback callback, object state)
+
+        /// <inheritdoc />
+        public override unsafe void Post(SendOrPostCallback callback, object? state)
         {
-            Add(CapturingDelegate.Create<SendOrPostCallback, object>(&SendOrPostCallbackCaller, callback, state), true);
+            Add(CapturingDelegate.Create<SendOrPostCallback, object>(&SendOrPostCallbackCaller, callback, state!), true);
         }
+        
+        /// <summary>
+        /// Send a <see cref="CapturingDelegate"/> in the worker queue to execute synchronized in this context
+        /// and waits for it to be completed.
+        /// </summary>
+        /// <param name="callback">The callback to call in this context.</param>
+        /// <param name="passOwnership">
+        /// Whether to pass the ownership of the <paramref name="callback"/>.
+        /// <remarks>If you do not pass this ownership you need to cleanup the delegate.</remarks>
+        /// </param>
         public void Send(CapturingDelegate callback, bool passOwnership)
         {
             if (Thread.CurrentThread == _currentThread)
@@ -70,6 +88,19 @@ namespace engenious.Helper
                 Add(callback, passOwnership, true).WaitOne();
             }
         }
+
+        /// <summary>
+        /// Posts a <see cref="CapturingDelegate"/> in the worker queue to execute synchronized in this context.
+        /// </summary>
+        /// <param name="callback">The callback to call in this context.</param>
+        /// <param name="passOwnership">
+        /// Whether to pass the ownership of the <paramref name="callback"/>.
+        /// <remarks>If you do not pass this ownership you need to cleanup the delegate.</remarks>
+        /// </param>
+        /// <returns>
+        /// A reset event that gets set when the callback got executed.
+        /// <remarks>This <see cref="AutoResetEvent"/> gets reused and therefore automatically gets invalid after it was set once.</remarks>
+        /// </returns>
         public AutoResetEvent Post(CapturingDelegate callback, bool passOwnership)
         {
             return Add(callback, passOwnership, true);
@@ -80,18 +111,18 @@ namespace engenious.Helper
             {
                 if (_count == _array.Count)
                 {
-                    int newcapacity = (int)((long)_array.Count * 2);
-                    if (newcapacity < _array.Count + 4)
+                    int newCapacity = (int)((long)_array.Count * 2);
+                    if (newCapacity < _array.Count + 4)
                     {
-                        newcapacity = _array.Count + 4;
+                        newCapacity = _array.Count + 4;
                     }
 
-                    int added = newcapacity - _array.Capacity;
-                    _array.Capacity = newcapacity;
-                    _array.InsertRange(_head, Enumerable.Repeat(new CallbackState(false), newcapacity / 2));
+                    int added = newCapacity - _array.Capacity;
+                    _array.Capacity = newCapacity;
+                    _array.InsertRange(_head, Enumerable.Repeat(new CallbackState(false), newCapacity / 2));
          
                     _tail = _head; // 178, 
-                    _head += newcapacity / 2;
+                    _head += newCapacity / 2;
                 }
                 var item = _array[_tail];
                 item.Callback = callback;
@@ -120,6 +151,9 @@ namespace engenious.Helper
                 return true;
             }
         }
+        /// <summary>
+        /// Executes all pending work on the current thread and returns afterwards.
+        /// </summary>
         public void RunOnCurrentThread()
         {
             _currentThread = Thread.CurrentThread;
@@ -136,8 +170,8 @@ namespace engenious.Helper
             }
 
         }
-
-        public void WaitForWork()
+        
+        internal void WaitForWork()
         {
             _resetEvent.WaitOne();
         }

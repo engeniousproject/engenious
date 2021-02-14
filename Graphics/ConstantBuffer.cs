@@ -20,12 +20,14 @@ namespace engenious.Graphics
         public ConstantBuffer(GraphicsDevice graphicsDevice, int size)
             : base(graphicsDevice)
         {
-            GraphicsDevice = graphicsDevice;
             GraphicsDevice.ValidateUiGraphicsThread();
             Ubo = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.UniformBuffer, Ubo);
             GL.BufferData(BufferTarget.UniformBuffer, new IntPtr(size), IntPtr.Zero, OpenTK.Graphics.OpenGL.BufferUsageHint.DynamicDraw);
         }
+        
+        /// <inheritdoc cref="GraphicsResource.GraphicsDevice"/>
+        public new GraphicsDevice GraphicsDevice => base.GraphicsDevice!;
 
         /// <summary>
         /// Updates the buffer data.

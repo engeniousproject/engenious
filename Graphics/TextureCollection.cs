@@ -9,12 +9,24 @@ namespace engenious.Graphics
     /// </summary>
     public sealed class TextureCollection : ICollection<Texture>
     {
+        /// <summary>
+        /// A reference to a texture slot in a <see cref="TextureCollection"/>.
+        /// </summary>
         public class TextureSlotReference
         {
             private readonly TextureCollection _collection;
             private int _refCount;
+
+            /// <summary>
+            /// Gets the slot the reference points to.
+            /// </summary>
             public int Slot { get; }
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="TextureSlotReference"/> class.
+            /// </summary>
+            /// <param name="collection">The texture collection to reference to.</param>
+            /// <param name="slot">The slot index to reference to.</param>
             public TextureSlotReference(TextureCollection collection, int slot)
             {
                 _collection = collection;
@@ -23,7 +35,7 @@ namespace engenious.Graphics
             }
 
             /// <summary>
-            /// Aquires one reference.
+            /// Acquires one reference.
             /// </summary>
             public void Acquire()
             {
@@ -42,7 +54,7 @@ namespace engenious.Graphics
                 }
             }
         }
-        private readonly Texture[] _textures;
+        private readonly Texture?[] _textures;
         private readonly TextureSlotReference[] _textureSlotReferences;
 
         /// <summary>
@@ -63,12 +75,9 @@ namespace engenious.Graphics
         /// Gets a texture at a given index.
         /// </summary>
         /// <param name="index">The index of the texture to get.</param>
-        public Texture this [int index]
+        public Texture? this [int index]
         { 
-            get
-            {
-                return _textures[index];
-            }
+            get => _textures[index];
             set
             {
                 if (_textures[index] != value)
@@ -132,7 +141,7 @@ namespace engenious.Graphics
         /// </summary>
         /// <param name="item">The element to search for.</param>
         /// <returns>The index of the item searched for if found; otherwise -1</returns>
-        public int IndexOf(Texture item)
+        public int IndexOf(Texture? item)
         {
             for (var i = 0; i < _textures.Length; i++)
                 if (_textures[i] == item)
@@ -157,23 +166,10 @@ namespace engenious.Graphics
         }
 
         /// <inheritdoc />
-        public int Count
-        {
-            get
-            {
-                return _textures.Length;
-            }
-        }
+        public int Count => _textures.Length;
 
         /// <inheritdoc />
-        public bool IsReadOnly
-        {
-            get
-            {
-                return false;
-            }
-        }
-
+        public bool IsReadOnly => false;
 
         #endregion
 

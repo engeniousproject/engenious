@@ -14,7 +14,7 @@ namespace engenious.Graphics
     {
         internal int Vbo, NextVbo = -1;
         internal long NextVertexCount;
-        internal VertexAttributes Vao;
+        internal VertexAttributes? Vao;
         private readonly WaitCallback _waitForExchange;
 
         private VertexBuffer(GraphicsDevice graphicsDevice, long vertexCapacity, BufferUsageHint usage = BufferUsageHint.StaticDraw)
@@ -23,11 +23,12 @@ namespace engenious.Graphics
             VertexCapacity = vertexCapacity;
             BufferUsage = usage;
 
+            VertexDeclaration = null!;
             unsafe
             {
                 _waitForExchange = (userData) =>
                 {
-                    ((AutoResetEvent) userData).WaitOne();
+                    ((AutoResetEvent) userData!).WaitOne();
 
                     GraphicsDevice.UiThread.QueueWork(CapturingDelegate.Create(&DoExchange, this));
                 };
@@ -152,6 +153,9 @@ namespace engenious.Graphics
                 GL.BindVertexArray(0);
             }
         }
+
+        /// <inheritdoc cref="GraphicsResource.GraphicsDevice"/>
+        public new GraphicsDevice GraphicsDevice => base.GraphicsDevice!;
 
         /// <summary>
         /// Gets the buffer usage.
@@ -318,7 +322,7 @@ namespace engenious.Graphics
             GraphicsDevice.ValidateUiGraphicsThread();
 
             GL.DeleteBuffer(Vbo);
-            Vao.Dispose();
+            Vao?.Dispose();
             base.Dispose();
         }
     }

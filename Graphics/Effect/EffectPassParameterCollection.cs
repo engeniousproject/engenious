@@ -51,13 +51,14 @@ namespace engenious.Graphics
 		/// Gets an element in the collection by using a name.
 		/// </summary>
 		/// <param name="name">The name to search for.</param>
-		public EffectPassParameter this [string name] { 
-			get {
-				EffectPassParameter val;
-				if (!_parameters.TryGetValue (name, out val)) {
-					val = CacheParameter (name);
-					_parameters.Add (name, val);
-				}
+		public EffectPassParameter this [string name]
+		{ 
+			get
+			{
+				if (_parameters.TryGetValue(name, out var val))
+					return val;
+				val = CacheParameter (name);
+				_parameters.Add (name, val);
 				return val;
 			} 
 		}

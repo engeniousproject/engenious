@@ -55,7 +55,8 @@ namespace engenious.Content
         }
         
         /// <inheritdoc />
-        internal override T ReadAsset<T>(Uri assetName)
+        internal override T? ReadAsset<T>(Uri assetName)
+            where T : class
         {
             return GetContentManager(assetName).ReadAsset<T>(assetName);
         }
@@ -69,6 +70,6 @@ namespace engenious.Content
             ListContent<T>(PathToUri(path), recursive);
 
         /// <inheritdoc />
-        internal override T ReadAsset<T>(string assetName) => ReadAsset<T>(PathToUri(assetName));
+        internal override T? ReadAsset<T>(string assetName) where T : class => ReadAsset<T>(PathToUri(assetName));
     }
 }

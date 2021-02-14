@@ -14,15 +14,16 @@ namespace engenious.Graphics
         /// <summary>
         /// Initializes a new instance of the <see cref="AnimationNode"/> class.
         /// </summary>
-        public AnimationNode()
+        public AnimationNode(Node node)
         {
+            Node = node;
             Frames = new List<AnimationFrame>();
         }
 
         /// <summary>
         /// Gets or sets the model node, which is to be animated, for this animation node.
         /// </summary>
-        public Node Node{ get; set; }
+        public Node Node{ get; }
 
         /// <summary>
         /// Gets the animation frames for this node.
@@ -55,7 +56,7 @@ namespace engenious.Graphics
             Sort();
             var frameIndex = Math.Max(Frames.FindIndex(f => f.Frame >= time)-1,0);
             var frame = Frames[frameIndex];
-            AnimationFrame nextFrame=null;
+            AnimationFrame nextFrame;
             if (Repeat){
                 nextFrame = Frames[(frameIndex + 1) % Frames.Count];
             }

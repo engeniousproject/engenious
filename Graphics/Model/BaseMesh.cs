@@ -3,18 +3,22 @@
     /// <summary>
     /// Abstract basic mesh class.
     /// </summary>
-    public abstract class BaseMesh : GraphicsResource,IMesh
+    public abstract class BaseMesh : GraphicsResource, IMesh
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseMesh"/> class.
         /// </summary>
         /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/>.</param>
-        protected BaseMesh(GraphicsDevice graphicsDevice)
+        /// <param name="primitiveCount">The number of primitives of this mesh.</param>
+        protected BaseMesh(GraphicsDevice graphicsDevice, int primitiveCount)
             : base(graphicsDevice)
         {
-            
+            PrimitiveCount = primitiveCount;
         }
 
+        /// <inheritdoc cref="GraphicsResource.GraphicsDevice"/>
+        public new GraphicsDevice GraphicsDevice => base.GraphicsDevice!;
+        
         /// <summary>
         /// Gets or sets the minimal bounding box containing this mesh.
         /// </summary>
@@ -23,7 +27,7 @@
         /// <summary>
         /// Gets or sets the number of primitives.
         /// </summary>
-        public int PrimitiveCount { get;protected internal set; }
+        public int PrimitiveCount { get; }
 
         /// <inheritdoc />
         public abstract void Draw();

@@ -10,20 +10,23 @@ namespace engenious.Graphics
         /// <summary>
         /// Initializes a new instance of the <see cref="Node"/> class.
         /// </summary>
-        public Node()
+        public Node(string name)
         {
+            Name = name;
             GlobalTransform = LocalTransform = Matrix.Identity;
+            Children = new List<Node>();
+            Meshes = new List<IMesh>();
         }
 
         /// <summary>
         /// Gets or sets the name of this node.
         /// </summary>
-        public string Name{ get; set; }
+        public string Name{ get; }
 
         /// <summary>
         /// Gets or sets the meshes this node influences.
         /// </summary>
-        public List<IMesh> Meshes{ get; set; }
+        public List<IMesh> Meshes{ get; }
 
         /// <summary>
         /// Gets or sets the transformation of this node.
@@ -43,7 +46,7 @@ namespace engenious.Graphics
         /// <summary>
         /// Gets or sets the child nodes.
         /// </summary>
-        public List<Node> Children{ get; set; }
+        public List<Node> Children{ get; }
     }
 }
 

@@ -27,10 +27,17 @@ namespace engenious.Graphics
             _parameters.Add(param);
         }
 
+        /// <inheritdoc cref="GraphicsResource.GraphicsDevice"/>
+        public new GraphicsDevice GraphicsDevice => base.GraphicsDevice!;
+        
         /// <summary>
         /// Gets the name of the parameter.
         /// </summary>
-        public string Name{ get; private set; }
+        public new string Name
+        {
+            get => base.Name!;
+            private init => base.Name = value;
+        }
 
         /// <summary>
         /// Sets the value of this parameter.

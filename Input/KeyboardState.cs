@@ -77,7 +77,7 @@ namespace engenious.Input
         /// Gets a <see cref="bool" /> indicating whether this key is currently up.
         /// </summary>
         /// <param name="key">The <see cref="Keys" /> to check.</param>
-        /// <returns><c>true</c> if <paramref name="keys"/> is in the up state; otherwise, <c>false</c>.</returns>
+        /// <returns><c>true</c> if <paramref name="key"/> is in the up state; otherwise, <c>false</c>.</returns>
         public bool IsKeyUp(Keys key)
         {
             return !IsKeyDown(key);
@@ -107,7 +107,7 @@ namespace engenious.Input
         }
 
         /// <summary>
-        /// Sets the key state of the <paramref name="keys"/> depending on the given <paramref name="down"/> value.
+        /// Sets the key state of the <paramref name="key"/> depending on the given <paramref name="down"/> value.
         /// </summary>
         /// <param name="key">The <see cref="Keys"/> which state should be changed.</param>
         /// <param name="down">The new state the key should be changed to.</param>
@@ -174,14 +174,9 @@ namespace engenious.Input
         /// <returns>
         /// <c>true</c> if this instance is equal to obj; <c>false</c> otherwise.
         /// </returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (obj is KeyboardState state)
-            {
-                return Equals(state);
-            }
-
-            return false;
+            return (obj is KeyboardState state) && Equals(state);
         }
 
         /// <summary>

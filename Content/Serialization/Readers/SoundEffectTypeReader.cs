@@ -10,10 +10,10 @@ namespace engenious.Content.Serialization
     public class SoundEffectTypeReader:ContentTypeReader<SoundEffect>
     {
         /// <inheritdoc />
-        public override SoundEffect Read(ContentManagerBase managerBase, ContentReader reader, Type customType = null)
+        public override SoundEffect Read(ContentManagerBase managerBase, ContentReader reader, Type? customType = null)
         {
             var format = (SoundEffect.AudioFormat)reader.ReadByte();
-            return new SoundEffect(reader.BaseStream,format);
+            return new SoundEffect(reader.BaseStream, format);
         }
     }
 }

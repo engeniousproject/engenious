@@ -12,8 +12,7 @@ namespace engenious.Graphics
     /// </summary>
     public class ConditionalVertexArray
     {
-        private Array _shit;
-        private Type _type;
+        private Array _vertices;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConditionalVertexArray"/> class.
@@ -29,6 +28,8 @@ namespace engenious.Graphics
         {
             if (!hasPositions)
                 throw new ArgumentException("vertices without positions not known");
+            _vertices = null!;
+            VertexDeclaration = null!;
             if (hasColors)
             {
                 if (hasNormals)
@@ -88,7 +89,7 @@ namespace engenious.Graphics
         /// <returns>The underlying array.</returns>
         public T[] GetVertices<T>() where T : unmanaged, IVertexType
         {
-            return (T[]) _shit;
+            return (T[]) _vertices;
         }
 
         /// <summary>
@@ -97,7 +98,7 @@ namespace engenious.Graphics
         /// <returns>The underlying array.</returns>
         public Array GetVertices()
         {
-            return _shit;
+            return _vertices;
         }
 
         /// <summary>
@@ -107,7 +108,11 @@ namespace engenious.Graphics
         /// <typeparam name="T">The type of the input vertex array.</typeparam>
         public void SetVertices<T>(T[] vertices) where T : unmanaged, IVertexType
         {
-            SetVertices(vertices,vertices.Length > 0 ? vertices[0].VertexDeclaration : (VertexDeclaration)typeof(T).GetField("VertexDeclaration", BindingFlags.Public | BindingFlags.Static)?.GetValue(null));
+            SetVertices(vertices,
+                vertices.Length > 0
+                    ? vertices[0].VertexDeclaration
+                    : (VertexDeclaration?)typeof(T).GetField("VertexDeclaration", BindingFlags.Public | BindingFlags.Static)?.GetValue(null)
+                    ?? throw new ArgumentException("Type parameter has no valid VertexDeclaration-property"));
         }
 
         /// <summary>
@@ -118,10 +123,9 @@ namespace engenious.Graphics
         /// <typeparam name="T">The type of the input vertex array.</typeparam>
         public void SetVertices<T>(T[] vertices, VertexDeclaration vertexDeclaration) where T : unmanaged, IVertexType
         {
-            _shit = vertices;
+            _vertices = vertices;
 
             var type = typeof(T);
-            _type = type;
 
             VertexDeclaration = vertexDeclaration;
             
@@ -146,7 +150,7 @@ namespace engenious.Graphics
         /// <summary>
         /// Gets the length of the vertex array.
         /// </summary>
-        public int Length => _shit.Length;
+        public int Length => _vertices?.Length ?? 0;
 
         /// <summary>
         /// Gets whether this vertex array has position information.
@@ -171,22 +175,22 @@ namespace engenious.Graphics
         /// <summary>
         /// Gets an indexer which is able to read position information from this array.
         /// </summary>
-        public IGenericIndexer<Vector3> AsPosition { get; private set; }
+        public IGenericIndexer<Vector3>? AsPosition { get; private set; }
 
         /// <summary>
         /// Gets an indexer which is able to read color information from this array.
         /// </summary>
-        public IGenericIndexer<Color> AsColor { get; private set; }
+        public IGenericIndexer<Color>? AsColor { get; private set; }
 
         /// <summary>
         /// Gets an indexer which is able to read normals from this array.
         /// </summary>
-        public IGenericIndexer<Vector3> AsNormal { get; private set; }
+        public IGenericIndexer<Vector3>? AsNormal { get; private set; }
 
         /// <summary>
         /// Gets an indexer which is able to read texture coordinates from this array.
         /// </summary>
-        public IGenericIndexer<Vector2> AsTextureCoordinate { get; private set; }
+        public IGenericIndexer<Vector2>? AsTextureCoordinate { get; private set; }
     }
 
     /// <summary>
@@ -216,9 +220,9 @@ namespace engenious.Graphics
         /// Initializes a new instance of the <see cref="GenericIndexer{T,TU,TUu}"/> class.
         /// </summary>
         /// <param name="array">The base array to read from.</param>
-        public GenericIndexer(T[] array)
+        public GenericIndexer(T[]? array)
         {
-            _array = array;
+            _array = array ?? Array.Empty<T>();
         }
 
         static GenericIndexer()
@@ -226,7 +230,7 @@ namespace engenious.Graphics
             if (!typeof(TU).IsAssignableFrom(typeof(T)))
                 throw new ArgumentException("types not compatible");
 
-            PropertyInfo propInfo = null;
+            PropertyInfo? propInfo = null;
             var retType = typeof(TUu);
             var props = typeof(TU).GetProperties(BindingFlags.Instance | BindingFlags.Public);
             if (props.Length > 2)
