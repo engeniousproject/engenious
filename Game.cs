@@ -13,7 +13,7 @@ namespace engenious
     public abstract class Game : Game<Window>
     {
         private readonly GameSettings _settings;
-        private Icon[] _icons;
+        private Icon[]? _icons;
         private void CreateWindow()
         {
             var nativeWindowSettings = new NativeWindowSettings
@@ -39,9 +39,11 @@ namespace engenious
         /// The settings with which the rendering environment should be initialized.
         /// <c>null</c> is equivalent to <see cref="GameSettings.Default"/>.
         /// </param>
-        protected Game(GameSettings settings = null)
+        protected Game(GameSettings? settings = null)
         {
             _settings = settings ?? GameSettings.Default;
+            
+            Window = null!;
             CreateWindow();
             
             InitializeControl();
@@ -56,7 +58,7 @@ namespace engenious
         /// Gets or sets an <see cref="Icons"/> associated with the rendering view.
         /// <remarks>This sets or gets the window icon, if the rendering view is a <see cref="Window"/>.</remarks>
         /// </summary>
-        public Icon[] Icons
+        public Icon[]? Icons
         {
             get => _icons;
             set

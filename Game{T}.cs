@@ -9,43 +9,47 @@ using OpenTK.Windowing.Desktop;
 
 namespace engenious
 {
-    /// <inheritdoc />
-    public delegate void KeyPressDelegate(object sender,char key);
+    /// <summary>
+    /// Represents the method that will handle the <see cref="Game{TControl}.KeyPress"/> event of a <see cref="Game{TControl}"/>.
+    /// </summary>
+    /// <param name="sender">The object the key press occured on.</param>
+    /// <param name="key">The key that was pressed.</param>
+    public delegate void KeyPressDelegate(object sender, char key);
 
     /// <summary>
     /// Provides basic logic for <see cref="GraphicsDevice"/> initialization, game content management and rendering.
     /// </summary>
-    public abstract class Game<TControl> : GraphicsResource, IGame
+    public abstract class Game<TControl> : IGame
         where TControl : class, IRenderingSurface
     {
-        /// <summary>
-        /// Occurs when a key is pressed while the <see cref="Game"/> is in focus.
-        /// </summary>
-        public event KeyPressDelegate KeyPress;
+        /// <inheritdoc />
+        public event KeyPressDelegate? KeyPress;
+
+        /// <inheritdoc />
+        public event EventHandler? Activated;
+
+        /// <inheritdoc />
+        public event EventHandler? Deactivated;
+        
+        /// <inheritdoc />
+        public event EventHandler? Exiting;
+
+
+        /// <inheritdoc />
+        public event EventHandler? Resized;
 
         /// <summary>
-        /// Occurs when the <see cref="Game"/> is getting focus.
+        /// The <see cref="ContextFlags"/> of the associated <see cref="Context"/>-
         /// </summary>
-        public event EventHandler Activated;
-
-        /// <summary>
-        /// Occurs when the <see cref="Game"/> is losing focus.
-        /// </summary>
-        public event EventHandler Deactivated;
-
-        /// <summary>
-        /// Occurs when the <see cref="Game"/> is exiting.
-        /// </summary>
-        public event EventHandler Exiting;
-
-        /// <summary>
-        /// Occurs when the <see cref="Game"/> game rendering view is being resized.
-        /// </summary>
-        public event EventHandler Resized;
-
         protected readonly ContextFlags ContextFlags;
-        protected IGraphicsContext _context;
+
+        /// <summary>
+        /// The <see cref="IGraphicsContext"/> associated with this <see cref="Game{TControl}"/>.
+        /// </summary>
+        protected IGraphicsContext? Context;
         private readonly AudioDevice _audio;
+
+        private GraphicsDevice? _graphicsDevice;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Game"/> class.
@@ -58,21 +62,25 @@ namespace engenious
 #if DEBUG
             ContextFlags |= ContextFlags.Debug;
 #endif
+            
+            Components = new GameComponentCollection();
+            Control = null!;
+            Content = null!;
         }
 
         /// <summary>
-        /// Assigns a context to a given <see cref="IWindowInfo"/>.
+        /// Assigns a context to a given <typeparamref name="TControl"/>.
         /// </summary>
         /// <param name="control">The control.</param>
         /// <param name="context">The context.</param>
         protected void ConstructContext(TControl control, IGraphicsContext context)
         {
             Control = control;
-            _context = context;
+            Context = context;
 
-            _context.MakeCurrent();
+            Context.MakeCurrent();
             
-            GraphicsDevice = new GraphicsDevice(this, _context);
+            _graphicsDevice = new GraphicsDevice(this, Context);
             
         }
 
@@ -93,6 +101,9 @@ namespace engenious
             GraphicsDevice.Present();
         }
 
+        /// <summary>
+        /// Initializes the control events and properties.
+        /// </summary>
         protected void InitializeControl()
         {
             GraphicsDevice.Viewport = new Viewport(new Rectangle(new Point(), Control.ClientSize));
@@ -101,7 +112,6 @@ namespace engenious
             Input.Keyboard.UpdateWindow(Control);
             
             Content = new AggregateContentManager(GraphicsDevice, "Content");
-            Components = new GameComponentCollection();
             
             Control.FocusedChanged += Window_FocusedChanged;
             Control.Closing += delegate
@@ -177,6 +187,9 @@ namespace engenious
         {
         }
 
+        /// <inheritdoc cref="IGame.GraphicsDevice"/>
+        public GraphicsDevice GraphicsDevice => _graphicsDevice!;
+
         /// <summary>
         /// Gets a <see cref="ContentManagerBase"/> for basic game content management.
         /// </summary>
@@ -247,7 +260,7 @@ namespace engenious
         public virtual void Update(GameTime gameTime)
         {
 
-            foreach (var component in Components.Updatables)
+            foreach (var component in Components.Updateables)
             {
                 if (!component.Enabled)
                     continue;
@@ -272,13 +285,12 @@ namespace engenious
         #region IDisposable
 
         /// <inheritdoc />
-        public override void Dispose()
+        public void Dispose()
         {
             Control.Dispose();
             GraphicsDevice.Dispose();
             _audio.Dispose();
             SoundSourceManager.Instance.Dispose();
-            base.Dispose();
         }
 
         #endregion

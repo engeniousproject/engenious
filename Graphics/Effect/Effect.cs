@@ -3,8 +3,10 @@
 	/// <summary>
 	/// Base class for effects.
 	/// </summary>
-	public class Effect:GraphicsResource,IEffect
+	public class Effect : GraphicsResource, IEffect
 	{
+		/// <inheritdoc cref="GraphicsResource.GraphicsDevice"/>
+		public new GraphicsDevice GraphicsDevice => base.GraphicsDevice!;
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Effect"/> class.
 		/// </summary>
@@ -14,6 +16,7 @@
 		{
 			Techniques = new EffectTechniqueCollection ();
 
+			Parameters = new EffectParameterCollection (GraphicsDevice);
 		}
 
 		/// <summary>
@@ -21,11 +24,12 @@
 		/// </summary>
 		protected internal virtual void Initialize ()
 		{
-			Parameters = new EffectParameterCollection (GraphicsDevice, Techniques);
 			foreach (var technique in Techniques)
 			{
 				technique.Initialize();
 			}
+
+			Parameters.Initialize(Techniques);
 		}
 
 		/// <summary>
@@ -47,7 +51,7 @@
 		/// <summary>
 		/// Gets the current set technique.
 		/// </summary>
-		public EffectTechnique CurrentTechnique {
+		public EffectTechnique? CurrentTechnique {
 			get;
 			set;
 		}
@@ -57,6 +61,8 @@
 		/// </summary>
 		protected internal virtual void OnApply ()
 		{
+			if (CurrentTechnique == null)
+				return;
 			foreach (var pass in CurrentTechnique.Passes) {
 				pass.Apply ();
 			}

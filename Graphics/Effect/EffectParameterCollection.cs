@@ -13,36 +13,40 @@ namespace engenious.Graphics
 		private readonly Dictionary<string,EffectParameter> _parameters;
 		private readonly List<EffectParameter> _parameterList;
 
+		/// <inheritdoc cref="GraphicsResource.GraphicsDevice"/>
+		public new GraphicsDevice GraphicsDevice => base.GraphicsDevice!;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="EffectParameterCollection"/> class.
 		/// </summary>
 		/// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> the resource is allocated on.</param>
-		/// <param name="techniques">A collection of techniques these parameters apply to.</param>
-		public EffectParameterCollection (GraphicsDevice graphicsDevice, EffectTechniqueCollection techniques)
+		public EffectParameterCollection (GraphicsDevice graphicsDevice)
 			: base(graphicsDevice)
 		{
 			GraphicsDevice.ValidateUiGraphicsThread();
 	        _parameters = new Dictionary<string, EffectParameter>();
 	        _parameterList = new List<EffectParameter>();
+		}
 
-	        foreach (var technique in techniques)
-	        {
-	            foreach (var pass in technique.Passes)
-	            {
-	                pass.CacheParameters();
+		internal void Initialize(EffectTechniqueCollection techniques)
+		{
+			foreach (var technique in techniques)
+			{
+				foreach (var pass in technique.Passes)
+				{
+					pass.CacheParameters();
 
-	                foreach (var param in pass.Parameters)
-	                {
-	                    EffectParameter current;
-	                    if (!_parameters.TryGetValue(param.Name, out current))
-	                    {
-	                        current = new EffectParameter(GraphicsDevice, param.Name);
-	                        Add(current);
-	                    }
-	                    current.Add(param);
-	                }
-	            }
-	        }
+					foreach (var param in pass.Parameters)
+					{
+						if (!_parameters.TryGetValue(param.Name, out var current))
+						{
+							current = new EffectParameter(GraphicsDevice, param.Name);
+							Add(current);
+						}
+						current.Add(param);
+					}
+				}
+			}
 		}
 
 		/// <summary>

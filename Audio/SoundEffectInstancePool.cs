@@ -8,14 +8,14 @@ namespace engenious.Audio
     /// </summary>
     public class SoundEffectInstancePool
     {
-        private static SoundEffectInstancePool _instance;
+        private static SoundEffectInstancePool? _instance;
         /// <summary>
         /// Gets the <see cref="SoundEffectInstancePool"/> singleton.
         /// </summary>
-        public static SoundEffectInstancePool Instance => _instance ?? (_instance = new SoundEffectInstancePool());
+        public static SoundEffectInstancePool Instance => _instance ??= new SoundEffectInstancePool();
 
         private const int InstanceCount = 256;
-        private readonly Stack<PooledSoundEffectInstance> _stack = new Stack<PooledSoundEffectInstance>(InstanceCount);
+        private readonly Stack<PooledSoundEffectInstance> _stack = new(InstanceCount);
 
         private SoundEffectInstancePool()
         {

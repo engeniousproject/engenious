@@ -32,7 +32,7 @@ namespace engenious.Audio
         /// <summary>
         /// The underlying <see cref="SoundEffect"/> instance.
         /// </summary>
-        protected SoundEffect _effect;
+        protected SoundEffect? _effect;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SoundEffectInstance"/>.
@@ -47,7 +47,7 @@ namespace engenious.Audio
         /// Initializes a new instance of the <see cref="SoundEffectInstance"/>.
         /// </summary>
         /// <param name="effect">The <see cref="SoundEffect"/> to use.</param>
-        public SoundEffectInstance(SoundEffect effect)
+        public SoundEffectInstance(SoundEffect? effect)
             : this(effect,TimeSpan.Zero)
         {
 
@@ -58,7 +58,7 @@ namespace engenious.Audio
         /// </summary>
         /// <param name="effect">The <see cref="SoundEffect"/> to use.</param>
         /// <param name="duration">The duration of the <see cref="SoundEffect"/>.</param>
-        public SoundEffectInstance(SoundEffect effect, TimeSpan duration)
+        public SoundEffectInstance(SoundEffect? effect, TimeSpan duration)
         {
             _effect = effect;
             Duration = duration;
@@ -194,6 +194,8 @@ namespace engenious.Audio
         /// </summary>
         public virtual void Play()
         {
+            if (_effect == null)
+                return;
             if (Sid==0)
             {
                 Sid = SoundSourceManager.Instance.Dequeue();

@@ -5,7 +5,7 @@ namespace engenious
     /// <summary>
     /// Defines a 2D integer rectangle.
     /// </summary>
-    public struct Rectangle
+    public struct Rectangle : IEquatable<Rectangle>
     {
         /// <summary>
         /// Initialize a new instance of the <see cref="Rectangle"/> struct.
@@ -228,14 +228,15 @@ namespace engenious
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public bool Equals(Rectangle other)
         {
-            if (obj is Rectangle)
-            {
-                var sec = (Rectangle)obj;
-                return X == sec.X && Y == sec.Y && Width == sec.Width && Height == sec.Height;
-            }
-            return false;
+            return X == other.X && Y == other.Y && Width == other.Width && Height == other.Height;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
+        {
+            return obj is Rectangle rectangle && Equals(rectangle);
         }
 
         /// <summary>
@@ -246,7 +247,7 @@ namespace engenious
         /// <returns><c>true</c> if the rectangles are the same; otherwise <c>false</c>.</returns>
         public static bool operator ==(Rectangle a, Rectangle b)
         {
-            return a.X == b.X && a.Y == b.Y && a.Width == b.Width && a.Height == b.Height;
+            return a.Equals(b);
         }
 
         /// <summary>

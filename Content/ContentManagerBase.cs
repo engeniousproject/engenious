@@ -43,34 +43,32 @@ namespace engenious.Content
         {
             foreach (var t in assembly.GetTypes())
             {
-
-                if (t.GetInterfaces().Contains(typeof(IContentTypeReader)) && !(t.IsInterface || t.IsAbstract))
-                {
-                    var attr = (ContentTypeReaderAttribute)t.GetCustomAttributes(typeof(ContentTypeReaderAttribute), true).FirstOrDefault();
-                    if (attr != null){
-                        var reader = Activator.CreateInstance(t) as IContentTypeReader;
-                        _typeReaders.Add(t.FullName, reader);
-                        if (attr.OutputType != null)
-                            _typeReadersOutput.Add(attr.OutputType.FullName,reader);
-                    }
-                }
+                if (!t.GetInterfaces().Contains(typeof(IContentTypeReader)) || t.IsInterface || t.IsAbstract)
+                    continue;
+                var attr = (ContentTypeReaderAttribute?)t.GetCustomAttributes(typeof(ContentTypeReaderAttribute), true).FirstOrDefault();
+                if (attr == null || t.FullName == null)
+                    continue;
+                var reader = Activator.CreateInstance(t) as IContentTypeReader;
+                if (reader == null)
+                    continue;
+                _typeReaders.Add(t.FullName, reader);
+                if (attr.OutputType != null && attr.OutputType.FullName != null)
+                    _typeReadersOutput.Add(attr.OutputType.FullName, reader);
             }
         }
-        internal IContentTypeReader GetReaderByType<T>()
+        internal IContentTypeReader? GetReaderByType<T>()
         {
             return GetReaderByOutput(typeof(T).FullName);
         }
-        internal IContentTypeReader GetReaderByOutput(string outputType)
+        internal IContentTypeReader? GetReaderByOutput(string? outputType)
         {
-            if (!_typeReadersOutput.TryGetValue(outputType, out var res))
+            if (outputType == null)
                 return null;
-            return res;
+            return _typeReadersOutput.TryGetValue(outputType, out var res) ? res : null;
         }
-        internal IContentTypeReader GetReader(string reader)
+        internal IContentTypeReader? GetReader(string reader)
         {
-            if (!_typeReaders.TryGetValue(reader, out var res))
-                return null;
-            return res;
+            return _typeReaders.TryGetValue(reader, out var res) ? res : null;
         }
         
         /// <summary>
@@ -99,11 +97,10 @@ namespace engenious.Content
         /// <param name="assetName">The asset to unload.</param>
         public void Unload(string assetName)
         {
-            if (_assets.TryGetValue(assetName, out var asset))
-            {
-                var disp = asset as IDisposable;
-                disp?.Dispose();
-            }
+            if (!_assets.TryGetValue(assetName, out var asset))
+                return;
+            var disposable = asset as IDisposable;
+            disposable?.Dispose();
         }
         
         /// <summary>
@@ -113,13 +110,11 @@ namespace engenious.Content
         /// <typeparam name="T">The asset type.</typeparam>
         public void Unload<T>(string assetName) where T : IDisposable
         {
-            if (_assets.TryGetValue(assetName, out var asset))
+            if (!_assets.TryGetValue(assetName, out var asset))
+                return;
+            if (asset is T stronglyTypedAsset)
             {
-                if (asset is T)
-                {
-                    var disp = (T) asset;
-                    disp.Dispose();
-                }
+                stronglyTypedAsset.Dispose();
             }
         }
 
@@ -130,7 +125,7 @@ namespace engenious.Content
         /// <param name="useCache">Whether to try loading from cache or not.</param>
         /// <typeparam name="T">The asset type.</typeparam>
         /// <returns>The loaded asset.</returns>
-        public T Load<T>(string assetName, bool useCache = true) where T : IDisposable
+        public T? Load<T>(string assetName, bool useCache = true) where T : class, IDisposable
         {
             if (useCache && _assets.TryGetValue(assetName, out var asset))
             {
@@ -162,7 +157,7 @@ namespace engenious.Content
         /// <param name="recursive">Whether to recursively search for content files.</param>
         /// <typeparam name="T">The asset type.</typeparam>
         /// <returns>Enumerable of matching content files in given path.</returns>
-        public abstract IEnumerable<string> ListContent<T>(Uri path, bool recursive = false);
+        public abstract IEnumerable<string> ListContent<T>(Uri path, bool recursive = false) where T : class;
 
         /// <summary>
         /// List the content files in <see cref="RootDirectory"/>.
@@ -179,7 +174,7 @@ namespace engenious.Content
         /// <param name="recursive">Whether to recursively search for content files.</param>
         /// <typeparam name="T">The asset type.</typeparam>
         /// <returns>Enumerable of matching content files in given path.</returns>
-        public abstract IEnumerable<string> ListContent<T>(string path, bool recursive = false);
+        public abstract IEnumerable<string> ListContent<T>(string path, bool recursive = false) where T : class;
 
         /// <summary>
         /// Reads an asset by given name and type.
@@ -188,7 +183,7 @@ namespace engenious.Content
         /// <typeparam name="T">The asset type.</typeparam>
         /// <returns>The read asset.</returns>
         /// <exception cref="Exception">Not an actual content file, or corrupt content file.</exception>
-        internal abstract T ReadAsset<T>(Uri assetName);
+        internal abstract T? ReadAsset<T>(Uri assetName) where T : class;
 
         /// <summary>
         /// Reads an asset by given name and type.
@@ -197,7 +192,7 @@ namespace engenious.Content
         /// <typeparam name="T">The asset type.</typeparam>
         /// <returns>The read asset.</returns>
         /// <exception cref="Exception">Not an actual content file, or corrupt content file.</exception>
-        internal abstract T ReadAsset<T>(string assetName);
+        internal abstract T? ReadAsset<T>(string assetName) where T : class;
 
         /// <summary>
         /// Reads the header of a content file
@@ -206,34 +201,29 @@ namespace engenious.Content
         /// <param name="throwsOnError">Whether the method should throw an exception on failure.</param>
         /// <returns></returns>
         /// <exception cref="Exception">Thrown when the file could not be loaded.</exception>
-        protected ContentFile ReadContentFileHead(Stream stream, bool throwsOnError = true)
+        protected ContentFile? ReadContentFileHead(Stream stream, bool throwsOnError = true)
         {
-            ContentFile res;
+            ContentFile? res;
             var magic = ReadMagic(stream);
             if (magic == ContentFile.Magic)
             {
                 res = ReadNewContentFile(stream, throwsOnError);
-                if (res == null)
-                {
-                    if (!throwsOnError)
-                        return null;
-                    throw new Exception("Could not load content file");
-                }
+                if (res != null)
+                    return res;
+                if (!throwsOnError)
+                    return null;
+                throw new Exception("Could not load content file");
             }
-            else
-            {
-                stream.Position -= 4;
-                res = ReadDeprecatedContentFile(stream, throwsOnError);
-                if (res == null)
-                {
-                    if (!throwsOnError)
-                        return null;
-                    throw new Exception("Could not load legacy content file");
-                }
-            }
-            return res;
+            // Legacy loading
+            stream.Position -= 4;
+            res = ReadDeprecatedContentFile(stream, throwsOnError);
+            if (res != null)
+                return res;
+            if (!throwsOnError)
+                return null;
+            throw new Exception("Could not load legacy content file");
         }
-        private ContentFile ReadContentFileV1(Stream stream, bool throwsOnError = true)
+        private ContentFile? ReadContentFileV1(Stream stream, bool throwsOnError = true)
         {
             var contentTypeLen = ReadUIntLE(stream);
             var buffer = new byte[contentTypeLen];
@@ -247,8 +237,11 @@ namespace engenious.Content
             return new ContentFile(contentType);
         }
 
+        /// <summary>
+        /// The currently implemented content file reader version.
+        /// </summary>
         public const byte ReaderVersion = 1;
-        private ContentFile ReadNewContentFile(Stream stream, bool throwsOnError = true)
+        private ContentFile? ReadNewContentFile(Stream stream, bool throwsOnError = true)
         {
             var version = stream.ReadByte();
 
@@ -279,11 +272,15 @@ namespace engenious.Content
             var val = ReadUInt(str);
             return BitHelper.BitConverterToBigEndian(val);
         }
-        private ContentFile ReadDeprecatedContentFile(Stream stream, bool throwsOnError = true)
+        private ContentFile? ReadDeprecatedContentFile(Stream stream, bool throwsOnError = true)
         {
             try
             {
+#pragma warning disable 618
+#pragma warning disable SYSLIB0011
                 return _formatter.Deserialize(stream) as ContentFile;
+#pragma warning restore SYSLIB0011
+#pragma warning restore 618
             }
             catch
             {

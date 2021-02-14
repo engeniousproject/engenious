@@ -74,6 +74,9 @@ namespace engenious.Graphics
             //buffer = new byte[indexCount * (int)IndexElementSize / 8];
         }
 
+        /// <inheritdoc cref="GraphicsResource.GraphicsDevice"/>
+        public new GraphicsDevice GraphicsDevice => base.GraphicsDevice!;
+
         /// <summary>
         /// Gets the buffer usage.
         /// </summary>

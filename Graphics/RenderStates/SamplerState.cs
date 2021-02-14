@@ -74,7 +74,7 @@ namespace engenious.Graphics
 
         private void ApplyAddressU()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             BeginApply();
             ApplyAddressUGl();
@@ -82,7 +82,7 @@ namespace engenious.Graphics
         }
         private void ApplyAddressUGl()
         {
-            GL.TexParameter(_boundTexture.Target, TextureParameterName.TextureWrapS,(int)AddressU);
+            GL.TexParameter(_boundTexture!.Target, TextureParameterName.TextureWrapS,(int)AddressU);
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace engenious.Graphics
 
         private void ApplyAddressV()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             BeginApply();
             ApplyAddressVGl();
@@ -112,7 +112,7 @@ namespace engenious.Graphics
         }
         private void ApplyAddressVGl()
         {
-            GL.TexParameter(_boundTexture.Target, TextureParameterName.TextureWrapT,(int)AddressV);
+            GL.TexParameter(_boundTexture!.Target, TextureParameterName.TextureWrapT,(int)AddressV);
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace engenious.Graphics
 
         private void ApplyAddressW()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             BeginApply();
             ApplyAddressWGl();
@@ -142,7 +142,7 @@ namespace engenious.Graphics
         }
         private void ApplyAddressWGl()
         {
-            GL.TexParameter(_boundTexture.Target, TextureParameterName.TextureWrapR,(int)AddressW);
+            GL.TexParameter(_boundTexture!.Target, TextureParameterName.TextureWrapR,(int)AddressW);
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace engenious.Graphics
 
         private void ApplyMinFilter()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             BeginApply();
             ApplyMinFilterGl();
@@ -172,7 +172,7 @@ namespace engenious.Graphics
         }
         private void ApplyMinFilterGl()
         {
-            GL.TexParameter(_boundTexture.Target, TextureParameterName.TextureMinFilter,(int)MinFilter);
+            GL.TexParameter(_boundTexture!.Target, TextureParameterName.TextureMinFilter,(int)MinFilter);
         }
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace engenious.Graphics
 
         private void ApplyMagFilter()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             BeginApply();
             ApplyMagFilterGl();
@@ -203,7 +203,7 @@ namespace engenious.Graphics
 
         private void ApplyMagFilterGl()
         {
-            GL.TexParameter(_boundTexture.Target, TextureParameterName.TextureMagFilter,(int)MagFilter);
+            GL.TexParameter(_boundTexture!.Target, TextureParameterName.TextureMagFilter,(int)MagFilter);
         }
 
         /// <summary>
@@ -225,7 +225,7 @@ namespace engenious.Graphics
 
         private void ApplyTextureCompareMode()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             BeginApply();
             ApplyTextureCompareModeGl();
@@ -234,7 +234,7 @@ namespace engenious.Graphics
 
         private void ApplyTextureCompareModeGl()
         {
-            GL.TexParameter(_boundTexture.Target, TextureParameterName.TextureCompareMode,(int)TextureCompareMode);
+            GL.TexParameter(_boundTexture!.Target, TextureParameterName.TextureCompareMode,(int)TextureCompareMode);
         }
 
         /// <summary>
@@ -256,7 +256,7 @@ namespace engenious.Graphics
 
         private void ApplyTextureCompareFunc()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             BeginApply();
             ApplyTextureCompareFuncGl();
@@ -265,7 +265,7 @@ namespace engenious.Graphics
 
         private void ApplyTextureCompareFuncGl()
         {
-            GL.TexParameter(_boundTexture.Target, TextureParameterName.TextureCompareFunc,(int)TextureCompareFunction);
+            GL.TexParameter(_boundTexture!.Target, TextureParameterName.TextureCompareFunc,(int)TextureCompareFunction);
         }
 
         /// <summary>
@@ -286,7 +286,7 @@ namespace engenious.Graphics
         }
         private void ApplyMaxAnisotropy()
         {
-            if (!GraphicsDevice.Capabilities.SupportsTextureFilterAnisotropic)
+            if (!GraphicsDevice!.Capabilities.SupportsTextureFilterAnisotropic)
                 return;
             GraphicsDevice.ValidateUiGraphicsThread();
 
@@ -297,7 +297,7 @@ namespace engenious.Graphics
 
         private void ApplyMaxAnisotropyGl()
         {
-            GL.TexParameter(_boundTexture.Target, TextureParameterNameTextureMaxAnisotropy, MathHelper.Clamp(MaxAnisotropy, 1.0f, GraphicsDevice.Capabilities.MaxTextureAnisotropy));
+            GL.TexParameter(_boundTexture!.Target, TextureParameterNameTextureMaxAnisotropy, MathHelper.Clamp(MaxAnisotropy, 1.0f, GraphicsDevice!.Capabilities.MaxTextureAnisotropy));
         }
 
         /// <summary>
@@ -319,7 +319,7 @@ namespace engenious.Graphics
 
         private void ApplyMaxMipLevel()
         {
-            if (!GraphicsDevice.Capabilities.SupportsTextureMaxLevel)
+            if (!GraphicsDevice!.Capabilities.SupportsTextureMaxLevel)
                 return;
             GraphicsDevice.ValidateUiGraphicsThread();
 
@@ -356,7 +356,7 @@ namespace engenious.Graphics
         
         private void ApplyMipMapLevelOfDetailBias()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             BeginApply();
 
@@ -366,7 +366,7 @@ namespace engenious.Graphics
         }
         private void ApplyMipMapLevelOfDetailBiasGl()
         {
-            GL.TexParameter(_boundTexture.Target, TextureParameterName.TextureLodBias, MipMapLevelOfDetailBias);
+            GL.TexParameter(_boundTexture!.Target, TextureParameterName.TextureLodBias, MipMapLevelOfDetailBias);
         }
 
         private int _maxAnisotropy = 4;
@@ -420,7 +420,7 @@ namespace engenious.Graphics
 
 
 
-        private Texture _boundTexture = null;
+        private Texture? _boundTexture = null;
         private GetIndexedPName _pName;
         internal void Bind(Texture texture)
         {
@@ -446,7 +446,7 @@ namespace engenious.Graphics
         {
             if (_bound)
                 return;
-            var index = GetIndexFromTarget(_boundTexture.Target);
+            var index = GetIndexFromTarget(_boundTexture!.Target);
             GL.GetInteger(PNames[index], 0, out _previousText);
             _bound = true;
         }
@@ -456,15 +456,15 @@ namespace engenious.Graphics
             _bound = false;
             if (_previousText != 0)
             {
-                GL.BindTexture(_boundTexture.Target, _previousText);
+                GL.BindTexture(_boundTexture!.Target, _previousText);
             }
         }
         private void Apply()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             BeginApply();
-            var oldState = _boundTexture.SamplerState;
+            var oldState = _boundTexture!.SamplerState;
 
             if (oldState == null || oldState.MipMapLevelOfDetailBias != MipMapLevelOfDetailBias)
                 ApplyMipMapLevelOfDetailBiasGl();

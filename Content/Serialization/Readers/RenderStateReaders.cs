@@ -13,18 +13,20 @@ namespace engenious.Content.Serialization
         #region implemented abstract members of ContentTypeReader
 
         /// <inheritdoc />
-        public override RasterizerState Read(ContentManagerBase managerBase, ContentReader reader, Type customType = null)
+        public override RasterizerState? Read(ContentManagerBase managerBase, ContentReader reader, Type? customType = null)
         {
             if (reader.ReadBoolean())
                 return null;
-            var state = new RasterizerState();
-            state.CullMode = (CullMode)reader.ReadUInt16();
-            state.FillMode = (PolygonMode)reader.ReadUInt16();
-            state.MultiSampleAntiAlias = reader.ReadBoolean();
-            state.ScissorTestEnable = reader.ReadBoolean();
-            
-            state.DepthBias = reader.ReadSingle();
-            state.SlopeScaleDepthBias = reader.ReadSingle();
+            var state = new RasterizerState
+            {
+                CullMode = (CullMode) reader.ReadUInt16(),
+                FillMode = (PolygonMode) reader.ReadUInt16(),
+                MultiSampleAntiAlias = reader.ReadBoolean(),
+                ScissorTestEnable = reader.ReadBoolean(),
+
+                DepthBias = reader.ReadSingle(),
+                SlopeScaleDepthBias = reader.ReadSingle()
+            };
             return state;
         }
 
@@ -40,29 +42,32 @@ namespace engenious.Content.Serialization
         #region implemented abstract members of ContentTypeReader
 
         /// <inheritdoc />
-        public override DepthStencilState Read(ContentManagerBase managerBase, ContentReader reader, Type customType = null)
+        public override DepthStencilState? Read(ContentManagerBase managerBase, ContentReader reader,
+            Type? customType = null)
         {
             if (reader.ReadBoolean())
                 return null;
-            var state = new DepthStencilState();
-            state.DepthBufferEnable = reader.ReadBoolean();
-            state.DepthBufferWriteEnable = reader.ReadBoolean();
-            state.StencilEnable = reader.ReadBoolean();
+            var state = new DepthStencilState()
+            {
+                DepthBufferEnable = reader.ReadBoolean(),
+                DepthBufferWriteEnable = reader.ReadBoolean(),
+                StencilEnable = reader.ReadBoolean(),
 
-            state.ReferenceStencil = reader.ReadInt32();
-            state.StencilMask = reader.ReadInt32();
+                ReferenceStencil = reader.ReadInt32(),
+                StencilMask = reader.ReadInt32(),
 
-            state.DepthBufferFunction = (DepthFunction)reader.ReadUInt16();
-            state.StencilFunction = (StencilFunction)reader.ReadUInt16();
-            state.StencilDepthBufferFail = (StencilOp)reader.ReadUInt16();
-            state.StencilFail = (StencilOp)reader.ReadUInt16();
-            state.StencilPass = (StencilOp)reader.ReadUInt16();
+                DepthBufferFunction = (DepthFunction) reader.ReadUInt16(),
+                StencilFunction = (StencilFunction) reader.ReadUInt16(),
+                StencilDepthBufferFail = (StencilOp) reader.ReadUInt16(),
+                StencilFail = (StencilOp) reader.ReadUInt16(),
+                StencilPass = (StencilOp) reader.ReadUInt16(),
 
-            state.TwoSidedStencilMode = reader.ReadBoolean();
-            state.CounterClockwiseStencilFunction = (StencilFunction) reader.ReadUInt16();
-            state.CounterClockwiseStencilDepthBufferFail= (StencilOp) reader.ReadUInt16();
-            state.CounterClockwiseStencilFail= (StencilOp) reader.ReadUInt16();
-            state.CounterClockwiseStencilPass= (StencilOp) reader.ReadUInt16();
+                TwoSidedStencilMode = reader.ReadBoolean(),
+                CounterClockwiseStencilFunction = (StencilFunction) reader.ReadUInt16(),
+                CounterClockwiseStencilDepthBufferFail = (StencilOp) reader.ReadUInt16(),
+                CounterClockwiseStencilFail = (StencilOp) reader.ReadUInt16(),
+                CounterClockwiseStencilPass = (StencilOp) reader.ReadUInt16()
+            };
             return state;
         }
 
@@ -78,24 +83,26 @@ namespace engenious.Content.Serialization
         #region implemented abstract members of ContentTypeReader
 
         /// <inheritdoc />
-        public override BlendState Read(ContentManagerBase managerBase, ContentReader reader, Type customType = null)
+        public override BlendState? Read(ContentManagerBase managerBase, ContentReader reader, Type? customType = null)
         {
             if (reader.ReadBoolean())
                 return null;
-            var state = new BlendState();
-            state.AlphaBlendFunction = (BlendEquationMode)reader.ReadUInt16();
-            state.AlphaDestinationBlend = (BlendingFactorDest)reader.ReadUInt16();
-            state.AlphaSourceBlend = (BlendingFactorSrc)reader.ReadUInt16();
+            var state = new BlendState()
+            {
+                AlphaBlendFunction = (BlendEquationMode) reader.ReadUInt16(),
+                AlphaDestinationBlend = (BlendingFactorDest)reader.ReadUInt16(),
+                AlphaSourceBlend = (BlendingFactorSrc)reader.ReadUInt16(),
 
-            state.ColorBlendFunction = (BlendEquationMode)reader.ReadUInt16();
-            state.ColorDestinationBlend = (BlendingFactorDest)reader.ReadUInt16();
-            state.ColorSourceBlend = (BlendingFactorSrc)reader.ReadUInt16();
+                ColorBlendFunction = (BlendEquationMode)reader.ReadUInt16(),
+                ColorDestinationBlend = (BlendingFactorDest)reader.ReadUInt16(),
+                ColorSourceBlend = (BlendingFactorSrc)reader.ReadUInt16(),
 
-            //state.BlendFactor = reader.ReadColor();
-            state.ColorWriteChannels = (ColorWriteChannels) reader.ReadByte();
-            state.ColorWriteChannels1 = (ColorWriteChannels) reader.ReadByte();
-            state.ColorWriteChannels2 = (ColorWriteChannels) reader.ReadByte();
-            state.ColorWriteChannels3 = (ColorWriteChannels) reader.ReadByte();
+                //state.BlendFactor = reader.ReadColor(),
+                ColorWriteChannels = (ColorWriteChannels) reader.ReadByte(),
+                ColorWriteChannels1 = (ColorWriteChannels) reader.ReadByte(),
+                ColorWriteChannels2 = (ColorWriteChannels) reader.ReadByte(),
+                ColorWriteChannels3 = (ColorWriteChannels) reader.ReadByte(),
+            };
             return state;
         }
 

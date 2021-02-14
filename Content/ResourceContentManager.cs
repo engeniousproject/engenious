@@ -53,7 +53,7 @@ namespace engenious.Content
             return true;
         }
 
-        private static IEnumerable<string> ListContent(Assembly assembly, Uri path, bool recursive = false)
+        private static IEnumerable<string> ListContent(Assembly? assembly, Uri path, bool recursive = false)
         {
             var res = assembly?.GetManifestResourceNames();
             var asmName = assembly?.GetName().Name;
@@ -83,10 +83,13 @@ namespace engenious.Content
 
         /// <inheritdoc />
         public override IEnumerable<string> ListContent<T>(Uri path, bool recursive = false)
+            where T : class
         {
             var tp = GetReaderByType<T>();
             var asm = GetAssembly(path);
             var asmName = asm?.GetName().Name;
+            if (tp == null)
+                yield break;
             foreach (var r in ListContent(asm, path, recursive))
             {
                 var resourceName = asmName + $".{r}.ego";
@@ -99,7 +102,8 @@ namespace engenious.Content
         }
 
         /// <inheritdoc />
-        internal override T ReadAsset<T>(Uri assetName)
+        internal override T? ReadAsset<T>(Uri assetName)
+            where T : class
         {
             var asm = GetAssembly(assetName);
             var asmName = asm?.GetName();
@@ -115,7 +119,7 @@ namespace engenious.Content
                 throw new MissingManifestResourceException($"Cannot find resource: {assetName}");
             var res = ReadContentFileHead(resourceStream);
 
-            return (T)res.Load(this, resourceStream, typeof(T));
+            return (T?)res?.Load(this, resourceStream, typeof(T));
         }
 
         
@@ -124,10 +128,10 @@ namespace engenious.Content
             ListContent(new Uri(path), recursive);
 
         /// <inheritdoc />
-        public override IEnumerable<string> ListContent<T>(string path, bool recursive = false) =>
+        public override IEnumerable<string> ListContent<T>(string path, bool recursive = false) where T : class =>
             ListContent<T>(new Uri(path), recursive);
 
         /// <inheritdoc />
-        internal override T ReadAsset<T>(string assetName) => ReadAsset<T>(new Uri(assetName));
+        internal override T? ReadAsset<T>(string assetName) where T : class => ReadAsset<T>(new Uri(assetName));
     }
 }

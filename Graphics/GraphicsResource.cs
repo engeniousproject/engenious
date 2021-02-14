@@ -10,15 +10,8 @@ namespace engenious.Graphics
         /// <summary>
         /// Initializes a new instance of the <see cref="GraphicsResource"/> class.
         /// </summary>
-        protected GraphicsResource()
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GraphicsResource"/> class.
-        /// </summary>
         /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> the resource is allocated on.</param>
-        protected GraphicsResource(GraphicsDevice graphicsDevice)
+        protected GraphicsResource(GraphicsDevice? graphicsDevice = null)
         {
             GraphicsDevice = graphicsDevice;
         }
@@ -26,17 +19,17 @@ namespace engenious.Graphics
         /// <summary>
         /// Gets the <see cref="GraphicsDevice"/> the resource is allocated on.
         /// </summary>
-        public GraphicsDevice GraphicsDevice{ get; internal set; }
+        public GraphicsDevice? GraphicsDevice{ get; internal set; }
 
         /// <summary>
         /// Gets or sets the name of the <see cref="GraphicsResource"/>.
         /// </summary>
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets a tag of the <see cref="GraphicsResource"/>.
         /// </summary>
-        public object Tag{ get; set; }
+        public object? Tag{ get; set; }
 
         /// <summary>
         /// Gets whether the <see cref="GraphicsResource"/> is disposed.

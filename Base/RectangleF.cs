@@ -5,7 +5,7 @@ namespace engenious
     /// <summary>
     /// Defines a 2D floating point Rectangle.
     /// </summary>
-    public struct RectangleF
+    public struct RectangleF : IEquatable<RectangleF>
     {
         /// <summary>
         /// Initialize a new instance of the <see cref="RectangleF"/> struct.
@@ -80,7 +80,7 @@ namespace engenious
         /// </summary>
         public Vector2 Location
         { 
-            get { return new Vector2(X, Y); } 
+            get => new(X, Y);
             set
             {
                 X = value.X;
@@ -197,24 +197,25 @@ namespace engenious
         /// <inheritdoc />
         public override string ToString()
         {
-            return string.Format("[Rectangle: X={0}, Y={1}, Width={2}, Height={3}]", X, Y, Width, Height);
+            return $"[Rectangle: X={X}, Y={Y}, Width={Width}, Height={Height}]";
         }
 
         /// <inheritdoc />
         public override int GetHashCode()
         {
-            return (((((Height.GetHashCode() * 397) ^ Width.GetHashCode()) * 397) ^ Y.GetHashCode()) * 397) ^ X.GetHashCode();
+            return HashCode.Combine(X, Y, Width, Height);
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public bool Equals(RectangleF other)
         {
-            if (obj is RectangleF)
-            {
-                var sec = (RectangleF)obj;
-                return X == sec.X && Y == sec.Y && Width == sec.Width && Height == sec.Height;
-            }
-            return false;
+            return X == other.X && Y ==other.Y && Width == other.Width && Height == other.Height;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
+        {
+            return obj is RectangleF other && Equals(other);
         }
 
         /// <summary>
@@ -285,6 +286,7 @@ namespace engenious
         /// A <see cref="RectangleF"/> with its location at the origin zero width and height.
         /// </summary>
         public static readonly RectangleF Empty = new RectangleF(0, 0, 0, 0);
+
     }
 
 }

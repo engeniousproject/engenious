@@ -38,7 +38,7 @@ namespace engenious.Content
             ListContent(UriToPath(path), recursive);
 
         /// <inheritdoc />
-        public override IEnumerable<string> ListContent<T>(Uri path, bool recursive = false) =>
+        public override IEnumerable<string> ListContent<T>(Uri path, bool recursive = false) where T : class =>
             ListContent<T>(UriToPath(path), recursive);
 
         /// <inheritdoc />
@@ -49,9 +49,12 @@ namespace engenious.Content
         }
 
         /// <inheritdoc />
-        public override IEnumerable<string> ListContent<T>(string path,bool recursive=false)//rather slow(needs to load part of files)
+        public override IEnumerable<string> ListContent<T>(string path, bool recursive=false) // rather slow(needs to load part of files)
+            where T : class
         {
             var tp = GetReaderByType<T>();
+            if (tp == null)
+                yield break;
             foreach(var file in ListContent(path))
             {
                 using var fs = new FileStream(file, FileMode.Open, FileAccess.Read);
@@ -61,17 +64,15 @@ namespace engenious.Content
         }
 
         /// <inheritdoc />
-        internal override T ReadAsset<T>(Uri assetName) => ReadAsset<T>(UriToPath(assetName));
+        internal override T? ReadAsset<T>(Uri assetName) where T : class => ReadAsset<T>(UriToPath(assetName));
 
         /// <inheritdoc />
-        internal override T ReadAsset<T>(string assetName)
+        internal override T? ReadAsset<T>(string assetName) where T : class
         {
-            using (var fs = new FileStream(Path.Combine(RootDirectory, assetName + ".ego"), FileMode.Open, FileAccess.Read))
-            {
-                var res = ReadContentFileHead(fs);
+            using var fs = new FileStream(Path.Combine(RootDirectory, assetName + ".ego"), FileMode.Open, FileAccess.Read);
+            var res = ReadContentFileHead(fs);
 
-                return (T)res.Load(this, fs,typeof(T));
-            }
+            return (T?)res?.Load(this, fs,typeof(T));
         }
     }
 }

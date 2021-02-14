@@ -22,7 +22,7 @@ namespace engenious.Utility
     /// <summary>
     /// A memory poolable capture class without parameters as a placeholder for delegates without parameters.
     /// </summary>
-    public class Capture : ICapture
+    public sealed class Capture : ICapture
     {
         /// <summary>
         /// A Capture instance for delegates without parameters.
@@ -51,7 +51,7 @@ namespace engenious.Utility
     /// A memory poolable capture class.
     /// </summary>
     /// <typeparam name="T1">The type of the 2nd element to capture.</typeparam>
-    public class Capture<T1> : ICapture
+    public sealed class Capture<T1> : ICapture
     {
         /// <inheritdoc />
         public void Dispose()
@@ -61,7 +61,7 @@ namespace engenious.Utility
         /// <summary>
         /// Gets the 1st captured element.
         /// </summary>
-        public T1 Item1 { get; internal set; }
+        public T1? Item1 { get; internal set; }
         unsafe void ICapture.Call(IntPtr funcPtr)
         {
             Call((delegate* <T1, void>)funcPtr);
@@ -72,11 +72,11 @@ namespace engenious.Utility
         }
         internal unsafe void Call(delegate* <T1, void> funcPtr)
         {
-            funcPtr(Item1);
+            funcPtr(Item1!);
         }
         internal unsafe T CallRet<T>(delegate* <T1, T> funcPtr)
         {
-            return funcPtr(Item1);
+            return funcPtr(Item1!);
         }
     }
     /// <summary>
@@ -84,7 +84,7 @@ namespace engenious.Utility
     /// </summary>
     /// <typeparam name="T1">The type of the 2nd element to capture.</typeparam>
     /// <typeparam name="T2">The type of the 3rd element to capture.</typeparam>
-    public class Capture<T1, T2> : ICapture
+    public sealed class Capture<T1, T2> : ICapture
     {
         /// <inheritdoc />
         public void Dispose()
@@ -94,11 +94,11 @@ namespace engenious.Utility
         /// <summary>
         /// Gets the 1st captured element.
         /// </summary>
-        public T1 Item1 { get; internal set; }
+        public T1? Item1 { get; internal set; }
         /// <summary>
         /// Gets the 2nd captured element.
         /// </summary>
-        public T2 Item2 { get; internal set; }
+        public T2? Item2 { get; internal set; }
         unsafe void ICapture.Call(IntPtr funcPtr)
         {
             Call((delegate* <T1, T2, void>)funcPtr);
@@ -109,11 +109,11 @@ namespace engenious.Utility
         }
         internal unsafe void Call(delegate* <T1, T2, void> funcPtr)
         {
-            funcPtr(Item1, Item2);
+            funcPtr(Item1!, Item2!);
         }
         internal unsafe T CallRet<T>(delegate* <T1, T2, T> funcPtr)
         {
-            return funcPtr(Item1, Item2);
+            return funcPtr(Item1!, Item2!);
         }
     }
     /// <summary>
@@ -122,7 +122,7 @@ namespace engenious.Utility
     /// <typeparam name="T1">The type of the 2nd element to capture.</typeparam>
     /// <typeparam name="T2">The type of the 3rd element to capture.</typeparam>
     /// <typeparam name="T3">The type of the 4th element to capture.</typeparam>
-    public class Capture<T1, T2, T3> : ICapture
+    public sealed class Capture<T1, T2, T3> : ICapture
     {
         /// <inheritdoc />
         public void Dispose()
@@ -132,15 +132,15 @@ namespace engenious.Utility
         /// <summary>
         /// Gets the 1st captured element.
         /// </summary>
-        public T1 Item1 { get; internal set; }
+        public T1? Item1 { get; internal set; }
         /// <summary>
         /// Gets the 2nd captured element.
         /// </summary>
-        public T2 Item2 { get; internal set; }
+        public T2? Item2 { get; internal set; }
         /// <summary>
         /// Gets the 3rd captured element.
         /// </summary>
-        public T3 Item3 { get; internal set; }
+        public T3? Item3 { get; internal set; }
         unsafe void ICapture.Call(IntPtr funcPtr)
         {
             Call((delegate* <T1, T2, T3, void>)funcPtr);
@@ -151,11 +151,11 @@ namespace engenious.Utility
         }
         internal unsafe void Call(delegate* <T1, T2, T3, void> funcPtr)
         {
-            funcPtr(Item1, Item2, Item3);
+            funcPtr(Item1!, Item2!, Item3!);
         }
         internal unsafe T CallRet<T>(delegate* <T1, T2, T3, T> funcPtr)
         {
-            return funcPtr(Item1, Item2, Item3);
+            return funcPtr(Item1!, Item2!, Item3!);
         }
     }
     /// <summary>
@@ -165,7 +165,7 @@ namespace engenious.Utility
     /// <typeparam name="T2">The type of the 3rd element to capture.</typeparam>
     /// <typeparam name="T3">The type of the 4th element to capture.</typeparam>
     /// <typeparam name="T4">The type of the 5th element to capture.</typeparam>
-    public class Capture<T1, T2, T3, T4> : ICapture
+    public sealed class Capture<T1, T2, T3, T4> : ICapture
     {
         /// <inheritdoc />
         public void Dispose()
@@ -175,19 +175,19 @@ namespace engenious.Utility
         /// <summary>
         /// Gets the 1st captured element.
         /// </summary>
-        public T1 Item1 { get; internal set; }
+        public T1? Item1 { get; internal set; }
         /// <summary>
         /// Gets the 2nd captured element.
         /// </summary>
-        public T2 Item2 { get; internal set; }
+        public T2? Item2 { get; internal set; }
         /// <summary>
         /// Gets the 3rd captured element.
         /// </summary>
-        public T3 Item3 { get; internal set; }
+        public T3? Item3 { get; internal set; }
         /// <summary>
         /// Gets the 4th captured element.
         /// </summary>
-        public T4 Item4 { get; internal set; }
+        public T4? Item4 { get; internal set; }
         unsafe void ICapture.Call(IntPtr funcPtr)
         {
             Call((delegate* <T1, T2, T3, T4, void>)funcPtr);
@@ -198,19 +198,30 @@ namespace engenious.Utility
         }
         internal unsafe void Call(delegate* <T1, T2, T3, T4, void> funcPtr)
         {
-            funcPtr(Item1, Item2, Item3, Item4);
+            funcPtr(Item1!, Item2!, Item3!, Item4!);
         }
         internal unsafe T CallRet<T>(delegate* <T1, T2, T3, T4, T> funcPtr)
         {
-            return funcPtr(Item1, Item2, Item3, Item4);
+            return funcPtr(Item1!, Item2!, Item3!, Item4!);
         }
     }
     public partial struct CapturingDelegate
     {
+        /// <summary>
+        /// Creates a new instance of the <see cref="CapturingDelegate"/> struct without any parameters.
+        /// </summary>
+        /// <param name="functionPointer">The function pointer to call.</param>
+        /// <returns>The created <see cref="CapturingDelegate" />.</returns>
         public static unsafe CapturingDelegate Create(delegate*<void> functionPointer)
         {
             return new (Utility.Capture.Instance, (IntPtr)functionPointer);
         }
+        /// <summary>
+        /// Creates a new instance of the <see cref="CapturingDelegate"/> struct without any parameters and a return value.
+        /// </summary>
+        /// <param name="functionPointer">The function pointer to call.</param>
+        /// <typeparam name="TRet">The type of the return parameter of the function pointer.</typeparam>
+        /// <returns>The created <see cref="CapturingDelegate" />.</returns>
         public static unsafe CapturingDelegate CreateRet<TRet>(delegate*<TRet> functionPointer)
         {
             return new (Utility.Capture.Instance, (IntPtr)functionPointer);
@@ -221,10 +232,25 @@ namespace engenious.Utility
             capture.Item1 = item1;
             return capture;
         }
+        /// <summary>
+        /// Creates a new instance of the <see cref="CapturingDelegate"/> struct with 2 generic parameters and a return value.
+        /// </summary>
+        /// <param name="functionPointer">The function pointer to call.</param>
+        /// <param name="item1">The 1st parameter to capture with the created delegate.</param>
+        /// <typeparam name="T1">The type of the 1st parameter.</typeparam>
+        /// <returns>The created <see cref="CapturingDelegate" />.</returns>
         public static unsafe CapturingDelegate Create<T1>(delegate*<T1, void> functionPointer, T1 item1)
         {
             return new (CreateCaptureWith(item1), (IntPtr)functionPointer);
         }
+        /// <summary>
+        /// Creates a new instance of the <see cref="CapturingDelegate"/> struct with 2 generic parameters.
+        /// </summary>
+        /// <param name="functionPointer">The function pointer to call.</param>
+        /// <param name="item1">The 1st parameter to capture with the created delegate.</param>
+        /// <typeparam name="T1">The type of the 1st parameter.</typeparam>
+        /// <typeparam name="TRet">The type of the return parameter of the function pointer.</typeparam>
+        /// <returns>The created <see cref="CapturingDelegate" />.</returns>
         public static unsafe CapturingDelegate CreateRet<T1, TRet>(delegate*<T1, TRet> functionPointer, T1 item1)
         {
             return new (CreateCaptureWith(item1), (IntPtr)functionPointer);
@@ -236,10 +262,29 @@ namespace engenious.Utility
             capture.Item2 = item2;
             return capture;
         }
+        /// <summary>
+        /// Creates a new instance of the <see cref="CapturingDelegate"/> struct with 6 generic parameters and a return value.
+        /// </summary>
+        /// <param name="functionPointer">The function pointer to call.</param>
+        /// <param name="item1">The 1st parameter to capture with the created delegate.</param>
+        /// <param name="item2">The 2nd parameter to capture with the created delegate.</param>
+        /// <typeparam name="T1">The type of the 1st parameter.</typeparam>
+        /// <typeparam name="T2">The type of the 2nd parameter.</typeparam>
+        /// <returns>The created <see cref="CapturingDelegate" />.</returns>
         public static unsafe CapturingDelegate Create<T1, T2>(delegate*<T1, T2, void> functionPointer, T1 item1, T2 item2)
         {
             return new (CreateCaptureWith(item1, item2), (IntPtr)functionPointer);
         }
+        /// <summary>
+        /// Creates a new instance of the <see cref="CapturingDelegate"/> struct with 6 generic parameters.
+        /// </summary>
+        /// <param name="functionPointer">The function pointer to call.</param>
+        /// <param name="item1">The 1st parameter to capture with the created delegate.</param>
+        /// <param name="item2">The 2nd parameter to capture with the created delegate.</param>
+        /// <typeparam name="T1">The type of the 1st parameter.</typeparam>
+        /// <typeparam name="T2">The type of the 2nd parameter.</typeparam>
+        /// <typeparam name="TRet">The type of the return parameter of the function pointer.</typeparam>
+        /// <returns>The created <see cref="CapturingDelegate" />.</returns>
         public static unsafe CapturingDelegate CreateRet<T1, T2, TRet>(delegate*<T1, T2, TRet> functionPointer, T1 item1, T2 item2)
         {
             return new (CreateCaptureWith(item1, item2), (IntPtr)functionPointer);
@@ -252,10 +297,33 @@ namespace engenious.Utility
             capture.Item3 = item3;
             return capture;
         }
+        /// <summary>
+        /// Creates a new instance of the <see cref="CapturingDelegate"/> struct with 10 generic parameters and a return value.
+        /// </summary>
+        /// <param name="functionPointer">The function pointer to call.</param>
+        /// <param name="item1">The 1st parameter to capture with the created delegate.</param>
+        /// <param name="item2">The 2nd parameter to capture with the created delegate.</param>
+        /// <param name="item3">The 3rd parameter to capture with the created delegate.</param>
+        /// <typeparam name="T1">The type of the 1st parameter.</typeparam>
+        /// <typeparam name="T2">The type of the 2nd parameter.</typeparam>
+        /// <typeparam name="T3">The type of the 3rd parameter.</typeparam>
+        /// <returns>The created <see cref="CapturingDelegate" />.</returns>
         public static unsafe CapturingDelegate Create<T1, T2, T3>(delegate*<T1, T2, T3, void> functionPointer, T1 item1, T2 item2, T3 item3)
         {
             return new (CreateCaptureWith(item1, item2, item3), (IntPtr)functionPointer);
         }
+        /// <summary>
+        /// Creates a new instance of the <see cref="CapturingDelegate"/> struct with 10 generic parameters.
+        /// </summary>
+        /// <param name="functionPointer">The function pointer to call.</param>
+        /// <param name="item1">The 1st parameter to capture with the created delegate.</param>
+        /// <param name="item2">The 2nd parameter to capture with the created delegate.</param>
+        /// <param name="item3">The 3rd parameter to capture with the created delegate.</param>
+        /// <typeparam name="T1">The type of the 1st parameter.</typeparam>
+        /// <typeparam name="T2">The type of the 2nd parameter.</typeparam>
+        /// <typeparam name="T3">The type of the 3rd parameter.</typeparam>
+        /// <typeparam name="TRet">The type of the return parameter of the function pointer.</typeparam>
+        /// <returns>The created <see cref="CapturingDelegate" />.</returns>
         public static unsafe CapturingDelegate CreateRet<T1, T2, T3, TRet>(delegate*<T1, T2, T3, TRet> functionPointer, T1 item1, T2 item2, T3 item3)
         {
             return new (CreateCaptureWith(item1, item2, item3), (IntPtr)functionPointer);
@@ -269,10 +337,37 @@ namespace engenious.Utility
             capture.Item4 = item4;
             return capture;
         }
+        /// <summary>
+        /// Creates a new instance of the <see cref="CapturingDelegate"/> struct with 14 generic parameters and a return value.
+        /// </summary>
+        /// <param name="functionPointer">The function pointer to call.</param>
+        /// <param name="item1">The 1st parameter to capture with the created delegate.</param>
+        /// <param name="item2">The 2nd parameter to capture with the created delegate.</param>
+        /// <param name="item3">The 3rd parameter to capture with the created delegate.</param>
+        /// <param name="item4">The 4th parameter to capture with the created delegate.</param>
+        /// <typeparam name="T1">The type of the 1st parameter.</typeparam>
+        /// <typeparam name="T2">The type of the 2nd parameter.</typeparam>
+        /// <typeparam name="T3">The type of the 3rd parameter.</typeparam>
+        /// <typeparam name="T4">The type of the 4th parameter.</typeparam>
+        /// <returns>The created <see cref="CapturingDelegate" />.</returns>
         public static unsafe CapturingDelegate Create<T1, T2, T3, T4>(delegate*<T1, T2, T3, T4, void> functionPointer, T1 item1, T2 item2, T3 item3, T4 item4)
         {
             return new (CreateCaptureWith(item1, item2, item3, item4), (IntPtr)functionPointer);
         }
+        /// <summary>
+        /// Creates a new instance of the <see cref="CapturingDelegate"/> struct with 14 generic parameters.
+        /// </summary>
+        /// <param name="functionPointer">The function pointer to call.</param>
+        /// <param name="item1">The 1st parameter to capture with the created delegate.</param>
+        /// <param name="item2">The 2nd parameter to capture with the created delegate.</param>
+        /// <param name="item3">The 3rd parameter to capture with the created delegate.</param>
+        /// <param name="item4">The 4th parameter to capture with the created delegate.</param>
+        /// <typeparam name="T1">The type of the 1st parameter.</typeparam>
+        /// <typeparam name="T2">The type of the 2nd parameter.</typeparam>
+        /// <typeparam name="T3">The type of the 3rd parameter.</typeparam>
+        /// <typeparam name="T4">The type of the 4th parameter.</typeparam>
+        /// <typeparam name="TRet">The type of the return parameter of the function pointer.</typeparam>
+        /// <returns>The created <see cref="CapturingDelegate" />.</returns>
         public static unsafe CapturingDelegate CreateRet<T1, T2, T3, T4, TRet>(delegate*<T1, T2, T3, T4, TRet> functionPointer, T1 item1, T2 item2, T3 item3, T4 item4)
         {
             return new (CreateCaptureWith(item1, item2, item3, item4), (IntPtr)functionPointer);

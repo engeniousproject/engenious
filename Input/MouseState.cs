@@ -50,9 +50,9 @@ namespace engenious.Input
 
         /// <summary>
         /// Gets a <see cref="System.Boolean"/> indicating whether the specified
-        /// <see cref="OpenTK.Input.MouseButton"/> is pressed.
+        /// <see cref="MouseButton"/> is pressed.
         /// </summary>
-        /// <param name="button">The <see cref="OpenTK.Input.MouseButton"/> to check.</param>
+        /// <param name="button">The <see cref="MouseButton"/> to check.</param>
         /// <returns>True if key is pressed; false otherwise.</returns>
         public bool this [MouseButton button]
         {
@@ -69,7 +69,7 @@ namespace engenious.Input
         /// <summary>
         /// Gets a <see cref="System.Boolean"/> indicating whether this button is down.
         /// </summary>
-        /// <param name="button">The <see cref="OpenTK.Input.MouseButton"/> to check.</param>
+        /// <param name="button">The <see cref="MouseButton"/> to check.</param>
         public bool IsButtonDown(MouseButton button)
         {
             return ReadBit((int)button);
@@ -78,7 +78,7 @@ namespace engenious.Input
         /// <summary>
         /// Gets a <see cref="System.Boolean"/> indicating whether this button is up.
         /// </summary>
-        /// <param name="button">The <see cref="OpenTK.Input.MouseButton"/> to check.</param>
+        /// <param name="button">The <see cref="MouseButton"/> to check.</param>
         public bool IsButtonUp(MouseButton button)
         {
             return !ReadBit((int)button);
@@ -102,7 +102,7 @@ namespace engenious.Input
         }
 
         /// <summary>
-        /// Gets a <see cref="OpenTK.Input.MouseScroll"/> instance,
+        /// Gets a <see cref="MouseScroll"/> instance,
         /// representing the current state of the mouse scroll wheel.
         /// </summary>
         public MouseScroll Scroll
@@ -253,16 +253,9 @@ namespace engenious.Input
         /// <returns>
         /// True if this instance is equal to obj; false otherwise.
         /// </returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (obj is MouseState)
-            {
-                return this == (MouseState)obj;
-            }
-            else
-            {
-                return false;
-            }
+            return (obj is MouseState state) && Equals(state);
         }
 
         /// <summary>
@@ -277,9 +270,9 @@ namespace engenious.Input
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents the current <see cref="OpenTK.Input.MouseState"/>.
+        /// Returns a <see cref="System.String"/> that represents the current <see cref="MouseState"/>.
         /// </summary>
-        /// <returns>A <see cref="System.String"/> that represents the current <see cref="OpenTK.Input.MouseState"/>.</returns>
+        /// <returns>A <see cref="System.String"/> that represents the current <see cref="MouseState"/>.</returns>
         public override string ToString()
         {
             var b = Convert.ToString(_buttons, 2).PadLeft(10, '0');

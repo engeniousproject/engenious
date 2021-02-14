@@ -96,7 +96,7 @@ namespace engenious.Graphics
 
         private void ApplyDepthBufferEnable()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             if (DepthBufferEnable)
                 GL.Enable(EnableCap.DepthTest);
@@ -123,7 +123,7 @@ namespace engenious.Graphics
 
         private void ApplyDepthBufferWriteEnable()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             GL.DepthMask(_depthBufferWriteEnable);
         }
@@ -147,7 +147,7 @@ namespace engenious.Graphics
 
         private void ApplyDepthBufferFunction()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             GL.DepthFunc((OpenTK.Graphics.OpenGL.DepthFunction) _depthBufferFunction);
         }
@@ -171,7 +171,7 @@ namespace engenious.Graphics
 
         private void ApplyStencilEnable()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             if (_stencilEnable)
                 GL.Enable(EnableCap.StencilTest);
@@ -215,7 +215,7 @@ namespace engenious.Graphics
 
         private void ApplyTwoSidedStencilMode()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             ApplyTwoSidedStencilModeGl();
         }
@@ -251,7 +251,7 @@ namespace engenious.Graphics
             }
         }
 
-        private bool TwoSidedStencilChanged(DepthStencilState oldState)
+        private bool TwoSidedStencilChanged(DepthStencilState? oldState)
         {
             if (oldState == null || oldState.TwoSidedStencilMode != TwoSidedStencilMode)
                 return true;
@@ -434,7 +434,7 @@ namespace engenious.Graphics
 
         private void Apply()
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
+            GraphicsDevice!.ValidateUiGraphicsThread();
 
             var oldState = GraphicsDevice.DepthStencilState;
 

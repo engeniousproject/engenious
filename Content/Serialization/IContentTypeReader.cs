@@ -14,7 +14,7 @@ namespace engenious.Content.Serialization
 		/// <param name="reader">The content reader containing the content data.</param>
 		/// <param name="customType">The custom type the content object should be loaded as.</param>
 		/// <returns>The loaded content object.</returns>
-		object Read(ContentManagerBase managerBase, ContentReader reader,Type customType=null);
+		object? Read(ContentManagerBase managerBase, ContentReader reader,Type? customType = null);
 	}
 }
 

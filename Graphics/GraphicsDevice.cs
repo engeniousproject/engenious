@@ -17,23 +17,23 @@ namespace engenious.Graphics
     /// </summary>
     public class GraphicsDevice : IDisposable
     {
-        private BlendState _blendState;
-        private DepthStencilState _depthStencilState;
-        private RasterizerState _rasterizerState;
+        private BlendState? _blendState;
+        private DepthStencilState? _depthStencilState;
+        private RasterizerState? _rasterizerState;
         private Rectangle _scissorRectangle;
         private Viewport _viewport;
-        internal readonly IGraphicsContext _context;
+        internal readonly IGraphicsContext Context;
 
         private Thread _graphicsThread;
 
-        private EffectPass _effectPass;
-        private VertexBuffer _vertexBuffer;
-        private IndexBuffer _indexBuffer;
+        private EffectPass? _effectPass;
+        private VertexBuffer? _vertexBuffer;
+        private IndexBuffer? _indexBuffer;
         
 
-
-        DebugProc DebugCallbackInstance;
-        
+#if DEBUG
+        DebugProc? DebugCallbackInstance;
+#endif
 
         static void DebugCallback(DebugSource source, DebugType type, int id, DebugSeverity severity, int length, IntPtr message, IntPtr userParam)
         {
@@ -74,11 +74,11 @@ namespace engenious.Graphics
             }
         }
 
-        internal IGame Game;
+        internal readonly IGame Game;
         internal readonly HashSet<string> Extensions = new HashSet<string>();
-        internal string DriverVendor;
-        internal Version DriverVersion;
-        internal Version GlslVersion;
+        internal readonly string? DriverVendor;
+        internal readonly Version? DriverVersion;
+        internal readonly Version? GlslVersion;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GraphicsDevice"/> class.
@@ -88,19 +88,18 @@ namespace engenious.Graphics
         public GraphicsDevice(IGame game, IGraphicsContext context)
         {
             _graphicsThread = Thread.CurrentThread;
-            _context = context;
-            _context.MakeCurrent();
+            Context = context;
+            Context.MakeCurrent();
             Game = game;
 
-            int count;
-            GL.GetInteger(GetPName.NumExtensions, out count);
+            GL.GetInteger(GetPName.NumExtensions, out var count);
             for (var i = 0; i < count; i++)
             {
                 var extension = GL.GetString(StringNameIndexed.Extensions, i);
                 Extensions.Add(extension);
             }
 
-            ReadOpenGlVersion();
+            (DriverVendor, DriverVersion, GlslVersion) = ReadOpenGlVersion();
 #if DEBUG
             if (Extensions.Contains("GL_ARB_debug_output"))
             {
@@ -108,7 +107,7 @@ namespace engenious.Graphics
                 GL.Enable(EnableCap.DebugOutput);
                 GL.Enable(EnableCap.DebugOutputSynchronous);
                 CheckError();
-                DebugCallbackInstance = new DebugProc(DebugCallback);
+                DebugCallbackInstance = DebugCallback;
                 //var ptr = Marshal.GetFunctionPointerForDelegate(DebugCallbackInstance);
                 //var c = Marshal.GetDelegateForFunctionPointer<DebugProc>(ptr);
                 
@@ -127,11 +126,11 @@ namespace engenious.Graphics
 
             UiThread = new GraphicsThread(this);
 
-            _fenceThread = new GraphicsThread(_context);
+            _fenceThread = new GraphicsThread(Context);
 
             Threads = new List<GraphicsThread>();
             // Make current again as GraphicsThread creates a new context.
-            _context.MakeCurrent();
+            Context.MakeCurrent();
             
             CheckError();
             //TODO: samplerstate
@@ -140,14 +139,20 @@ namespace engenious.Graphics
         internal void SwitchUiThread()
         {
             _graphicsThread = Thread.CurrentThread;
-            _context.MakeCurrent();
+            Context.MakeCurrent();
         }
 
+        /// <summary>
+        /// Adds a new graphics thread to the <see cref="Threads"/> list.
+        /// </summary>
         public void AddGraphicsThread()
         {
-            Threads.Add(new GraphicsThread(_context));
+            Threads.Add(new GraphicsThread(Context));
         }
         
+        /// <summary>
+        /// Gets a list of the associated secondary graphics threads.
+        /// </summary>
         public List<GraphicsThread> Threads { get; }
 
         private static void WaitForFence(IntPtr fence)
@@ -157,7 +162,14 @@ namespace engenious.Graphics
                 Thread.Yield();
             GL.DeleteSync(fence);
         }
-        public unsafe AutoResetEvent CreateFenceAsync()
+        /// <summary>
+        /// Creates a new asynchronous fence which can be waited on using the returned <see cref="AutoResetEvent"/>.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="AutoResetEvent"/> with which one can wait for the fence to be reached.
+        /// <remarks>This event gets invalid as soon as it was fired once and cannot be reused.</remarks>
+        /// </returns>
+        public unsafe AutoResetEvent? CreateFenceAsync()
         {
             ValidateUiGraphicsThread();
             
@@ -166,6 +178,10 @@ namespace engenious.Graphics
 
             return _fenceThread.QueueWork(CapturingDelegate.Create(&WaitForFence, fence));
         }
+        /// <summary>
+        /// Creates a fence pointer which can be used using OpenTK GL.[Client]WaitSync.
+        /// </summary>
+        /// <returns>The <see cref="IntPtr"/> pointing to the fence object.</returns>
         public unsafe IntPtr CreateFence()
         {
             ValidateUiGraphicsThread();
@@ -182,52 +198,53 @@ namespace engenious.Graphics
             UiThread.RunThread();
         }
 
-        private void ReadOpenGlVersion()
+        private (string? driverVendor, Version? driverVersion, Version? glslVersion) ReadOpenGlVersion()
         {
-            string versionString = null, fullVersion = null;
+            string? driverVendor = null;
+            Version? driverVersion = null, glslVersion = null;
             try
             {
-                fullVersion = GL.GetString(StringName.Version);
+                string fullVersion = GL.GetString(StringName.Version);
                 var splt = fullVersion.Split(new []{' '}, StringSplitOptions.None);
-                versionString = splt.FirstOrDefault();
-                if (versionString == null)
-                    return;
-                DriverVersion = new Version(versionString);
-                DriverVendor = GL.GetString(StringName.Vendor);
+                string? versionString = splt.FirstOrDefault();
+                if (versionString != null)
+                    driverVersion = new Version(versionString);
+                driverVendor = GL.GetString(StringName.Vendor);
                 fullVersion = GL.GetString(StringName.ShadingLanguageVersion);
                 versionString = fullVersion.Split(new []{' '}, StringSplitOptions.None).FirstOrDefault();
-                if (versionString == null)
-                    return;
+                if (versionString != null)
+                    glslVersion = new Version(versionString);
 
-                GlslVersion = new Version(versionString);
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
                 if (!Extensions.Contains("VERSION_1_2"))
                 {
-                    DriverVersion = new Version(1,0);
-                    GlslVersion = new Version(1,0);//throw new Exception(string.Join("\r\n\t",Extensions.Keys)+$"\r\ncan't parse version: {versionString} fullversion{fullVersion}", ex);
-                    return;
+                    driverVersion = new Version(1,0);
+                    glslVersion = new Version(1,0);//throw new Exception(string.Join("\r\n\t",Extensions.Keys)+$"\r\ncan't parse version: {versionString} fullversion{fullVersion}", ex);
+                    return (driverVendor, driverVersion, glslVersion);
                 }
 
-                DriverVersion = new Version(GL.GetInteger(GetPName.MajorVersion), GL.GetInteger(GetPName.MinorVersion));
-                if (DriverVersion.Major == 2)
+                driverVersion = new Version(GL.GetInteger(GetPName.MajorVersion), GL.GetInteger(GetPName.MinorVersion));
+                if (driverVersion.Major == 2)
                 {
-                    GlslVersion = DriverVersion.Minor == 0 ? new Version(1, 10) : new Version(1, 20);
+                    glslVersion = driverVersion.Minor == 0 ? new Version(1, 10) : new Version(1, 20);
                 }
-                else if (DriverVersion.Major == 3 && DriverVersion.Minor <= 2)
+                else if (driverVersion.Major == 3 && driverVersion.Minor <= 2)
                 {
-                    GlslVersion = new Version(1, 30 + 10 * DriverVersion.Minor);
+                    glslVersion = new Version(1, 30 + 10 * driverVersion.Minor);
                 }
-                else if (DriverVersion.Major >= 3)
+                else if (driverVersion.Major >= 3)
                 {
-                    GlslVersion = new Version(DriverVersion.Major, DriverVersion.Minor * 10);
+                    glslVersion = new Version(driverVersion.Major, driverVersion.Minor * 10);
                 }
                 else
                 {
-                    GlslVersion = new Version(1, 0);
+                    glslVersion = new Version(1, 0);
                 }
             }
+            
+            return (driverVendor, driverVersion, glslVersion);
         }
 
         /// <summary>
@@ -262,10 +279,12 @@ namespace engenious.Graphics
             var code = GL.GetError();
             if (code == ErrorCode.NoError)
                 return;
-            var frame = new System.Diagnostics.StackTrace(true).GetFrame(1);
-            string filename = frame.GetFileName();
+            var frame = new StackTrace(true).GetFrame(1);
+            if (frame == null)
+                return;
+            string? filename = frame.GetFileName();
             int line = frame.GetFileLineNumber();
-            string method = frame.GetMethod().Name;
+            string? method = frame.GetMethod()?.Name;
             System.Diagnostics.Debug.WriteLine("[GL] " + filename + ":" + method + " - " + line.ToString() + ":" + code.ToString());
             /*var frame = new System.Diagnostics.StackTrace(true).GetFrame(1);
             ErrorCode code = ErrorCode.InvalidValue;
@@ -305,7 +324,7 @@ namespace engenious.Graphics
         {
             ValidateUiGraphicsThread();
             CheckError();
-            _context.SwapBuffers();
+            Context.SwapBuffers();
         }
 
         /// <summary>
@@ -323,7 +342,7 @@ namespace engenious.Graphics
         /// </summary>
         public Viewport Viewport
         {
-            get { return _viewport; }
+            get => _viewport;
             set
             {
                 if (_viewport.Bounds != value.Bounds)
@@ -454,8 +473,10 @@ namespace engenious.Graphics
         /// <param name="vertexCount">The number of vertices to render.</param>
         public void DrawPrimitives(PrimitiveType primitiveType, int startVertex, int vertexCount)
         {
+            if (VertexBuffer == null)
+                return;
             VertexBuffer.EnsureVao();
-            VertexBuffer.Vao.Bind();
+            VertexBuffer.Vao!.Bind();
 
 
             GL.DrawArrays((OpenTK.Graphics.OpenGL.PrimitiveType) primitiveType, startVertex, vertexCount);
@@ -474,6 +495,8 @@ namespace engenious.Graphics
         public void DrawIndexedPrimitives(PrimitiveType primitiveType, int baseVertex, int minVertexIndex,
             int numVertices, int startIndex, int primitiveCount)
         {
+            if (VertexBuffer == null || IndexBuffer == null)
+                return;
             CheckError();
             VertexBuffer.EnsureVao();
             if (VertexBuffer.Bind())
@@ -498,8 +521,10 @@ namespace engenious.Graphics
         public void DrawInstancedPrimitives(PrimitiveType primitiveType, int baseVertex, int startIndex,
             int primitiveCount, int instanceCount)
         {
+            if (VertexBuffer == null || IndexBuffer == null)
+                return;
             VertexBuffer.EnsureVao();
-            VertexBuffer.Vao.Bind();
+            VertexBuffer.Vao!.Bind();
             GL.DrawElementsInstancedBaseVertex((OpenTK.Graphics.OpenGL.PrimitiveType) primitiveType, primitiveCount * 3,
                 (OpenTK.Graphics.OpenGL.DrawElementsType)IndexBuffer.IndexElementSize, IntPtr.Zero, instanceCount,
                 baseVertex);
@@ -515,8 +540,10 @@ namespace engenious.Graphics
         public void MultiDrawElementsBaseVertex(PrimitiveType primitiveType, int[] baseVertex, int startIndex,
             int[] primitiveCount)
         {
+            if (VertexBuffer == null || IndexBuffer == null)
+                return;
             VertexBuffer.EnsureVao();
-            VertexBuffer.Vao.Bind();
+            VertexBuffer.Vao!.Bind();
             GL.MultiDrawElementsBaseVertex((OpenTK.Graphics.OpenGL.PrimitiveType)primitiveType, primitiveCount,
                 (OpenTK.Graphics.OpenGL.DrawElementsType)IndexBuffer.IndexElementSize, IntPtr.Zero, primitiveCount.Length,
                 baseVertex);
@@ -552,9 +579,9 @@ namespace engenious.Graphics
         /// <summary>
         /// Gets or sets the current blend state state used for blending.
         /// </summary>
-        public BlendState BlendState
+        public BlendState? BlendState
         {
-            get { return _blendState; }
+            get => _blendState;
             set
             {
                 if (_blendState != value)
@@ -570,9 +597,9 @@ namespace engenious.Graphics
         /// <summary>
         /// Gets or sets the current depth stencil state.
         /// </summary>
-        public DepthStencilState DepthStencilState
+        public DepthStencilState? DepthStencilState
         {
-            get { return _depthStencilState; }
+            get => _depthStencilState;
             set
             {
                 if (_depthStencilState != value)
@@ -588,7 +615,7 @@ namespace engenious.Graphics
         /// <summary>
         /// Gets or sets the current rasterizer state.
         /// </summary>
-        public RasterizerState RasterizerState
+        public RasterizerState? RasterizerState
         {
             get { return _rasterizerState; }
             set
@@ -614,7 +641,7 @@ namespace engenious.Graphics
         /// </summary>
         public Rectangle ScissorRectangle
         {
-            get { return _scissorRectangle; }
+            get => _scissorRectangle;
             set
             {
                 if (_scissorRectangle != value)
@@ -632,7 +659,7 @@ namespace engenious.Graphics
         /// <summary>
         /// Gets or sets the currently active <see cref="engenious.Graphics.EffectPass"/>.
         /// </summary>
-        public EffectPass EffectPass
+        public EffectPass? EffectPass
         {
             get => _effectPass;
             set
@@ -646,7 +673,7 @@ namespace engenious.Graphics
         /// <summary>
         /// Gets or sets the currently active <see cref="engenious.Graphics.VertexBuffer"/>.
         /// </summary>
-        public VertexBuffer VertexBuffer
+        public VertexBuffer? VertexBuffer
         {
             get => _vertexBuffer;
             set
@@ -660,7 +687,7 @@ namespace engenious.Graphics
         /// <summary>
         /// Gets or sets the currently active <see cref="engenious.Graphics.IndexBuffer"/>.
         /// </summary>
-        public IndexBuffer IndexBuffer
+        public IndexBuffer? IndexBuffer
         {
             get => _indexBuffer;
             set

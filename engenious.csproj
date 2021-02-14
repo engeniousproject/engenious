@@ -8,6 +8,8 @@
         <Description>engenious graphics framework core assembly, similar to XNA/MonoGame.</Description>
         
         <DocumentationFile>$(BaseIntermediateOutputPath)/engenious.xml</DocumentationFile>
+        
+        <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
 

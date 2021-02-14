@@ -15,6 +15,10 @@ namespace engenious
     {
         internal readonly GameWindow BaseWindow;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Window"/> class.
+        /// </summary>
+        /// <param name="baseWindow">The OpenTK base window.</param>
         public Window(GameWindow baseWindow)
         {
             BaseWindow = baseWindow;
@@ -240,49 +244,49 @@ namespace engenious
 
         #endregion
 
-        event Action<FrameEventArgs> IControlInternals.RenderFrame
+        event Action<FrameEventArgs>? IControlInternals.RenderFrame
         {
             add => BaseWindow.RenderFrame += value;
             remove => BaseWindow.RenderFrame -= value;
         }
 
-        event Action<FrameEventArgs> IControlInternals.UpdateFrame
+        event Action<FrameEventArgs>? IControlInternals.UpdateFrame
         {
             add => BaseWindow.UpdateFrame += value;
             remove => BaseWindow.UpdateFrame -= value;
         }
 
-        event Action<CancelEventArgs> IControlInternals.Closing
+        event Action<CancelEventArgs>? IControlInternals.Closing
         {
             add => BaseWindow.Closing += value;
             remove => BaseWindow.Closing -= value;
         }
 
-        event Action<FocusedChangedEventArgs> IControlInternals.FocusedChanged
+        event Action<FocusedChangedEventArgs>? IControlInternals.FocusedChanged
         {
             add => BaseWindow.FocusedChanged += value;
             remove => BaseWindow.FocusedChanged -= value;
         }
         
-        event Action<ResizeEventArgs> IControlInternals.Resize
+        event Action<ResizeEventArgs>? IControlInternals.Resize
         {
             add => BaseWindow.Resize += value;
             remove => BaseWindow.Resize -= value;
         }
         
-        event Action IControlInternals.Load
+        event Action? IControlInternals.Load
         {
             add => BaseWindow.Load += value;
             remove => BaseWindow.Load -= value;
         }
         
-        event Action<TextInputEventArgs> IControlInternals.KeyPress
+        event Action<TextInputEventArgs>? IControlInternals.KeyPress
         {
             add => BaseWindow.TextInput += value;
             remove => BaseWindow.TextInput -= value;
         }
                 
-        event Action<MouseWheelEventArgs> IControlInternals.MouseWheel
+        event Action<MouseWheelEventArgs>? IControlInternals.MouseWheel
         {
             add => BaseWindow.MouseWheel += value;
             remove => BaseWindow.MouseWheel -= value;

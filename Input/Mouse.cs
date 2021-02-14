@@ -11,7 +11,7 @@ namespace engenious.Input
     /// </summary>
     public static class Mouse
     {
-        private static IRenderingSurface _window;
+        private static IRenderingSurface? _window;
         private static float _deltaPrecise;
         private static MouseScroll _scroll = default;
 
@@ -58,7 +58,7 @@ namespace engenious.Input
         /// <returns>The current raw mouse state.</returns>
         public static MouseState GetState()
         {
-            var state = _window.WindowInfo.MouseState;
+            var state = _window!.WindowInfo!.MouseState;
             var actual = new MouseState()
                 {IsConnected = true, Position = new Vector2(state.Position.X, state.Position.Y), Scroll = _scroll};
             for (var i = 0; i < MouseButtonCount; i++)
@@ -79,7 +79,7 @@ namespace engenious.Input
         /// <returns>The current mouse cursor state.</returns>
         public static MouseState GetCursorState()
         {
-            var state = _window.WindowInfo.MouseState;
+            var state = _window!.WindowInfo!.MouseState;
             var actual = new MouseState()
                 {IsConnected = true, Position = new Vector2(state.Position.X, state.Position.Y), Scroll = _scroll};
             for (var i = 0; i < MouseButtonCount; i++)
@@ -101,7 +101,7 @@ namespace engenious.Input
         /// <param name="y">The y-component for the new cursor position.</param>
         public static void SetPosition(float x, float y)
         {
-            _window.WindowInfo.MousePosition = new OpenTK.Mathematics.Vector2(x, y);
+            _window!.WindowInfo!.MousePosition = new OpenTK.Mathematics.Vector2(x, y);
         }
     }
 }

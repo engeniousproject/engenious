@@ -8,7 +8,7 @@ namespace engenious.Input
     /// </summary>
     public class GamePad
     {
-        private static IRenderingSurface _window;
+        private static IRenderingSurface _window = null!;
         internal static void UpdateWindow<TControl>(TControl window)
             where TControl : class, IRenderingSurface
         {
@@ -21,15 +21,13 @@ namespace engenious.Input
         /// <returns>The current gamepad state of the gamepad specified by <paramref name="index"/>.</returns>
         public static unsafe GamePadState GetState(int index = 0)
         {
-            var state = _window.WindowInfo.JoystickStates[index];
+            var state = _window.WindowInfo!.JoystickStates[index];
             var actual = new GamePadState();
             if (!state.IsConnected)
                 return actual;
             actual.SetConnected(true);
 
             throw new NotSupportedException(); // TODO: implement
-            
-            return actual;
         }
     }
 }

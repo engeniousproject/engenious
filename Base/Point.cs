@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using OpenTK.Mathematics;
 
 namespace engenious
@@ -6,7 +7,7 @@ namespace engenious
     /// <summary>
     /// A 2D integer point.
     /// </summary>
-    public struct Point
+    public struct Point : IEquatable<Point>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Point"/> struct.
@@ -62,14 +63,15 @@ namespace engenious
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj)
+        public bool Equals(Point other)
         {
-            if (obj is Point)
-            {
-                var sec = (Point)obj;
-                return X == sec.X && Y == sec.Y;
-            }
-            return false;
+            return X == other.X && Y == other.Y;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
+        {
+            return obj is Point point && Equals(point);
         }
 
         /// <summary>

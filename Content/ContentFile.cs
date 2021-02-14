@@ -32,14 +32,13 @@ namespace engenious.Content
         /// <param name="stream">The stream to read the file from.</param>
         /// <param name="type">The type to try to read the file as.</param>
         /// <returns>The read content file.</returns>
-        public object Load(ContentManagerBase managerBase, Stream stream, Type type)
+        public object? Load(ContentManagerBase managerBase, Stream stream, Type type)
         {
             var reader = new ContentReader(stream);
             var readName = reader.ReadString();
-            var tp = managerBase.GetReaderByOutput(type.FullName);
-            if (tp == null)
-                tp = managerBase.GetReader(readName);
-            return tp.Read(managerBase, reader, type);
+            var tp = managerBase.GetReaderByOutput(type.FullName) ?? managerBase.GetReader(readName);
+
+            return tp?.Read(managerBase, reader, type);
         }
     }
 }

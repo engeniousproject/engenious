@@ -13,7 +13,7 @@ namespace engenious.Graphics
     /// <summary>
     /// A 2D GPU texture.
     /// </summary>
-    public class Texture2D : Texture
+    public class Texture2D : Texture, IEquatable<Texture2D>
     {
         internal int Texture;
         private readonly PixelInternalFormat _internalFormat;
@@ -94,7 +94,7 @@ namespace engenious.Graphics
         }
 
         /// <inheritdoc />
-        public override bool Equals(Texture other)
+        public override bool Equals(Texture? other)
         {
             if (!(other is Texture2D otherTex))
                 return false;
@@ -308,10 +308,8 @@ namespace engenious.Graphics
         /// <returns>The loaded texture.</returns>
         public static Texture2D FromStream(GraphicsDevice graphicsDevice, Stream stream, int mipMaps = 1)
         {
-            using (var bmp = new Bitmap(stream))
-            {
-                return FromBitmap(graphicsDevice, bmp, mipMaps);
-            }
+            using var bmp = new Bitmap(stream);
+            return FromBitmap(graphicsDevice, bmp, mipMaps);
         }
 
         /// <summary>
@@ -323,10 +321,8 @@ namespace engenious.Graphics
         /// <returns>The loaded texture.</returns>
         public static Texture2D FromFile(GraphicsDevice graphicsDevice, string filename, int mipMaps = 1)
         {
-            using (var bmp = new Bitmap(filename))
-            {
-                return FromBitmap(graphicsDevice, bmp, mipMaps);
-            }
+            using var bmp = new Bitmap(filename);
+            return FromBitmap(graphicsDevice, bmp, mipMaps);
         }
 
         /// <summary>
@@ -409,6 +405,28 @@ namespace engenious.Graphics
             GL.DeleteTexture(Texture);
 
             base.Dispose();
+        }
+
+        /// <inheritdoc />
+        public bool Equals(Texture2D? other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Texture == other.Texture;
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj is Texture2D text && Equals(text);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return Texture;
         }
     }
 }

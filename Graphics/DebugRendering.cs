@@ -82,7 +82,7 @@ namespace engenious.Graphics
             _effect.VertexColorEnabled = true;
             _effect.TextureEnabled = false;
             
-            foreach (var p in _effect.CurrentTechnique.Passes)
+            foreach (var p in _effect.CurrentTechnique!.Passes)
             {
                 p.Apply();
                 
@@ -114,7 +114,7 @@ namespace engenious.Graphics
             _effect.Projection = projection;
             _effect.VertexColorEnabled = false;
             _effect.TextureEnabled = false;
-            foreach (var p in _effect.CurrentTechnique.Passes)
+            foreach (var p in _effect.CurrentTechnique!.Passes)
             {
                 p.Apply();
 

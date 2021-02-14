@@ -3,18 +3,19 @@
     /// <summary>
     /// A simple mesh class.
     /// </summary>
-    public class Mesh:BaseMesh
+    public class Mesh : BaseMesh
     {
         /// <inheritdoc />
-        public Mesh(GraphicsDevice graphicsDevice)
-            : base(graphicsDevice)
+        public Mesh(GraphicsDevice graphicsDevice, int primitiveCount, VertexBuffer vertexBuffer)
+            : base(graphicsDevice, primitiveCount)
         {
+            VB = vertexBuffer;
         }
 
         /// <summary>
         /// Gets or sets the <see cref="VertexBuffer"/>.
         /// </summary>
-        public VertexBuffer VB{ get; set; }
+        public VertexBuffer VB{ get; }
 
         /// <inheritdoc />
         public override void Draw()

@@ -10,9 +10,9 @@ namespace engenious
         private void ConstructContext()
         {
             var windowInfo = Control.WindowInfo;
-            _context = Control.Context;
+            Context = Control.Context;
 
-            _context.MakeCurrent();
+            Context.MakeCurrent();
             
         }
     }

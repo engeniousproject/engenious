@@ -10,12 +10,11 @@ namespace engenious.Audio
     internal class SoundSourceManager : IDisposable
     {
 
-        private static SoundSourceManager _instance;
-        public static SoundSourceManager Instance => _instance ?? (_instance = new SoundSourceManager());
+        private static SoundSourceManager? _instance;
+        public static SoundSourceManager Instance => _instance ??= new SoundSourceManager();
 
 
         private const int MaxSources=256;
-        private readonly Thread _updateThread;
         private readonly int[] _sources;
         private readonly List<SoundEffectInstance> _playingInstances;
         private readonly List<int> _inUse;
@@ -33,8 +32,8 @@ namespace engenious.Audio
             _available = new List<int>(_sources);
             _playingInstances = new List<SoundEffectInstance>();
             _run = true;
-            _updateThread = new Thread(UpdateLoop){IsBackground = true};
-            _updateThread.Start();
+            Thread updateThread = new Thread(UpdateLoop){IsBackground = true};
+            updateThread.Start();
         }
 
         private void UpdateLoop()

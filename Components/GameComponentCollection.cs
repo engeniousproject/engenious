@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace engenious
@@ -18,7 +19,7 @@ namespace engenious
         public GameComponentCollection()
         {
             Drawables = new List<IDrawable>();
-            Updatables = new List<IUpdateable>();
+            Updateables = new List<IUpdateable>();
             _components = new List<GameComponent>();
             _updateComparer = new UpdateComparer();
             _drawComparer = new DrawComparer();
@@ -27,7 +28,7 @@ namespace engenious
         /// <summary>
         /// Gets the list of updateable components.
         /// </summary>
-        internal List<IUpdateable> Updatables { get; }
+        internal List<IUpdateable> Updateables { get; }
 
         /// <summary>
         /// Gets the list of drawable components.
@@ -37,13 +38,13 @@ namespace engenious
 
         internal void Sort()
         {
-            Updatables.Sort(_updateComparer);
+            Updateables.Sort(_updateComparer);
             Drawables.Sort(_drawComparer);
         }
 
         private class UpdateComparer : IComparer<IUpdateable>
         {
-            public int Compare(IUpdateable x,IUpdateable y)
+            public int Compare(IUpdateable? x,IUpdateable? y)
             {
                 if (x == null || y == null)
                     return 0;
@@ -54,7 +55,7 @@ namespace engenious
         }
         private class DrawComparer : IComparer<IDrawable>
         {
-            public int Compare(IDrawable x,IDrawable y)
+            public int Compare(IDrawable? x,IDrawable? y)
             {
                 if (x == null || y == null)
                     return 0;
@@ -69,11 +70,12 @@ namespace engenious
         /// <inheritdoc />
         public void Add(GameComponent item)
         {
+            if (item is null)
+                throw new ArgumentNullException(nameof(item));
             if (item is IDrawable drawable)
                 Drawables.Add(drawable);
             IUpdateable updateable = item;
-            if (updateable != null)
-                Updatables.Add(updateable);
+            Updateables.Add(updateable);
             _components.Add(item);
             Sort();
         }
@@ -82,7 +84,7 @@ namespace engenious
         public void Clear()
         {
             Drawables.Clear();
-            Updatables.Clear();
+            Updateables.Clear();
             _components.Clear();
         }
 
@@ -101,13 +103,10 @@ namespace engenious
         /// <inheritdoc />
         public bool Remove(GameComponent item)
         {
-
-            var drawable = item as IDrawable;
-            if (drawable != null)
+            if (item is IDrawable drawable)
                 Drawables.Remove(drawable);
             IUpdateable updateable = item;
-            if (updateable != null)
-                Updatables.Remove(updateable);
+            Updateables.Remove(updateable);
             
             return _components.Remove(item);
         }

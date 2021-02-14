@@ -7,21 +7,33 @@ using engenious.Helper;
 
 namespace engenious.Utility
 {
+    /// <summary>
+    /// A dynamically growing list that uses memory pooling for its buffers.
+    /// </summary>
+    /// <typeparam name="T">The generic type to contain in this list.</typeparam>
     public class PoolingList<T> : IList<T>
     {
         private const int DefaultCapacity = 4;
         private int _size;
         private T[] _pooledArray;
         
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PoolingList{T}"/> class.
+        /// </summary>
+        /// <param name="capacity">The capacity to initialize the <see cref="PoolingList{T}"/> with.</param>
         public PoolingList(int capacity = DefaultCapacity)
         {
             _pooledArray = ArrayPool<T>.Shared.Rent(capacity);
             _size = 0;
         }
 
+        /// <summary>
+        /// Gets a struct enumerator for this <see cref="PoolingList{T}"/>.
+        /// </summary>
+        /// <returns>The enumerator.</returns>
         public Enumerator GetEnumerator()
         {
-            return new Enumerator(this);
+            return new(this);
         }
         
         /// <inheritdoc />
@@ -69,6 +81,9 @@ namespace engenious.Utility
             var newCapacity = _pooledArray.Length == 0 ? DefaultCapacity : _pooledArray.Length * 2;
             Capacity = newCapacity;
         }
+        /// <summary>
+        /// Gets or sets the capacity of this <see cref="PoolingList{T}"/>.
+        /// </summary>
         public int Capacity
         {
             get => _pooledArray.Length;
@@ -203,6 +218,9 @@ namespace engenious.Utility
             }
         }
 
+        /// <summary>
+        /// A struct enumerator for this <see cref="PoolingList{T}"/>.
+        /// </summary>
         public struct Enumerator : IEnumerator<T>, IEnumerator
         {
             private readonly PoolingList<T> _list;
@@ -254,6 +272,11 @@ namespace engenious.Utility
             }
         }
         
+        /// <summary>
+        /// Steals the pooled memory buffer of this list and resets this list.
+        /// <remarks>This buffer needs to be returned to the memory pool using <seealso cref="ReturnBuffer"/></remarks>
+        /// </summary>
+        /// <returns>The stolen memory buffer.</returns>
         public T[] StealAndClearBuffer()
         {
             var buf = _pooledArray;
@@ -262,6 +285,10 @@ namespace engenious.Utility
             return buf;
         }
 
+        /// <summary>
+        /// Returns a buffer into the memory pool.
+        /// </summary>
+        /// <param name="buffer">The buffer to return to the memory pool.</param>
         public void ReturnBuffer(T[] buffer)
         {
             ArrayPool<T>.Shared.Return(buffer);

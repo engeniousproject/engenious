@@ -4,15 +4,18 @@ namespace engenious.Graphics
 {
     internal class NodeContent
     {
-        public NodeContent(NodeContent parent=null)
+        public NodeContent(string name, NodeContent? parent = null)
         {
-            GlobalTransform = LocalTransform = Matrix.Identity;
+            Name = name;
             Parent = parent;
+            GlobalTransform = LocalTransform = Matrix.Identity;
+            Meshes = new List<int>();
+            Children = new List<NodeContent>();
         }
 
         public string Name{ get; set; }
 
-        public List<int> Meshes{ get; set; }
+        public List<int> Meshes{ get; }
 
         public Matrix Transformation{ get; set; }
 
@@ -20,8 +23,8 @@ namespace engenious.Graphics
 
         public Matrix GlobalTransform{ get; set; }
 
-        public List<NodeContent> Children{ get; set; }
-        public NodeContent Parent{get;internal set;}
+        public List<NodeContent> Children{ get; }
+        public NodeContent? Parent { get; internal set; }
     }
 }
 

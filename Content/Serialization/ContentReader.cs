@@ -24,11 +24,11 @@ namespace engenious.Content.Serialization
         /// <param name="managerBase">The content manager to use for reading.</param>
         /// <typeparam name="T">The content type to read.</typeparam>
         /// <returns>The read content type.</returns>
-        public T Read<T>(ContentManagerBase managerBase)
+        public T? Read<T>(ContentManagerBase managerBase)
         {
             var name = ReadString();
             var typeReader = managerBase.GetReader(name);
-            return typeReader == null ? default(T) : Read<T>(managerBase, typeReader);
+            return typeReader == null ? default : Read<T>(managerBase, typeReader);
         }
 
         /// <summary>
@@ -38,9 +38,9 @@ namespace engenious.Content.Serialization
         /// <param name="typeReader">The type reader to use for reading.</param>
         /// <typeparam name="T">The content type to read.</typeparam>
         /// <returns>The read content type.</returns>
-        public T Read<T>(ContentManagerBase managerBase, IContentTypeReader typeReader)
+        public T? Read<T>(ContentManagerBase managerBase, IContentTypeReader typeReader)
         {
-            return (T)typeReader.Read(managerBase, this, typeof(T));
+            return (T?)typeReader.Read(managerBase, this, typeof(T));
 
         }
 
