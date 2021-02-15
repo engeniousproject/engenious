@@ -87,7 +87,7 @@ namespace engenious
         /// </summary>
         public Size Size
         { 
-            get { return new Size(Width, Height); }
+            get => new Size(Width, Height);
             set
             {
                 Width = value.Width;
@@ -100,7 +100,7 @@ namespace engenious
         /// </summary>
         public Point Location
         { 
-            get { return new Point(X, Y); } 
+            get => new Point(X, Y);
             set
             {
                 X = value.X;

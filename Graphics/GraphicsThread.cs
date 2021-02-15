@@ -12,7 +12,7 @@ namespace engenious.Graphics
     /// </summary>
     public class GraphicsThread : IDisposable
     {
-        private readonly INativeWindow _windowInfo;
+        private readonly IWindowWrapper _windowInfo;
         private readonly IGraphicsContext _context;
         private readonly GlSynchronizationContext _sync;
 
@@ -20,10 +20,10 @@ namespace engenious.Graphics
         private CancellationTokenSource CancellationTokenSource { get; }
         private readonly CancellationToken _cancellationToken;
 
-        private static NativeWindow CreateSharedContext(IGraphicsContext sharedContext)
+        private static IWindowWrapper CreateSharedContext(IGraphicsContext sharedContext)
         {
             var settings = new NativeWindowSettings() {SharedContext = sharedContext as IGLFWGraphicsContext, StartVisible = false};
-            var window = new GameWindow(GameWindowSettings.Default, settings);
+            var window = new OpenTkWindowWrapper(new GameWindow(GameWindowSettings.Default, settings));
             window.Context.MakeNoneCurrent();
             return window;
         }
@@ -36,7 +36,7 @@ namespace engenious.Graphics
         {
         }
 
-        private GraphicsThread(INativeWindow windowInfo, IGraphicsContext context, Thread workingThread)
+        private GraphicsThread(IWindowWrapper windowInfo, IGraphicsContext context, Thread workingThread)
         {
             CancellationTokenSource = new CancellationTokenSource();
             _cancellationToken = CancellationTokenSource.Token;
@@ -62,8 +62,8 @@ namespace engenious.Graphics
         /// <summary>
         /// Initializes a new instance of the <see cref="GraphicsThread"/> class.
         /// </summary>
-        /// <param name="windowInfo">The native window to create the graphics thread for.</param>
-        public GraphicsThread(NativeWindow windowInfo)
+        /// <param name="windowInfo">The native window wrapper to create the graphics thread for.</param>
+        public GraphicsThread(IWindowWrapper windowInfo)
             : this(windowInfo, windowInfo.Context, null!)
         {
             _cancellationToken.Register(() => _sync.CancelWait());

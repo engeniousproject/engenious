@@ -5,6 +5,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace engenious
 {
@@ -13,35 +14,27 @@ namespace engenious
     /// </summary>
     public class Window : IRenderingSurface
     {
-        internal readonly GameWindow BaseWindow;
+        internal readonly IWindowWrapper BaseWindow;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Window"/> class.
         /// </summary>
-        /// <param name="baseWindow">The OpenTK base window.</param>
-        public Window(GameWindow baseWindow)
+        /// <param name="baseWindow">The base window.</param>
+        public Window(IWindowWrapper baseWindow)
         {
             BaseWindow = baseWindow;
-            baseWindow.KeyDown += delegate(KeyboardKeyEventArgs e)
-            {
-                if (e.Key == Key.F4 && e.Alt)
-                {
-                    Close();
-                }
-            };
-
         }
 
         /// <inheritdoc />
         public Point PointToScreen(Point pt)
         {
-            return BaseWindow.PointToScreen(new Vector2i(pt.X, pt.Y));
+            return BaseWindow.PointToScreen(pt);
         }
 
         /// <inheritdoc />
         public Point PointToClient(Point pt)
         {
-            return BaseWindow.PointToClient(new Vector2i(pt.X, pt.Y));
+            return BaseWindow.PointToClient(pt);
         }
 
         /// <inheritdoc />
@@ -62,46 +55,36 @@ namespace engenious
 
         /// <inheritdoc />
         public Rectangle ClientRectangle{
-            get{
-                return Rectangle.FromLTRB(BaseWindow.ClientRectangle.Min.X,BaseWindow.ClientRectangle.Min.Y,BaseWindow.ClientRectangle.Max.X,BaseWindow.ClientRectangle.Max.Y);
-            }
-            set{
-                BaseWindow.ClientRectangle = new Box2i(value.Left,value.Top,value.Right,value.Bottom);
-            }
+            get => BaseWindow.ClientRectangle;
+            set => BaseWindow.ClientRectangle = value;
         }
 
         /// <inheritdoc />
         public Size ClientSize{
-            get{
-                return new Size(BaseWindow.ClientSize.X,BaseWindow.ClientSize.Y);
-            }
-            set{
-                BaseWindow.Size = new Vector2i(value.Width,value.Height);
-            }
+            get => new Size(BaseWindow.ClientSize.X,BaseWindow.ClientSize.Y);
+            set => BaseWindow.Size = new Vector2i(value.Width,value.Height);
         }
 
         /// <summary>
         /// Gets or sets the <see cref="Icon"/> of this <see cref="Window"/>.
         /// </summary>
-        public WindowIcon Icon { get { return BaseWindow.Icon; } set { BaseWindow.Icon = value; } }
+        public WindowIcon? Icon { get => BaseWindow.Icon;
+            set => BaseWindow.Icon = value;
+        }
 
         /// <summary>
         /// Gets or sets whether the <see cref="Window"/> is visible.
         /// </summary>
         public bool Visible{
-            get{
-                return BaseWindow.IsVisible;
-            }
-            set{
-                BaseWindow.IsVisible = value;
-            }
+            get => BaseWindow.IsVisible;
+            set => BaseWindow.IsVisible = value;
         }
 
         /// <inheritdoc />
         public IntPtr Handle => throw new NotSupportedException();
 
         /// <inheritdoc />
-        public INativeWindow WindowInfo => BaseWindow;
+        public IWindowWrapper WindowInfo => BaseWindow;
 
         /// <summary>
         /// Gets or sets whether the <see cref="Window"/> is in focus.
@@ -112,12 +95,8 @@ namespace engenious
         /// Gets or sets whether the mouse cursor is visible on this <see cref="Window"/>.
         /// </summary>
         public bool CursorVisible{
-            get{
-                return BaseWindow.CursorVisible;
-            }
-            set{
-                BaseWindow.CursorVisible = value;
-            }
+            get => BaseWindow.CursorVisible;
+            set => BaseWindow.CursorVisible = value;
         }
 
         /// <summary>
@@ -133,9 +112,7 @@ namespace engenious
         /// Gets or sets whether the <see cref="Window"/> is without a border.
         /// </summary>
         public bool IsBorderless{
-            get{
-                return BaseWindow.WindowBorder != WindowBorder.Hidden;
-            }
+            get => BaseWindow.WindowBorder != WindowBorder.Hidden;
             set{
                 if (value)
                     BaseWindow.WindowBorder = WindowBorder.Hidden;
@@ -149,9 +126,7 @@ namespace engenious
         /// Gets or sets whether the user is able to resize this <see cref="Window"/>.
         /// </summary>
         public bool AllowUserResizing{
-            get{
-                return _allowUserResizing;
-            }
+            get => _allowUserResizing;
             set{
                 _allowUserResizing = value;
                 if (IsBorderless)
@@ -166,9 +141,7 @@ namespace engenious
         /// Gets or sets whether the <see cref="Window"/> is in fullscreen mode.
         /// </summary>
         public bool Fullscreen{
-            get{
-                return _fullscreen;
-            }
+            get => _fullscreen;
             set{
                 if (!_fullscreen)
                     _oWindowState = BaseWindow.WindowState;
@@ -181,21 +154,15 @@ namespace engenious
         /// Gets or sets the <see cref="Window"/> title.
         /// </summary>
         public string Title{
-            get{
-                return BaseWindow.Title;
-            }
-            set{
-                BaseWindow.Title = value;
-            }
+            get => BaseWindow.Title;
+            set => BaseWindow.Title = value;
         }
 
         /// <summary>
         /// Gets or sets the position of the <see cref="Window"/>.
         /// </summary>
         public Point Position{
-            get{
-                return new Point(BaseWindow.Location.X,BaseWindow.Location.Y);
-            }
+            get => new Point(BaseWindow.Location.X,BaseWindow.Location.Y);
             set{
                 X = value.X;
                 Y = value.Y;
@@ -206,24 +173,16 @@ namespace engenious
         /// Gets or sets the horizontal position of the <see cref="Window"/>.
         /// </summary>
         public int X{
-            get{
-                return BaseWindow.Location.X;
-            }
-            set{
-                BaseWindow.Location = new Vector2i(value, BaseWindow.Location.Y);
-            }
+            get => BaseWindow.Location.X;
+            set => BaseWindow.Location = new Vector2i(value, BaseWindow.Location.Y);
         }
 
         /// <summary>
         /// Gets or sets the vertical position of the <see cref="Window"/>.
         /// </summary>
         public int Y{
-            get{
-                return BaseWindow.Location.Y;
-            }
-            set{
-                BaseWindow.Location = new Vector2i(BaseWindow.Location.X, value);
-            }
+            get => BaseWindow.Location.Y;
+            set => BaseWindow.Location = new Vector2i(BaseWindow.Location.X, value);
         }
 
         /// <summary>
@@ -282,8 +241,8 @@ namespace engenious
         
         event Action<TextInputEventArgs>? IControlInternals.KeyPress
         {
-            add => BaseWindow.TextInput += value;
-            remove => BaseWindow.TextInput -= value;
+            add => BaseWindow.KeyPress += value;
+            remove => BaseWindow.KeyPress -= value;
         }
                 
         event Action<MouseWheelEventArgs>? IControlInternals.MouseWheel

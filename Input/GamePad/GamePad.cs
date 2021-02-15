@@ -23,7 +23,7 @@ namespace engenious.Input
         {
             var state = _window.WindowInfo!.JoystickStates[index];
             var actual = new GamePadState();
-            if (!state.IsConnected)
+            if (state == null)
                 return actual;
             actual.SetConnected(true);
 

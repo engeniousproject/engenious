@@ -142,7 +142,7 @@ namespace engenious
         public float Length
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get { return (float)Math.Sqrt(LengthSquared); }
+            get => (float)Math.Sqrt(LengthSquared);
         }
 
         /// <summary>

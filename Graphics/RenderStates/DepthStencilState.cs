@@ -414,7 +414,7 @@ namespace engenious.Graphics
         /// </summary>
         public StencilOp StencilPass
         {
-            get { return _stencilPass; }
+            get => _stencilPass;
             set
             {
                 ThrowIfReadOnly();

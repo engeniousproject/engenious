@@ -74,7 +74,7 @@ namespace engenious.Audio
         /// </summary>
         public bool IsLooped
         { 
-            get { return _isLooped; }
+            get => _isLooped;
             set
             { 
                 if (value != _isLooped && Sid != 0)
@@ -89,7 +89,7 @@ namespace engenious.Audio
         /// Gets or sets the volume of the sound.
         /// </summary>
         public float Volume{
-            get{return _volume;}
+            get => _volume;
             set
             {
                 // ReSharper disable once CompareOfFloatsByEqualityOperator
@@ -106,7 +106,7 @@ namespace engenious.Audio
         /// Gets or sets the pitch of the sound.
         /// </summary>
         public float Pitch{
-            get{return _pitch;}
+            get => _pitch;
             set
             {
                 // ReSharper disable once CompareOfFloatsByEqualityOperator
@@ -122,7 +122,7 @@ namespace engenious.Audio
         /// Gets or sets the pan of the sound.
         /// </summary>
         public float Pan{
-            get{return _pan;}
+            get => _pan;
             set
             {
                 // ReSharper disable once CompareOfFloatsByEqualityOperator

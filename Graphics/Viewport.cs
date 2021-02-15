@@ -80,7 +80,7 @@
         /// </summary>
         public Rectangle Bounds
         {
-            get{ return new Rectangle(X, Y, Width, Height); }
+            get => new Rectangle(X, Y, Width, Height);
             internal set
             {
                 X = value.X;

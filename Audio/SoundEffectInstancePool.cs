@@ -75,7 +75,7 @@ namespace engenious.Audio
         /// </summary>
         public override SoundState State
         {
-            get { return _state; }
+            get => _state;
             internal set
             {
                 _state = value;

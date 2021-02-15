@@ -105,7 +105,7 @@ namespace engenious
         public double Length
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get{return (double)Math.Sqrt(LengthSquared);}
+            get => (double)Math.Sqrt(LengthSquared);
         }
 
         /// <summary>

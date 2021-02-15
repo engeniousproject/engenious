@@ -23,11 +23,8 @@
         /// </summary>
         public Plane Bottom
         {
-            get { return _planes[5]; }
-            private set
-            {
-                _planes[5] = value;
-            }
+            get => _planes[5];
+            private set => _planes[5] = value;
         }
 
         /// <summary>
@@ -35,11 +32,8 @@
         /// </summary>
         public Plane Top
         {
-            get { return _planes[4]; }
-            private set
-            {
-                _planes[4] = value;
-            }
+            get => _planes[4];
+            private set => _planes[4] = value;
         }
 
         /// <summary>
@@ -47,11 +41,8 @@
         /// </summary>
         public Plane Far
         {
-            get { return _planes[3]; }
-            private set
-            {
-                _planes[3] = value;
-            }
+            get => _planes[3];
+            private set => _planes[3] = value;
         }
 
         /// <summary>
@@ -59,11 +50,8 @@
         /// </summary>
         public Plane Near
         {
-            get { return _planes[2]; }
-            private set
-            {
-                _planes[2] = value;
-            }
+            get => _planes[2];
+            private set => _planes[2] = value;
         }
 
         /// <summary>
@@ -71,11 +59,8 @@
         /// </summary>
         public Plane Left
         {
-            get { return _planes[1]; }
-            private set
-            {
-                _planes[1] = value;
-            }
+            get => _planes[1];
+            private set => _planes[1] = value;
         }
 
         /// <summary>
@@ -83,11 +68,8 @@
         /// </summary>
         public Plane Right
         {
-            get { return _planes[0]; }
-            private set
-            {
-                _planes[0] = value;
-            }
+            get => _planes[0];
+            private set => _planes[0] = value;
         }
 
         /// <summary>

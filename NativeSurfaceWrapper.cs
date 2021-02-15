@@ -17,7 +17,7 @@ namespace engenious
         /// <param name="windowInfo">The native window info to wrap.</param>
         /// <param name="contextFlags">Thre graphics context flags</param>
         /// <exception cref="NotImplementedException">This class is currently not implemented.</exception>
-        public NativeSurfaceWrapper(INativeWindow windowInfo, ContextFlags contextFlags)
+        public NativeSurfaceWrapper(IWindowWrapper windowInfo, ContextFlags contextFlags)
         {
             //TODO implement
             WindowInfo = windowInfo;
@@ -27,7 +27,7 @@ namespace engenious
         }
 
         /// <inheritdoc />
-        public INativeWindow WindowInfo { get; }
+        public IWindowWrapper WindowInfo { get; }
 
         /// <summary>
         /// Gets the graphics context for this surface wrapper.

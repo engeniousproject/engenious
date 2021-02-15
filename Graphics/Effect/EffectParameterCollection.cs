@@ -63,23 +63,15 @@ namespace engenious.Graphics
 		/// Gets an element in the collection by using an index value.
 		/// </summary>
 		/// <param name="index">The element index.</param>
-		public EffectParameter this [int index] { 
-			get {
-				return _parameterList [index];
-			} 
-		}
+		public EffectParameter this [int index] => _parameterList [index];
 
 		/// <summary>
 		/// Gets an element in the collection by using a name.
 		/// </summary>
 		/// <param name="name">The name to search for.</param>
-		public EffectParameter this [string name] { 
-			get {
-				return _parameters [name];
-			} 
-		}
+		public EffectParameter this [string name] => _parameters [name];
 
-        IEnumerator IEnumerable.GetEnumerator()
+		IEnumerator IEnumerable.GetEnumerator()
         {
             return _parameterList.GetEnumerator();
         }

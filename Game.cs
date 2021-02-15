@@ -23,7 +23,7 @@ namespace engenious
                 Flags = ContextFlags,
                 Size = new Vector2i(1024, 768)
             };
-            var baseWindow = new GameWindow(GameWindowSettings.Default, nativeWindowSettings);
+            var baseWindow = new OpenTkWindowWrapper(new GameWindow(GameWindowSettings.Default, nativeWindowSettings));
             //GraphicsContext.ShareContexts = true;
             Window = new Window(baseWindow);
             ConstructContext(Window, baseWindow.Context);
@@ -118,7 +118,9 @@ namespace engenious
         /// Gets or sets a title associated with the rendering view.
         /// <remarks>This sets or gets the window title, if the rendering view is a <see cref="Window"/>.</remarks>
         /// </summary>
-        public string Title{ get { return Window.Title; } set { Window.Title = value; } }
+        public string Title{ get => Window.Title;
+            set => Window.Title = value;
+        }
 
         /// <summary>
         /// Runs the rendering view's message loop, as well as update and rendering loop.

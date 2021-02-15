@@ -14,14 +14,8 @@ namespace engenious.Input
         /// </summary>
         public bool IsDown
         {
-            get
-            {
-                return (byte)(_buttons & DPadButtons.Down) != 0;
-            }
-            internal set
-            {
-                SetButton(DPadButtons.Down, value);
-            }
+            get => (byte)(_buttons & DPadButtons.Down) != 0;
+            internal set => SetButton(DPadButtons.Down, value);
         }
 
         /// <summary>
@@ -29,14 +23,8 @@ namespace engenious.Input
         /// </summary>
         public bool IsLeft
         {
-            get
-            {
-                return (byte)(_buttons & DPadButtons.Left) != 0;
-            }
-            internal set
-            {
-                SetButton(DPadButtons.Left, value);
-            }
+            get => (byte)(_buttons & DPadButtons.Left) != 0;
+            internal set => SetButton(DPadButtons.Left, value);
         }
 
         /// <summary>
@@ -44,14 +32,8 @@ namespace engenious.Input
         /// </summary>
         public bool IsRight
         {
-            get
-            {
-                return (byte)(_buttons & DPadButtons.Right) != 0;
-            }
-            internal set
-            {
-                SetButton(DPadButtons.Right, value);
-            }
+            get => (byte)(_buttons & DPadButtons.Right) != 0;
+            internal set => SetButton(DPadButtons.Right, value);
         }
 
         /// <summary>
@@ -59,14 +41,8 @@ namespace engenious.Input
         /// </summary>
         public bool IsUp
         {
-            get
-            {
-                return (byte)(_buttons & DPadButtons.Up) != 0;
-            }
-            internal set
-            {
-                SetButton(DPadButtons.Up, value);
-            }
+            get => (byte)(_buttons & DPadButtons.Up) != 0;
+            internal set => SetButton(DPadButtons.Up, value);
         }
 
         /// <summary>

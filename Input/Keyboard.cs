@@ -27,8 +27,7 @@ namespace engenious.Input
         /// <returns>The current keyboard state.</returns>
         public static unsafe KeyboardState GetState()
         {
-            var state = _window!.WindowInfo!.KeyboardState;
-            return *(KeyboardState*)(&state);
+            return _window!.WindowInfo!.KeyboardState;
         }
 
         /// <summary>

@@ -67,7 +67,7 @@ namespace engenious
         /// </summary>
         public Vector2 Size
         { 
-            get { return new Vector2(Width, Height); }
+            get => new Vector2(Width, Height);
             set
             {
                 Width = value.X;

@@ -122,10 +122,7 @@ void main(void)
         /// <inheritdoc />
         public Matrix Projection
         {
-            get
-            {
-                return _projection;
-            }
+            get => _projection;
             set
             {
                 // if (_projection != value)
@@ -139,10 +136,7 @@ void main(void)
         /// <inheritdoc />
         public Matrix View
         {
-            get
-            {
-                return _view;
-            }
+            get => _view;
             set
             {
                 // if (_view != value)
@@ -156,10 +150,7 @@ void main(void)
         /// <inheritdoc />
         public Matrix World
         {
-            get
-            {
-                return _world;
-            }
+            get => _world;
             set
             {
                 // if (_world != value)
@@ -187,10 +178,7 @@ void main(void)
         public bool TextureEnabled
         {
 
-            set
-            {
-                Parameters["textEnabled"].SetValue(value ? 1 : 0);
-            }
+            set => Parameters["textEnabled"].SetValue(value ? 1 : 0);
         }
 
         /// <summary>
@@ -199,10 +187,7 @@ void main(void)
         public bool VertexColorEnabled
         {
 
-            set
-            {
-                Parameters["colorEnabled"].SetValue(value ? 1 : 0);
-            }
+            set => Parameters["colorEnabled"].SetValue(value ? 1 : 0);
         }
 
         #endregion

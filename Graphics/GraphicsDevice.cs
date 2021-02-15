@@ -617,7 +617,7 @@ namespace engenious.Graphics
         /// </summary>
         public RasterizerState? RasterizerState
         {
-            get { return _rasterizerState; }
+            get => _rasterizerState;
             set
             {
                 if (_rasterizerState != value)

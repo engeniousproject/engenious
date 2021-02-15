@@ -75,6 +75,6 @@ namespace engenious
         /// <summary>
         /// Gets a representation of native surface handle for this <see cref="IRenderingSurface"/>.
         /// </summary>
-        INativeWindow? WindowInfo { get; }
+        IWindowWrapper? WindowInfo { get; }
     }
 }

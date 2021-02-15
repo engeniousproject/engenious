@@ -41,11 +41,7 @@ namespace engenious.Graphics
 		/// Gets an element in the collection by using an index value.
 		/// </summary>
 		/// <param name="index">The element index.</param>
-		public EffectPassParameter this [int index] { 
-			get {
-				return _parameterList [index];
-			} 
-		}
+		public EffectPassParameter this [int index] => _parameterList [index];
 
 		/// <summary>
 		/// Gets an element in the collection by using a name.

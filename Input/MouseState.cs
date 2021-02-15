@@ -56,7 +56,7 @@ namespace engenious.Input
         /// <returns>True if key is pressed; false otherwise.</returns>
         public bool this [MouseButton button]
         {
-            get { return IsButtonDown(button); }
+            get => IsButtonDown(button);
             internal set
             {
                 if (value)
@@ -88,18 +88,12 @@ namespace engenious.Input
         /// Gets the absolute wheel position in integer units.
         /// To support high-precision mice, it is recommended to use <see cref="WheelPrecise"/> instead.
         /// </summary>
-        public int Wheel
-        {
-            get { return (int)(_scroll.Y*WheelDelta); }
-        }
+        public int Wheel => (int)(_scroll.Y*WheelDelta);
 
         /// <summary>
         /// Gets the absolute wheel position in floating-point units.
         /// </summary>
-        public float WheelPrecise
-        {
-            get { return _scroll.Y; }
-        }
+        public float WheelPrecise => _scroll.Y;
 
         /// <summary>
         /// Gets a <see cref="MouseScroll"/> instance,
@@ -107,8 +101,8 @@ namespace engenious.Input
         /// </summary>
         public MouseScroll Scroll
         {
-            get { return _scroll; }
-            internal set{_scroll = value;}
+            get => _scroll;
+            internal set => _scroll = value;
         }
 
         /// <summary>
@@ -116,8 +110,8 @@ namespace engenious.Input
         /// </summary>
         public int X
         {
-            get { return (int)Math.Round(_position.X); }
-            internal set { _position.X = value; }
+            get => (int)Math.Round(_position.X);
+            internal set => _position.X = value;
         }
 
         /// <summary>
@@ -125,8 +119,8 @@ namespace engenious.Input
         /// </summary>
         public int Y
         {
-            get { return (int)Math.Round(_position.Y); }
-            internal set { _position.Y = value; }
+            get => (int)Math.Round(_position.Y);
+            internal set => _position.Y = value;
         }
         /// <summary>
         /// Gets an integer representing the absolute x,y position of the pointer, in BaseWindow pixel coordinates.
@@ -137,68 +131,45 @@ namespace engenious.Input
         /// Gets a <see cref="System.Boolean"/> indicating whether the left mouse button is pressed.
         /// This property is intended for XNA compatibility.
         /// </summary>
-        public ButtonState LeftButton
-        {
-            get { return IsButtonDown(MouseButton.Left) ? ButtonState.Pressed : ButtonState.Released; }
-        }
+        public ButtonState LeftButton => IsButtonDown(MouseButton.Left) ? ButtonState.Pressed : ButtonState.Released;
 
         /// <summary>
         /// Gets a <see cref="System.Boolean"/> indicating whether the middle mouse button is pressed.
         /// This property is intended for XNA compatibility.
         /// </summary>
-        public ButtonState MiddleButton
-        {
-            get { return IsButtonDown(MouseButton.Middle) ? ButtonState.Pressed : ButtonState.Released; }
-        }
+        public ButtonState MiddleButton => IsButtonDown(MouseButton.Middle) ? ButtonState.Pressed : ButtonState.Released;
 
         /// <summary>
         /// Gets a <see cref="System.Boolean"/> indicating whether the right mouse button is pressed.
         /// This property is intended for XNA compatibility.
         /// </summary>
-        public ButtonState RightButton
-        {
-            get { return IsButtonDown(MouseButton.Right) ? ButtonState.Pressed : ButtonState.Released; }
-        }
+        public ButtonState RightButton => IsButtonDown(MouseButton.Right) ? ButtonState.Pressed : ButtonState.Released;
 
         /// <summary>
         /// Gets a <see cref="System.Boolean"/> indicating whether the first extra mouse button is pressed.
         /// This property is intended for XNA compatibility.
         /// </summary>
-        public ButtonState XButton1
-        {
-            get { return IsButtonDown(MouseButton.Button1) ? ButtonState.Pressed : ButtonState.Released; }
-        }
+        public ButtonState XButton1 => IsButtonDown(MouseButton.Button1) ? ButtonState.Pressed : ButtonState.Released;
 
         /// <summary>
         /// Gets a <see cref="System.Boolean"/> indicating whether the second extra mouse button is pressed.
         /// This property is intended for XNA compatibility.
         /// </summary>
-        public ButtonState XButton2
-        {
-            get { return IsButtonDown(MouseButton.Button2) ? ButtonState.Pressed : ButtonState.Released; }
-        }
+        public ButtonState XButton2 => IsButtonDown(MouseButton.Button2) ? ButtonState.Pressed : ButtonState.Released;
 
         /// <summary>
         /// Gets a value indicating whether any button is down.
         /// </summary>
         /// <value><c>true</c> if any button is down; otherwise, <c>false</c>.</value>
-        public bool IsAnyButtonDown
-        {
-            get
-            {
-                // If any bit is set then a button is down.
-                return _buttons != 0;
-            }
-        }
+        public bool IsAnyButtonDown =>
+            // If any bit is set then a button is down.
+            _buttons != 0;
 
         /// <summary>
         /// Gets the absolute wheel position in integer units. This property is intended for XNA compatibility.
         /// To support high-precision mice, it is recommended to use <see cref="WheelPrecise"/> instead.
         /// </summary>
-        public int ScrollWheelValue
-        {
-            get { return Wheel; }
-        }
+        public int ScrollWheelValue => Wheel;
 
         /// <summary>
         /// Gets a value indicating whether this instance is connected.
@@ -206,8 +177,8 @@ namespace engenious.Input
         /// <value><c>true</c> if this instance is connected; otherwise, <c>false</c>.</value>
         public bool IsConnected
         {
-            get { return _isConnected; }
-            internal set { _isConnected = value; }
+            get => _isConnected;
+            internal set => _isConnected = value;
         }
 
         /// <summary>
@@ -285,8 +256,8 @@ namespace engenious.Input
 
         internal Vector2 Position
         {
-            get { return _position; }
-            set { _position = value; }
+            get => _position;
+            set => _position = value;
         }
 
         internal bool ReadBit(int offset)
