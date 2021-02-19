@@ -136,6 +136,11 @@ namespace engenious.Graphics
             //TODO: samplerstate
         }
 
+        internal void RemoveFromUiThread()
+        {
+            Context.MakeNoneCurrent();
+        }
+
         internal void SwitchUiThread()
         {
             _graphicsThread = Thread.CurrentThread;
