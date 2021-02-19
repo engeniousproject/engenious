@@ -224,6 +224,12 @@ namespace engenious.Graphics
         /// Gets the <see cref="RasterizerState"/> associated with this pass.
         /// </summary>
         public RasterizerState? RasterizerState{ get; internal set; }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }
 

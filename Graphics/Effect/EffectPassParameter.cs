@@ -370,5 +370,11 @@ namespace engenious.Graphics
         {
             GL.UniformBlockBinding(Pass.Program, Location, value.Ubo);
         }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }
