@@ -16,6 +16,8 @@ namespace engenious.Graphics
         private readonly IGraphicsContext _context;
         private readonly GlSynchronizationContext _sync;
 
+        private readonly bool _isIndependentThread;
+
         private readonly Thread _thread;
         private CancellationTokenSource CancellationTokenSource { get; }
         private readonly CancellationToken _cancellationToken;
@@ -68,6 +70,7 @@ namespace engenious.Graphics
         {
             _cancellationToken.Register(() => _sync.CancelWait());
             _thread = new Thread(ThreadQueueLoop);
+            _isIndependentThread = true;
 
             _thread.Start();
         }
@@ -153,7 +156,8 @@ namespace engenious.Graphics
             var token = CancellationTokenSource.Token;
             var cancellation = token.WaitHandle;
             CancellationTokenSource.Cancel();
-            cancellation.WaitOne();
+            if (_isIndependentThread)
+                _thread.Join();
             CancellationTokenSource.Dispose();
             _windowInfo.Dispose();
         }
