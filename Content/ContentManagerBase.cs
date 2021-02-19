@@ -27,10 +27,8 @@ namespace engenious.Content
         /// Initializes a new instance of the <see cref="ContentManagerBase"/> class.
         /// </summary>
         /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> to use.</param>
-        /// <param name="rootDirectory">The root directory to load content files from.</param>
-        public ContentManagerBase(GraphicsDevice graphicsDevice, string rootDirectory)
+        public ContentManagerBase(GraphicsDevice graphicsDevice)
         {
-            RootDirectory = rootDirectory;
             GraphicsDevice = graphicsDevice;
             _typeReaders = new Dictionary<string, IContentTypeReader>();
             _typeReadersOutput = new Dictionary<string, IContentTypeReader>();
@@ -89,7 +87,7 @@ namespace engenious.Content
         /// <summary>
         /// Gets or sets the root directory.
         /// </summary>
-        public string RootDirectory{ get; set; }
+        public abstract string RootDirectory{ get; set; }
 
         /// <summary>
         /// Unloads an asset by name.

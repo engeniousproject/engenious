@@ -58,7 +58,6 @@ namespace engenious
         /// <param name="matrix">Rotation <see cref="Matrix"/> to convert to a <see cref="Quaternion"/>.</param>
         public Quaternion(Matrix matrix)
         {
-            //matrix.Transpose();
             var tr = matrix.M11 + matrix.M22 + matrix.M33;
 
             if (tr > 0)
@@ -93,6 +92,49 @@ namespace engenious
                 Y = (matrix.M23 + matrix.M32) / s;
                 Z = 0.25f * s;
             }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Quaternion"/> struct.
+        /// <remarks>(X, Y, Z) corresponds to (Roll, Pitch, Yaw)</remarks>
+        /// </summary>
+        /// <param name="eulerAngles">The euler angles to convert to a <see cref="Quaternion"/>.</param>
+        public Quaternion(Vector3 eulerAngles)
+        {
+            float cy = MathF.Cos(eulerAngles.Z * 0.5f);
+            float sy = MathF.Sin(eulerAngles.Z * 0.5f);
+            float cp = MathF.Cos(eulerAngles.Y * 0.5f);
+            float sp = MathF.Sin(eulerAngles.Y * 0.5f);
+            float cr = MathF.Cos(eulerAngles.X * 0.5f);
+            float sr = MathF.Sin(eulerAngles.X * 0.5f);
+
+            W = cr * cp * cy + sr * sp * sy;
+            X = sr * cp * cy - cr * sp * sy;
+            Y = cr * sp * cy + sr * cp * sy;
+            Z = cr * cp * sy - sr * sp * cy;
+        }
+
+        /// <summary>
+        /// Converts the <see cref="Quaternion"/> rotation to euler angles.
+        /// <remarks>(X, Y, Z) corresponds to (Roll, Pitch, Yaw)</remarks>
+        /// </summary>
+        /// <returns>The euler rotation angles.</returns>
+        public Vector3 ToEulerAngles()
+        {
+            Vector3 angles = default;
+
+            float sinRCosP = 2 * (this.W * this.X + this.Y * this.Z);
+            float cosRCosP = 1 - 2 * (this.X * this.X + this.Y * this.Y);
+            angles.X = MathF.Atan2(sinRCosP, cosRCosP);
+
+            float sinP = 2 * (this.W * this.Y - this.Z * this.X);
+            angles.Y = MathF.Abs(sinP) >= 1 ? MathF.CopySign(MathF.PI / 2, sinP) : MathF.Asin(sinP);
+
+            float sinYCosP = 2 * (this.W * this.Z + this.X * this.Y);
+            float cosYCosP = 1 - 2 * (this.Y * this.Y + this.Z * this.Z);
+            angles.Z = MathF.Atan2(sinYCosP, cosYCosP);
+
+            return angles;
         }
 
         /// <summary>

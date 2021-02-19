@@ -17,13 +17,14 @@ namespace engenious.Content
             return dirName == null ? Path.GetFullPath("Content") : Path.Combine(dirName, "Content");
         }
         /// <inheritdoc />
-        public FileContentManager(GraphicsDevice graphicsDevice) : base(graphicsDevice, GetDefaultDirectory())
+        public FileContentManager(GraphicsDevice graphicsDevice) : this(graphicsDevice, GetDefaultDirectory())
         {
         }
 
         /// <inheritdoc />
-        public FileContentManager(GraphicsDevice graphicsDevice, string rootDirectory) : base(graphicsDevice, rootDirectory)
+        public FileContentManager(GraphicsDevice graphicsDevice, string rootDirectory) : base(graphicsDevice)
         {
+            RootDirectory = rootDirectory;
         }
 
         private static string UriToPath(Uri uri)
@@ -32,6 +33,9 @@ namespace engenious.Content
                 throw new ArgumentException("Invalid uri for this content manager type.");
             return uri.AbsolutePath.Substring(1);
         }
+
+        /// <inheritdoc />
+        public sealed override string RootDirectory { get; set; }
 
         /// <inheritdoc />
         public override IEnumerable<string> ListContent(Uri path, bool recursive = false) =>

@@ -44,9 +44,7 @@
         /// <returns>The resulting transformation <see cref="Matrix"/>.</returns>
         public Matrix ToMatrix()
         {
-            var res = Matrix.CreateScaling(Scale) * Matrix.CreateTranslation(Location) *  Matrix.CreateFromQuaternion(Rotation.X, Rotation.Y, Rotation.Z, Rotation.W);
-            //res *= ;
-            // res *= Matrix.CreateScaling(Scale);
+            var res = Matrix.CreateScaling(Scale) * Matrix.CreateTranslation(Location) * Matrix.CreateFromQuaternion(Rotation.X, Rotation.Y, Rotation.Z, Rotation.W);
             // res.M11 *= Scale.X;
             // res.M12 *= Scale.X;
             // res.M13 *= Scale.X;

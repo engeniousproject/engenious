@@ -185,13 +185,39 @@ namespace engenious
         /// </summary>
         public Vector3 Translation
         {
-            get => new Vector3(M41, M42, M43);
+            get => new Vector3(M14, M24, M34);
             set
             {
                 M14 = value.X;
                 M24 = value.Y;
                 M34 = value.Z;
             }
+        }
+
+        /// <summary>
+        /// Gets or sets the scaling vector of the <see cref="Matrix"/>.
+        /// </summary>
+        public Vector3 Scaling
+        {
+            get
+            {
+                var (_, scaling, _) = this;
+                return scaling;
+            }
+            set => throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Gets or sets the rotation vector as euler angles of the <see cref="Matrix"/>.
+        /// </summary>
+        public Vector3 Rotation
+        {
+            get
+            {
+                var (_, _, rot) = this;
+                return rot.ToEulerAngles();
+            }
+            set => throw new NotImplementedException();
         }
 
         /// <summary>
@@ -326,6 +352,139 @@ namespace engenious
                               M31, M32, M33, M34,
                               M41, M42, M43, M44);
         }
+
+        private static Vector3 ToVec3(Vector4 vector4)
+        {
+            return new Vector3(vector4.X, vector4.Y, vector4.Z);
+        }
+        /// <summary>
+        /// Deconstructs the transformation matrix into translation scaling and quaternion rotation.
+        /// </summary>
+        /// <param name="translation">The extracted translation vector.</param>
+        /// <param name="scale">The extracted scaling vector.</param>
+        /// <param name="rotation">The extracted quaternion rotation.</param>
+        public void Deconstruct(out Vector3 translation, out Vector3 scale, out Quaternion rotation)
+        {
+            var tmp = this;
+            translation = tmp.Translation;
+            
+            tmp.Translation = Vector3.Zero;
+
+            scale = new Vector3
+            (
+                ToVec3(tmp.Column0).Length,
+                ToVec3(tmp.Column1).Length,
+                ToVec3(tmp.Column2).Length
+            );
+
+            tmp.Column0 = new Vector4(tmp.Column0.X / scale.X, tmp.Column0.Y / scale.X, tmp.Column0.Z / scale.X, tmp.Column0.W);
+            tmp.Column1 = new Vector4(tmp.Column1.X / scale.Y, tmp.Column1.Y / scale.Y, tmp.Column1.Z / scale.Y, tmp.Column1.W);
+            tmp.Column2 = new Vector4(tmp.Column2.X / scale.Z, tmp.Column2.Y / scale.Z, tmp.Column2.Z / scale.Z, tmp.Column2.W);
+
+            var q = new Quaternion(tmp);
+
+            rotation = q;
+        }
+        /// <summary>
+        /// Decomposes the transformation matrix into translation scaling and euler rotation.
+        /// </summary>
+        /// <param name="translation">The extracted translation vector.</param>
+        /// <param name="scale">The extracted scaling vector.</param>
+        /// <param name="rotation">The extracted euler rotation angles.</param>
+        public void Decompose(out Vector3 translation, out Vector3 scale, out Vector3 rotation)
+        {
+            var (tr, sc, quatRotation) = this;
+            translation = tr;
+            scale = sc;
+            rotation = quatRotation.ToEulerAngles();
+        }
+
+        /// <summary>
+        /// Gets a single row vector at a given row position.
+        /// </summary>
+        /// <param name="rowIndex">The row to get.</param>
+        /// <returns>The row vector.</returns>
+        public Vector4 GetRow(int rowIndex)
+        {
+            return rowIndex switch
+            {
+                0 => Row0,
+                1 => Row1,
+                2 => Row2,
+                3 => Row3,
+                _ => throw new ArgumentOutOfRangeException(nameof(rowIndex))
+            };
+        }
+        
+        /// <summary>
+        /// Sets a single row vector at a given row position.
+        /// </summary>
+        /// <param name="rowIndex">The row to set.</param>
+        /// <param name="value">The new row vector values.</param>
+        public void SetRow(int rowIndex, Vector4 value)
+        {
+            switch (rowIndex)
+            {
+                case 0:
+                    Row0 = value;
+                    break;
+                case 1:
+                    Row1 = value;
+                    break;
+                case 2:
+                    Row2 = value;
+                    break;
+                case 3:
+                    Row3 = value;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(rowIndex));
+            }
+        }
+
+        /// <summary>
+        /// Gets a single column vector at a given column position.
+        /// </summary>
+        /// <param name="columnIndex">The column to get.</param>
+        /// <returns>The column vector.</returns>
+        public Vector4 GetColumn(int columnIndex)
+        {
+            return columnIndex switch
+            {
+                0 => Column0,
+                1 => Column1,
+                2 => Column2,
+                3 => Column3,
+                _ => throw new ArgumentOutOfRangeException(nameof(columnIndex))
+            };
+        }
+        
+        /// <summary>
+        /// Sets a single column vector at a given column position.
+        /// </summary>
+        /// <param name="columnIndex">The column to set.</param>
+        /// <param name="value">The new column vector values.</param>
+        public void SetColumn(int columnIndex, Vector4 value)
+        {
+            switch (columnIndex)
+            {
+                case 0:
+                    Column0 = value;
+                    break;
+                case 1:
+                    Column1 = value;
+                    break;
+                case 2:
+                    Column2 = value;
+                    break;
+                case 3:
+                    Column3 = value;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(columnIndex));
+            }
+        }
+
 
         /// <inheritdoc />
         public override int GetHashCode()
@@ -748,8 +907,8 @@ namespace engenious
         {
             var ret = Identity;
             ret.M22 = ret.M33 = (float)Math.Cos(rot);
-            ret.M23 = (float)Math.Sin(rot);
-            ret.M32 = -ret.M23;
+            ret.M32 = MathF.Sin(rot);
+            ret.M23 = -ret.M32;
             return ret;
         }
 
@@ -762,8 +921,8 @@ namespace engenious
         {
             var ret = Identity;
             ret.M11 = ret.M33 = (float)Math.Cos(rot);
-            ret.M31 = (float)Math.Sin(rot);
-            ret.M13 = -ret.M31;
+            ret.M13 = (float)Math.Sin(rot);
+            ret.M31 = -ret.M13;
             return ret;
         }
 

@@ -9,12 +9,17 @@ namespace engenious.Content
     {
         private readonly Dictionary<string, ContentManagerBase> _contentManagers;
         private readonly ContentManagerBase _fallbackContentManager;
+        private string _rootDirectory;
+
         /// <inheritdoc />
-        public AggregateContentManager(GraphicsDevice graphicsDevice, string rootDirectory) : base(graphicsDevice, rootDirectory)
+        public AggregateContentManager(GraphicsDevice graphicsDevice, string rootDirectory) : base(graphicsDevice)
         {
             _contentManagers = new Dictionary<string, ContentManagerBase>();
-            _fallbackContentManager = new ResourceContentManager(graphicsDevice, rootDirectory);
-            AddContentManager("file", new FileContentManager(graphicsDevice, rootDirectory));
+            _fallbackContentManager = new ResourceContentManager(graphicsDevice);
+            AddContentManager("file", new FileContentManager(graphicsDevice));
+
+            _rootDirectory = null!;
+            RootDirectory = rootDirectory;
         }
 
         /// <summary>
@@ -40,6 +45,20 @@ namespace engenious.Content
         private ContentManagerBase GetContentManager(Uri uri)
         {
             return GetContentManager(uri.Scheme);
+        }
+
+
+        /// <inheritdoc />
+        public sealed override string RootDirectory
+        {
+            get => _rootDirectory;
+            set
+            {
+                _rootDirectory = value;
+                foreach (var (name, c) in _contentManagers)
+                    c.RootDirectory = value;
+                _fallbackContentManager.RootDirectory = value;
+            }
         }
 
         /// <inheritdoc />

@@ -12,9 +12,10 @@ namespace engenious.Content
     public class ResourceContentManager : ContentManagerBase
     {
         /// <inheritdoc />
-        public ResourceContentManager(GraphicsDevice graphicsDevice, string rootDirectory)
-            : base(graphicsDevice, rootDirectory)
+        public ResourceContentManager(GraphicsDevice graphicsDevice)
+            : base(graphicsDevice)
         {
+            RootDirectory = string.Empty;
         }
 
         private Assembly? GetAssembly(Uri path)
@@ -72,7 +73,10 @@ namespace engenious.Content
 
                             });
         }
-        
+
+        /// <inheritdoc />
+        public sealed override string RootDirectory { get; set; }
+
         /// <inheritdoc />
         public override IEnumerable<string> ListContent(Uri path, bool recursive = false)
         {

@@ -186,7 +186,7 @@ namespace engenious.Graphics
         /// Sets the value of this parameter.
         /// </summary>
         /// <param name="value">The value to set the parameter to.</param>
-        public void SetValue(Texture value)
+        public void SetValue(Texture? value)
         {
             GraphicsDevice.ValidateUiGraphicsThread();
             foreach (var param in _parameters)
