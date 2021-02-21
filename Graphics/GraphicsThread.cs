@@ -69,7 +69,7 @@ namespace engenious.Graphics
             : this(windowInfo, windowInfo.Context, null!)
         {
             _cancellationToken.Register(() => _sync.CancelWait());
-            _thread = new Thread(ThreadQueueLoop);
+            _thread = new Thread(ThreadQueueLoop){IsBackground = true};
             _isIndependentThread = true;
 
             _thread.Start();

@@ -91,19 +91,17 @@ namespace engenious.Graphics
         /// Renders the model using a given custom model effect, as well as a texture.
         /// </summary>
         /// <param name="effect">The model effect to use for rendering.</param>
-        /// <param name="text">The texture to use for rendering.</param>
-        public void Draw(IModelEffect effect, Texture2D text)
+        public void Draw(IModelEffect effect)
         {
             if (RootNode == null)
                 return;
-            DrawNode(RootNode, effect, text);
+            DrawNode(RootNode, effect);
         }
 
-        internal void DrawNode(Node node, IModelEffect effect, Texture2D text)
+        internal void DrawNode(Node node, IModelEffect effect)
         {
             if (node.Meshes.Count == 0 && node.Children.Count == 0)
                 return;
-            effect.Texture = text;
 
             if (effect.CurrentTechnique == null)
                 throw new ArgumentException("The effect has no technique selected", nameof(effect));
@@ -121,7 +119,7 @@ namespace engenious.Graphics
                 }
 
                 foreach (var child in node.Children)
-                    DrawNode(child, effect, text);
+                    DrawNode(child, effect);
             }
         }
     }

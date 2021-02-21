@@ -1,6 +1,7 @@
 ﻿using System;
 using OpenTK.Graphics.OpenGL;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace engenious.Graphics
 {
@@ -39,7 +40,7 @@ namespace engenious.Graphics
             /// </summary>
             public void Acquire()
             {
-                _refCount++;
+                Interlocked.Increment(ref _refCount);
             }
 
             /// <summary>
@@ -47,7 +48,7 @@ namespace engenious.Graphics
             /// </summary>
             public void Release()
             {
-                _refCount--;
+                var refCount = Interlocked.Decrement(ref _refCount);
                 if (_refCount == 0)
                 {
                     _collection[Slot] = null;

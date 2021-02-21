@@ -149,6 +149,7 @@ namespace engenious.Graphics
             _currentTextureSlotReferene?.Release();
             if (value == null)
             {
+                _currentTextureSlotReferene = null;
                 using (Pass.Apply())
                     GL.Uniform1(Location, 0);
                 return;
