@@ -1,21 +1,20 @@
-﻿using engenious.Helper;
-
 namespace engenious.Graphics
 {
+    
     /// <summary>
-    /// A universal basic effect implementation.
+    /// A sdf font effect implementation.
     /// </summary>
-    public class BasicEffect : Effect,IModelEffect
+    public class MsdfEffect : Effect,IModelEffect
     {
         private const string VertexShader =
             @"
-#if __VERSION__ >= 300
-
 in vec3 position;
 in vec4 color;
 in vec2 textureCoordinate;
+in vec2 texSize;
 out vec4 psColor;
 out vec2 psTexCoord;
+flat out vec2 psTexSize;
 
 uniform mat4 World;
 uniform mat4 View;
@@ -26,65 +25,46 @@ void main(void)
    gl_Position = Proj*(View*(World*vec4(position, 1.0)));
    psColor = color;
    psTexCoord = textureCoordinate;
+   psTexSize = texSize;
 }
-#else
-attribute vec3 position;
-attribute vec4 color;
-attribute vec2 textureCoordinate;
-varying vec4 psColor;
-varying vec2 psTexCoord;
-
-uniform mat4 World;
-uniform mat4 View;
-uniform mat4 Proj;
-void main(void)
-{
-   gl_Position = Proj*(View*(World*vec4(position, 1.0)));
-   psColor = color;
-   psTexCoord = textureCoordinate;
-}
-#endif
 ";
         private const string PixelShader =
             @"
-#if __VERSION__ >= 300
 in vec4 psColor;
 in vec2 psTexCoord;
+flat in vec2 psTexSize;
 out vec4 outColor;
 uniform sampler2D text;
-uniform int textEnabled,colorEnabled;
+
+float median(float r, float g, float b) {
+    return max(min(r, g), min(max(r, g), b));
+}
 void main(void)
 {
-   outColor = vec4(1.0,1.0,1.0,1.0);
-   if (textEnabled == 1)
-     outColor = outColor * texture2D(text,psTexCoord);
-   if (colorEnabled == 1)
-     outColor = outColor * psColor;
-   
+    const float pxRange = 4;
+    const float _Cutoff = 0.55;
+    vec4 samplePoint = texture(text, psTexCoord);
+
+    float dist = (_Cutoff - median(samplePoint.r, samplePoint.g, samplePoint.b)) * pxRange;
+    
+    vec2 duv = fwidth(psTexCoord);
+    
+    float dtex = length(duv * vec2(textureSize(text, 0)));
+    
+    float pixelDist = dist * 2 / dtex;
+
+    outColor = psColor;
+    outColor.a *= clamp(0.9 - pixelDist, 0.0, 1.0);
+    //outColor.a = 1.0;
 }
-#else
-varying vec4 psColor;
-varying vec2 psTexCoord;
-uniform sampler2D text;
-uniform int textEnabled,colorEnabled;
-void main(void)
-{
-   gl_FragColor = vec4(1.0,1.0,1.0,1.0);
-   if (textEnabled == 1)
-     gl_FragColor = gl_FragColor * texture2D(text,psTexCoord);
-   if (colorEnabled == 1)
-     gl_FragColor = gl_FragColor * psColor;
-   
-}
-#endif
 ";
 
-        public class BasicTechnique : EffectTechnique, IModelTechnique
+        public class MsdfTechnique : EffectTechnique, IModelTechnique
         {
             private readonly GraphicsDevice _graphicsDevice;
 
             /// <inheritdoc />
-            protected internal BasicTechnique(GraphicsDevice graphicsDevice, string name) : base(name)
+            protected internal MsdfTechnique(GraphicsDevice graphicsDevice, string name) : base(name)
             {
                 _graphicsDevice = graphicsDevice;
             }
@@ -150,13 +130,13 @@ void main(void)
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BasicEffect"/> class.
+        /// Initializes a new instance of the <see cref="MsdfEffect"/> class.
         /// </summary>
         /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/>.</param>
-        public BasicEffect(GraphicsDevice graphicsDevice)
+        public MsdfEffect(GraphicsDevice graphicsDevice)
             : base(graphicsDevice)
         {
-            MainTechnique = new BasicTechnique(graphicsDevice, "Basic");
+            MultiSignedTechnique = new MsdfTechnique(graphicsDevice, "MtsdfTechnique");
 
             GraphicsDevice.ValidateUiGraphicsThread();
             Shader[] shaders = {
@@ -166,17 +146,18 @@ void main(void)
 
             foreach (var shader in shaders)
                 shader.Compile();
-            var pass = new EffectPass(graphicsDevice, "Basic");
+            var pass = new EffectPass(graphicsDevice, "MtsdfPass");
             pass.AttachShaders(shaders);
             pass.BindAttribute(VertexElementUsage.Color, "color");
             pass.BindAttribute(VertexElementUsage.TextureCoordinate, "textureCoordinate");
             pass.BindAttribute(VertexElementUsage.Position, "position");
+            pass.BindAttribute(VertexElementUsage.Normal, "texSize");
             pass.Link();
 
-            MainTechnique.Passes.Add(pass);
-            Techniques.Add(MainTechnique);
+            MultiSignedTechnique.Passes.Add(pass);
+            Techniques.Add(MultiSignedTechnique);
 
-            CurrentTechnique = MainTechnique;
+            CurrentTechnique = MultiSignedTechnique;
             
             Initialize();
 
@@ -187,54 +168,35 @@ void main(void)
 
         #region IEffectMatrices implementation
         
-        public BasicTechnique MainTechnique { get; }
+        public MsdfTechnique MultiSignedTechnique { get; }
 
         /// <inheritdoc />
         public Matrix Projection
         {
-            get => MainTechnique.Projection;
-            set => MainTechnique.Projection = value;
+            get => MultiSignedTechnique.Projection;
+            set => MultiSignedTechnique.Projection = value;
         }
 
         /// <inheritdoc />
         public Matrix View
         {
-            get => MainTechnique.View;
-            set => MainTechnique.View = value;
+            get => MultiSignedTechnique.View;
+            set => MultiSignedTechnique.View = value;
         }
 
         /// <inheritdoc />
         public Matrix World
         {
-            get => MainTechnique.World;
-            set => MainTechnique.World = value;
+            get => MultiSignedTechnique.World;
+            set => MultiSignedTechnique.World = value;
         }
 
         /// <inheritdoc />
         public Texture Texture
         {
-            set => MainTechnique.Texture = value;
+            set => MultiSignedTechnique.Texture = value;
         }
-
-        /// <summary>
-        /// Sets whether texture rendering is enabled.
-        /// </summary>
-        public bool TextureEnabled
-        {
-
-            set => Parameters["textEnabled"].SetValue(value ? 1 : 0);
-        }
-
-        /// <summary>
-        /// Sets whether vertex coloring is enabled.
-        /// </summary>
-        public bool VertexColorEnabled
-        {
-
-            set => Parameters["colorEnabled"].SetValue(value ? 1 : 0);
-        }
-
+        
         #endregion
     }
 }
-

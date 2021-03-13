@@ -31,6 +31,11 @@ namespace engenious.Content.Serialization
         }
 
         #endregion
+
+        /// <inheritdoc />
+        public RasterizerStateTypeReader() : base(0)
+        {
+        }
     }
 
     /// <summary>
@@ -72,6 +77,11 @@ namespace engenious.Content.Serialization
         }
 
         #endregion
+
+        /// <inheritdoc />
+        public DepthStencilStateTypeReader() : base(0)
+        {
+        }
     }
 
     /// <summary>
@@ -107,6 +117,11 @@ namespace engenious.Content.Serialization
         }
 
         #endregion
+
+        /// <inheritdoc />
+        public BlendStateTypeReader() : base(0)
+        {
+        }
     }
 }
 

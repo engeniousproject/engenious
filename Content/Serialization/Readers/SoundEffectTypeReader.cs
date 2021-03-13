@@ -15,5 +15,10 @@ namespace engenious.Content.Serialization
             var format = (SoundEffect.AudioFormat)reader.ReadByte();
             return new SoundEffect(reader.BaseStream, format);
         }
+
+        /// <inheritdoc />
+        public SoundEffectTypeReader() : base(0)
+        {
+        }
     }
 }

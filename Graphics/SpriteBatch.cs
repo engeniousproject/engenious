@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 
 namespace engenious.Graphics
@@ -65,7 +66,10 @@ namespace engenious.Graphics
         private IModelEffect _effect;
         private bool _useScreenSpace;
         private readonly BasicEffect _defaultEffect;
+        private readonly MsdfEffect _fontEffect;
         private readonly SpriteBatcher _batcher;
+        
+        private IModelTechnique CurrentTechnique => _effect.CurrentTechnique as IModelTechnique;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SpriteBatch"/> class.
@@ -83,6 +87,12 @@ namespace engenious.Graphics
             effect.Parameters["Proj"].SetValue(Matrix.Identity);
 
             _defaultEffect = effect;
+            
+            var fontEffect = new MsdfEffect(graphicsDevice);
+            fontEffect.View = Matrix.Identity;
+            fontEffect.Projection = Matrix.Identity;
+            _fontEffect = fontEffect;
+            
             _effect = effect;
         }
         
@@ -120,75 +130,82 @@ namespace engenious.Graphics
         /// <summary>
         /// Draws a texture sprite.
         /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters sprite with.</param>
         /// <param name="texture">The texture to draw.</param>
         /// <param name="destinationRectangle">The destination region to draw the texture at.</param>
         /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
-        public void Draw(Texture2D texture, Rectangle destinationRectangle, Color color)
+        public void Draw(IModelTechnique effectTechnique,Texture2D texture, Rectangle destinationRectangle, Color color)
         {
-            Draw(texture, destinationRectangle, null, color);
+            Draw(effectTechnique, texture, destinationRectangle, null, color);
         }
 
         /// <summary>
         /// Draws a texture sprite.
         /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters sprite with.</param>
         /// <param name="texture">The texture to draw.</param>
         /// <param name="destinationRectangle">The destination region to draw the texture at.</param>
         /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
-        public void Draw(Texture2D texture, RectangleF destinationRectangle, Color color)
+        public void Draw(IModelTechnique effectTechnique,Texture2D texture, RectangleF destinationRectangle, Color color)
         {
-            Draw(texture, destinationRectangle, null, color);
+            Draw(effectTechnique, texture, destinationRectangle, null, color);
         }
 
         /// <summary>
         /// Draws a texture sprite.
         /// </summary>
-        /// <param name="texture">The texture to draw.</param>
-        /// <param name="destinationRectangle">The destination region to draw the texture at.</param>
-        /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
-        /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
-        public void Draw(Texture2D texture, Rectangle destinationRectangle, Rectangle? sourceRectangle, Color color)
-        {
-            Draw(texture, new Vector2(destinationRectangle.X, destinationRectangle.Y), sourceRectangle, color, 0f, new Vector2(), new Vector2(destinationRectangle.Width, destinationRectangle.Height), SpriteEffects.None, 0.0f);
-        }
-
-        /// <summary>
-        /// Draws a texture sprite.
-        /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters sprite with.</param>
         /// <param name="texture">The texture to draw.</param>
         /// <param name="destinationRectangle">The destination region to draw the texture at.</param>
         /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
         /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
-        public void Draw(Texture2D texture, RectangleF destinationRectangle, Rectangle? sourceRectangle, Color color)
+        public void Draw(IModelTechnique effectTechnique,Texture2D texture, Rectangle destinationRectangle, Rectangle? sourceRectangle, Color color)
         {
-            Draw(texture, new Vector2(destinationRectangle.X, destinationRectangle.Y), sourceRectangle, color, 0f, new Vector2(), new Vector2(destinationRectangle.Width, destinationRectangle.Height), SpriteEffects.None, 0.0f);
+            Draw(effectTechnique, texture, new Vector2(destinationRectangle.X, destinationRectangle.Y), sourceRectangle, color, 0f, new Vector2(), new Vector2(destinationRectangle.Width, destinationRectangle.Height), SpriteEffects.None, 0.0f);
         }
 
         /// <summary>
         /// Draws a texture sprite.
         /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters sprite with.</param>
+        /// <param name="texture">The texture to draw.</param>
+        /// <param name="destinationRectangle">The destination region to draw the texture at.</param>
+        /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
+        /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
+        public void Draw(IModelTechnique effectTechnique,Texture2D texture, RectangleF destinationRectangle, Rectangle? sourceRectangle, Color color)
+        {
+            Draw(effectTechnique, texture, new Vector2(destinationRectangle.X, destinationRectangle.Y), sourceRectangle, color, 0f, new Vector2(), new Vector2(destinationRectangle.Width, destinationRectangle.Height), SpriteEffects.None, 0.0f);
+        }
+
+        /// <summary>
+        /// Draws a texture sprite.
+        /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters sprite with.</param>
         /// <param name="texture">The texture to draw.</param>
         /// <param name="position">The position to draw the texture at.</param>
         /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
-        public void Draw(Texture2D texture, Vector2 position, Color color)
+        public void Draw(IModelTechnique effectTechnique,Texture2D texture, Vector2 position, Color color)
         {
-            Draw(texture, position, null, color);
+            Draw(effectTechnique, texture, position, null, color);
         }
 
         /// <summary>
         /// Draws a texture sprite.
         /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters sprite with.</param>
         /// <param name="texture">The texture to draw.</param>
         /// <param name="position">The position to draw the texture at.</param>
         /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
         /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
-        public void Draw(Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color)
+        public void Draw(IModelTechnique effectTechnique,Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color)
         {
-            Draw(texture, position, sourceRectangle, color, 0, new Vector2(texture.Width / 2f, texture.Height / 2f), 1f, SpriteEffects.None);//TODO?
+            Draw(effectTechnique, texture, position, sourceRectangle, color, 0, new Vector2(texture.Width / 2f, texture.Height / 2f), 1f, SpriteEffects.None);//TODO?
         }
 
         /// <summary>
         /// Draws a texture sprite.
         /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters sprite with.</param>
         /// <param name="texture">The texture to draw.</param>
         /// <param name="position">The position to draw the texture at.</param>
         /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
@@ -198,14 +215,15 @@ namespace engenious.Graphics
         /// <param name="scale">The scale to draw the texture with.</param>
         /// <param name="effects">The sprite effects to be applied to the sprite.</param>
         /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
-        public void Draw(Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth = 0.0f)
+        public void Draw(IModelTechnique effectTechnique,Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth = 0.0f)
         {
-            Draw(texture, position, sourceRectangle, color, rotation, origin, new Vector2(scale * texture.Width, scale * texture.Height), effects, layerDepth);//TODO?
+            Draw(effectTechnique, texture, position, sourceRectangle, color, rotation, origin, new Vector2(scale * texture.Width, scale * texture.Height), effects, layerDepth);//TODO?
         }
 
         /// <summary>
         /// Draws a texture sprite.
         /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters sprite with.</param>
         /// <param name="texture">The texture to draw.</param>
         /// <param name="position">The position to draw the texture at.</param>
         /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
@@ -215,52 +233,55 @@ namespace engenious.Graphics
         /// <param name="size">The size to draw the texture with.</param>
         /// <param name="effects">The sprite effects to be applied to the sprite.</param>
         /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
-        public void Draw(Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteEffects effects, float layerDepth)
+        public void Draw(IModelTechnique effectTechnique,Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteEffects effects, float layerDepth)
         {
-            _batcher.AddBatch(SpriteBatcher.BatchPool.AquireBatch(texture, position, sourceRectangle, color, rotation, origin, size, effects, layerDepth, _sortMode));
+            _batcher.AddBatch(SpriteBatcher.BatchPool.AquireBatch(effectTechnique,  texture, position, sourceRectangle, color, rotation, origin, size, effects, layerDepth, _sortMode));
         }
 
         /// <summary>
         /// Draws a texture sprite.
         /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters sprite with.</param>
         /// <param name="texture">The texture to draw.</param>
         /// <param name="destinationRectangle">The destination region to draw the texture at.</param>
         /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
         /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
-        public void Draw(Texture2D texture, Rectangle destinationRectangle, RectangleF sourceRectangle, Color color)
+        public void Draw(IModelTechnique effectTechnique,Texture2D texture, Rectangle destinationRectangle, RectangleF sourceRectangle, Color color)
         {
-            //TODO
-            Draw(texture, new Vector2(destinationRectangle.X, destinationRectangle.Y), sourceRectangle, color, 0f, new Vector2(), new Vector2(destinationRectangle.Width, destinationRectangle.Height), SpriteEffects.None, 0.0f);
+            Draw(effectTechnique, texture, new Vector2(destinationRectangle.X, destinationRectangle.Y), sourceRectangle, color, 0f, new Vector2(), new Vector2(destinationRectangle.Width, destinationRectangle.Height), SpriteEffects.None, 0.0f);
         }
 
         /// <summary>
         /// Draws a texture sprite.
         /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters sprite with.</param>
         /// <param name="texture">The texture to draw.</param>
         /// <param name="destinationRectangle">The destination region to draw the texture at.</param>
         /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
         /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
-        public void Draw(Texture2D texture, RectangleF destinationRectangle, RectangleF sourceRectangle, Color color)
+        public void Draw(IModelTechnique effectTechnique,Texture2D texture, RectangleF destinationRectangle, RectangleF sourceRectangle, Color color)
         {
             //TODO
-            Draw(texture, new Vector2(destinationRectangle.X, destinationRectangle.Y), sourceRectangle, color, 0f, new Vector2(), new Vector2(destinationRectangle.Width, destinationRectangle.Height), SpriteEffects.None, 0.0f);
+            Draw(effectTechnique, texture, new Vector2(destinationRectangle.X, destinationRectangle.Y), sourceRectangle, color, 0f, new Vector2(), new Vector2(destinationRectangle.Width, destinationRectangle.Height), SpriteEffects.None, 0.0f);
         }
 
         /// <summary>
         /// Draws a texture sprite.
         /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters sprite with.</param>
         /// <param name="texture">The texture to draw.</param>
         /// <param name="position">The position to draw the texture at.</param>
         /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
         /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
-        public void Draw(Texture2D texture, Vector2 position, RectangleF sourceRectangle, Color color)
+        public void Draw(IModelTechnique effectTechnique,Texture2D texture, Vector2 position, RectangleF sourceRectangle, Color color)
         {
-            Draw(texture, position, sourceRectangle, color, 0, new Vector2(texture.Width / 2f, texture.Height / 2f), 1f, SpriteEffects.None);//TODO?
+            Draw(effectTechnique, texture, position, sourceRectangle, color, 0, new Vector2(texture.Width / 2f, texture.Height / 2f), 1f, SpriteEffects.None);//TODO?
         }
 
         /// <summary>
         /// Draws a texture sprite.
         /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters sprite with.</param>
         /// <param name="texture">The texture to draw.</param>
         /// <param name="position">The position to draw the texture at.</param>
         /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
@@ -270,14 +291,15 @@ namespace engenious.Graphics
         /// <param name="scale">The scale to draw the texture with.</param>
         /// <param name="effects">The sprite effects to be applied to the sprite.</param>
         /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
-        public void Draw(Texture2D texture, Vector2 position, RectangleF sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth = 0.0f)
+        public void Draw(IModelTechnique effectTechnique,Texture2D texture, Vector2 position, RectangleF sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth = 0.0f)
         {
-            Draw(texture, position, sourceRectangle, color, rotation, origin, new Vector2(scale * texture.Width, scale * texture.Height), effects, layerDepth);//TODO?
+            Draw(effectTechnique, texture, position, sourceRectangle, color, rotation, origin, new Vector2(scale * texture.Width, scale * texture.Height), effects, layerDepth);//TODO?
         }
         
         /// <summary>
         /// Draws a texture sprite.
         /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters sprite with.</param>
         /// <param name="texture">The texture to draw.</param>
         /// <param name="position">The position to draw the texture at.</param>
         /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
@@ -287,14 +309,15 @@ namespace engenious.Graphics
         /// <param name="size">The size to draw the texture with.</param>
         /// <param name="effects">The sprite effects to be applied to the sprite.</param>
         /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
-        public void Draw(Texture2D texture, Vector2 position, RectangleF sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteEffects effects, float layerDepth)
+        public void Draw(IModelTechnique effectTechnique,Texture2D texture, Vector2 position, RectangleF sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteEffects effects, float layerDepth)
         {
-            _batcher.AddBatch(SpriteBatcher.BatchPool.AquireBatch(texture, position, sourceRectangle, color, rotation, origin, size, effects, layerDepth, _sortMode));
+            _batcher.AddBatch(SpriteBatcher.BatchPool.AquireBatch(effectTechnique, texture, position, sourceRectangle, color, rotation, origin, size, effects, layerDepth, _sortMode));
         }
 
         /// <summary>
         /// Draws text using a given <see cref="SpriteFont"/>.
         /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters with.</param>
         /// <param name="spriteFont">The sprite font to use to draw the characters.</param>
         /// <param name="text">The text to draw.</param>
         /// <param name="position">The position to draw the text at.</param>
@@ -304,14 +327,15 @@ namespace engenious.Graphics
         /// <param name="scale">The scale to draw the text with.</param>
         /// <param name="effects">The sprite effects to be applied to the sprite.</param>
         /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
-        public void DrawString(SpriteFont spriteFont, StringBuilder text, Vector2 position, Color color, float rotation = 0.0f, Vector2 origin = new Vector2(), float scale = 1.0f, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
+        public void DrawString(IModelTechnique effectTechnique,SpriteFont spriteFont, StringBuilder text, Vector2 position, Color color, float rotation = 0.0f, Vector2 origin = new Vector2(), float scale = 1.0f, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
         {
-            DrawString(spriteFont, text, position, color, rotation, origin, new Vector2(scale, scale), effects, layerDepth);
+            DrawString(effectTechnique, spriteFont, text, position, color, rotation, origin, new Vector2(scale, scale), effects, layerDepth);
         }
 
         /// <summary>
         /// Draws text using a given <see cref="SpriteFont"/>.
         /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters with.</param>
         /// <param name="spriteFont">The sprite font to use to draw the characters.</param>
         /// <param name="text">The text to draw.</param>
         /// <param name="position">The position to draw the text at.</param>
@@ -321,7 +345,7 @@ namespace engenious.Graphics
         /// <param name="scale">The scale to draw the text with.</param>
         /// <param name="effects">The sprite effects to be applied to the sprite.</param>
         /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
-        public void DrawString(SpriteFont spriteFont, StringBuilder text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
+        public void DrawString(IModelTechnique effectTechnique,SpriteFont spriteFont, StringBuilder text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
         {
             var offset = new Vector2(0.0f, 0.0f);
             for (var i = 0; i < text.Length; i++)
@@ -344,7 +368,7 @@ namespace engenious.Graphics
                 if (fontChar == null)
                     continue;
                 
-                Draw(spriteFont.Texture, position + offset + fontChar.Offset, fontChar.TextureRegion, color, rotation, origin - offset, 1.0f, SpriteEffects.None, layerDepth);
+                Draw(effectTechnique, spriteFont.Texture, position + offset + fontChar.Offset, fontChar.TextureRegion, color, rotation, origin - offset, 1.0f, SpriteEffects.None, layerDepth);
                 offset.X += fontChar.Advance;
                 if (i < text.Length - 1)
                 {
@@ -353,6 +377,323 @@ namespace engenious.Graphics
                 }
             }
         }
+
+        /// <summary>
+        /// Draws text using a given <see cref="SpriteFont"/>.
+        /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters with.</param>
+        /// <param name="spriteFont">The sprite font to use to draw the characters.</param>
+        /// <param name="text">The text to draw.</param>
+        /// <param name="startIndex">The index to start drawing the text from.</param>
+        /// <param name="length">The length of characters to draw from the text.</param>
+        /// <param name="position">The position to draw the text at.</param>
+        /// <param name="color">The color to draw the text with.</param>
+        /// <param name="rotation">The rotation of the text in radians.</param>
+        /// <param name="origin">The origin point to rotate the text at.</param>
+        /// <param name="scale">The scale to draw the text with.</param>
+        /// <param name="effects">The sprite effects to be applied to the sprite.</param>
+        /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
+        public void DrawString(IModelTechnique effectTechnique,SpriteFont spriteFont, string text, int startIndex, int length, Vector2 position, Color color, float rotation = 0.0f, Vector2 origin = new Vector2(), float scale = 1.0f, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
+        {
+            DrawString(effectTechnique, spriteFont, text, startIndex, length, position, color, rotation, origin, new Vector2(scale, scale), effects, layerDepth);
+        }
+
+        /// <summary>
+        /// Draws text using a given <see cref="SpriteFont"/>.
+        /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters with.</param>
+        /// <param name="spriteFont">The sprite font to use to draw the characters.</param>
+        /// <param name="text">The text to draw.</param>
+        /// <param name="position">The position to draw the text at.</param>
+        /// <param name="color">The color to draw the text with.</param>
+        /// <param name="rotation">The rotation of the text in radians.</param>
+        /// <param name="origin">The origin point to rotate the text at.</param>
+        /// <param name="scale">The scale to draw the text with.</param>
+        /// <param name="effects">The sprite effects to be applied to the sprite.</param>
+        /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
+        public void DrawString(IModelTechnique effectTechnique,SpriteFont spriteFont, string text, Vector2 position, Color color, float rotation = 0.0f, Vector2 origin = new Vector2(), float scale = 1.0f, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
+        {
+            DrawString(effectTechnique, spriteFont, text, position, color, rotation, origin, new Vector2(scale, scale), effects, layerDepth);
+        }
+
+        /// <summary>
+        /// Draws text using a given <see cref="SpriteFont"/>.
+        /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters with.</param>
+        /// <param name="spriteFont">The sprite font to use to draw the characters.</param>
+        /// <param name="text">The text to draw.</param>
+        /// <param name="position">The position to draw the text at.</param>
+        /// <param name="color">The color to draw the text with.</param>
+        /// <param name="rotation">The rotation of the text in radians.</param>
+        /// <param name="origin">The origin point to rotate the text at.</param>
+        /// <param name="scale">The scale to draw the text with.</param>
+        /// <param name="effects">The sprite effects to be applied to the sprite.</param>
+        /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
+        public void DrawString(IModelTechnique effectTechnique,SpriteFont spriteFont, string text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
+        {
+            DrawString(effectTechnique, spriteFont, text, 0, text.Length, position, color, rotation, origin, scale, effects, layerDepth);
+        }
+
+        /// <summary>
+        /// Draws text using a given <see cref="SpriteFont"/>.
+        /// </summary>
+        /// <param name="effectTechnique">The technique to draw the characters with.</param>
+        /// <param name="spriteFont">The sprite font to use to draw the characters.</param>
+        /// <param name="text">The text to draw.</param>
+        /// <param name="startIndex">The index to start drawing the text from.</param>
+        /// <param name="length">The length of characters to draw from the text.</param>
+        /// <param name="position">The position to draw the text at.</param>
+        /// <param name="color">The color to draw the text with.</param>
+        /// <param name="rotation">The rotation of the text in radians.</param>
+        /// <param name="origin">The origin point to rotate the text at.</param>
+        /// <param name="scale">The scale to draw the text with.</param>
+        /// <param name="effects">The sprite effects to be applied to the sprite.</param>
+        /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
+        public void DrawString(IModelTechnique effectTechnique,SpriteFont spriteFont, string text, int startIndex, int length, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
+        {
+            var offset = new Vector2(0.0f, 0.0f);
+            for (var i = startIndex; i < startIndex + length; i++)
+            {
+
+                var c = text[i];
+                if (!spriteFont.CharacterMap.TryGetValue(c, out var fontChar))
+                {
+                    if (c == '\n')
+                    {
+                        offset.X = 0;
+                        offset.Y += spriteFont.LineSpacing * scale.Y;
+                        continue;
+                    }
+                    if (!spriteFont.DefaultCharacter.HasValue || !spriteFont.CharacterMap.TryGetValue(spriteFont.DefaultCharacter.Value, out fontChar))
+                    {
+                        continue;
+                    }
+                }
+                if (fontChar == null)
+                    continue;
+                var destSize = scale * new Vector2(fontChar.Size.X / fontChar.TextureRegion.Width,
+                    fontChar.Size.Y / fontChar.TextureRegion.Height);
+                Draw(effectTechnique, spriteFont.Texture, position + offset + fontChar.Offset * scale, fontChar.TextureRegion, color, rotation, origin - offset, destSize, effects, layerDepth);
+                offset.X += fontChar.Advance * scale.X;
+                if (i < text.Length - 1)
+                {
+                    if (spriteFont.Kernings.TryGetValue(SpriteFont.GetKerningKey(c, text[i + 1]), out var kerning))
+                        offset.X += kerning * scale.X;
+                }
+            }
+        }
+
+        
+
+        #region "Without Effects"
+        
+        /// <summary>
+        /// Draws a texture sprite.
+        /// </summary>
+        /// <param name="texture">The texture to draw.</param>
+        /// <param name="destinationRectangle">The destination region to draw the texture at.</param>
+        /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
+        public void Draw(Texture2D texture, Rectangle destinationRectangle, Color color)
+            => Draw(CurrentTechnique , texture, destinationRectangle, color);
+
+
+        /// <summary>
+        /// Draws a texture sprite.
+        /// </summary>
+        /// <param name="texture">The texture to draw.</param>
+        /// <param name="destinationRectangle">The destination region to draw the texture at.</param>
+        /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
+        public void Draw(Texture2D texture, RectangleF destinationRectangle, Color color)
+            => Draw(CurrentTechnique , texture, destinationRectangle, color);
+
+
+        /// <summary>
+        /// Draws a texture sprite.
+        /// </summary>
+        /// <param name="texture">The texture to draw.</param>
+        /// <param name="destinationRectangle">The destination region to draw the texture at.</param>
+        /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
+        /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
+        public void Draw(Texture2D texture, Rectangle destinationRectangle, Rectangle? sourceRectangle, Color color)
+            => Draw(CurrentTechnique , texture, destinationRectangle, sourceRectangle, color);
+
+
+        /// <summary>
+        /// Draws a texture sprite.
+        /// </summary>
+        /// <param name="texture">The texture to draw.</param>
+        /// <param name="destinationRectangle">The destination region to draw the texture at.</param>
+        /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
+        /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
+        public void Draw(Texture2D texture, RectangleF destinationRectangle, Rectangle? sourceRectangle, Color color)
+            => Draw(CurrentTechnique , texture, destinationRectangle, sourceRectangle, color);
+
+
+        /// <summary>
+        /// Draws a texture sprite.
+        /// </summary>
+        /// <param name="texture">The texture to draw.</param>
+        /// <param name="position">The position to draw the texture at.</param>
+        /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
+        public void Draw(Texture2D texture, Vector2 position, Color color)
+            => Draw(CurrentTechnique , texture, position, color);
+
+
+        /// <summary>
+        /// Draws a texture sprite.
+        /// </summary>
+        /// <param name="texture">The texture to draw.</param>
+        /// <param name="position">The position to draw the texture at.</param>
+        /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
+        /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
+        public void Draw(Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color)
+            => Draw(CurrentTechnique , texture, position, sourceRectangle, color);
+
+
+        /// <summary>
+        /// Draws a texture sprite.
+        /// </summary>
+        /// <param name="texture">The texture to draw.</param>
+        /// <param name="position">The position to draw the texture at.</param>
+        /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
+        /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
+        /// <param name="rotation">The rotation of the sprite in radians.</param>
+        /// <param name="origin">The point of origin for the sprites rotation.</param>
+        /// <param name="scale">The scale to draw the texture with.</param>
+        /// <param name="effects">The sprite effects to be applied to the sprite.</param>
+        /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
+        public void Draw(Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth = 0.0f)
+            => Draw(CurrentTechnique , texture, position, sourceRectangle, color, rotation, origin, scale, effects, layerDepth);
+
+
+        /// <summary>
+        /// Draws a texture sprite.
+        /// </summary>
+        /// <param name="texture">The texture to draw.</param>
+        /// <param name="position">The position to draw the texture at.</param>
+        /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
+        /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
+        /// <param name="rotation">The rotation of the sprite in radians.</param>
+        /// <param name="origin">The point of origin for the sprites rotation.</param>
+        /// <param name="size">The size to draw the texture with.</param>
+        /// <param name="effects">The sprite effects to be applied to the sprite.</param>
+        /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
+        public void Draw(Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteEffects effects, float layerDepth)
+            => Draw(CurrentTechnique , texture, position, sourceRectangle, color, rotation, origin, size, effects, layerDepth);
+
+
+        /// <summary>
+        /// Draws a texture sprite.
+        /// </summary>
+        /// <param name="texture">The texture to draw.</param>
+        /// <param name="destinationRectangle">The destination region to draw the texture at.</param>
+        /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
+        /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
+        public void Draw(Texture2D texture, Rectangle destinationRectangle, RectangleF sourceRectangle, Color color)
+            => Draw(CurrentTechnique , texture, destinationRectangle, sourceRectangle, color);
+
+
+        /// <summary>
+        /// Draws a texture sprite.
+        /// </summary>
+        /// <param name="texture">The texture to draw.</param>
+        /// <param name="destinationRectangle">The destination region to draw the texture at.</param>
+        /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
+        /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
+        public void Draw(Texture2D texture, RectangleF destinationRectangle, RectangleF sourceRectangle, Color color)
+            => Draw(CurrentTechnique , texture, destinationRectangle, sourceRectangle, color);
+
+
+        /// <summary>
+        /// Draws a texture sprite.
+        /// </summary>
+        /// <param name="texture">The texture to draw.</param>
+        /// <param name="position">The position to draw the texture at.</param>
+        /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
+        /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
+        public void Draw(Texture2D texture, Vector2 position, RectangleF sourceRectangle, Color color)
+            => Draw(CurrentTechnique , texture, position, sourceRectangle, color);
+
+
+        /// <summary>
+        /// Draws a texture sprite.
+        /// </summary>
+        /// <param name="texture">The texture to draw.</param>
+        /// <param name="position">The position to draw the texture at.</param>
+        /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
+        /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
+        /// <param name="rotation">The rotation of the sprite in radians.</param>
+        /// <param name="origin">The point of origin for the sprites rotation.</param>
+        /// <param name="scale">The scale to draw the texture with.</param>
+        /// <param name="effects">The sprite effects to be applied to the sprite.</param>
+        /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
+        public void Draw(Texture2D texture, Vector2 position, RectangleF sourceRectangle, Color color, float rotation, Vector2 origin, float scale, SpriteEffects effects, float layerDepth = 0.0f)
+            => Draw(CurrentTechnique , texture, position, sourceRectangle, color, rotation, origin, scale, effects, layerDepth = 0.0f);
+
+        
+        /// <summary>
+        /// Draws a texture sprite.
+        /// </summary>
+        /// <param name="texture">The texture to draw.</param>
+        /// <param name="position">The position to draw the texture at.</param>
+        /// <param name="sourceRectangle">The source rectangle to crop out of the texture to draw. Or null to use the whole texture.</param>
+        /// <param name="color">The color to use for colorizing the texture. Use <see cref="Color.White"/> to draw the texture without colorizing.</param>
+        /// <param name="rotation">The rotation of the sprite in radians.</param>
+        /// <param name="origin">The point of origin for the sprites rotation.</param>
+        /// <param name="size">The size to draw the texture with.</param>
+        /// <param name="effects">The sprite effects to be applied to the sprite.</param>
+        /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
+        public void Draw(Texture2D texture, Vector2 position, RectangleF sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteEffects effects, float layerDepth)
+            => Draw(CurrentTechnique , texture, position, sourceRectangle, color, rotation, origin, size, effects, layerDepth);
+
+        private IModelTechnique GetFontTechnique(SpriteFontType fontType)
+        {
+            switch (fontType)
+            {
+                case SpriteFontType.BitmapFont:
+                    return CurrentTechnique;
+                case SpriteFontType.MultiSignedDistanceField:
+                case SpriteFontType.MultiSignedAndTrueDistanceField:
+                    return _fontEffect.MultiSignedTechnique;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// Draws text using a given <see cref="SpriteFont"/>.
+        /// </summary>
+        /// <param name="spriteFont">The sprite font to use to draw the characters.</param>
+        /// <param name="text">The text to draw.</param>
+        /// <param name="position">The position to draw the text at.</param>
+        /// <param name="color">The color to draw the text with.</param>
+        /// <param name="rotation">The rotation of the text in radians.</param>
+        /// <param name="origin">The origin point to rotate the text at.</param>
+        /// <param name="scale">The scale to draw the text with.</param>
+        /// <param name="effects">The sprite effects to be applied to the sprite.</param>
+        /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
+        public void DrawString(SpriteFont spriteFont, StringBuilder text, Vector2 position, Color color,
+            float rotation = 0.0f, Vector2 origin = new Vector2(), float scale = 1.0f,
+            SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
+            => DrawString(GetFontTechnique(spriteFont.FontType), spriteFont, text, position, color, rotation, origin, scale, effects,
+                layerDepth);
+
+
+        /// <summary>
+        /// Draws text using a given <see cref="SpriteFont"/>.
+        /// </summary>
+        /// <param name="spriteFont">The sprite font to use to draw the characters.</param>
+        /// <param name="text">The text to draw.</param>
+        /// <param name="position">The position to draw the text at.</param>
+        /// <param name="color">The color to draw the text with.</param>
+        /// <param name="rotation">The rotation of the text in radians.</param>
+        /// <param name="origin">The origin point to rotate the text at.</param>
+        /// <param name="scale">The scale to draw the text with.</param>
+        /// <param name="effects">The sprite effects to be applied to the sprite.</param>
+        /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
+        public void DrawString(SpriteFont spriteFont, StringBuilder text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
+            => DrawString(GetFontTechnique(spriteFont.FontType), spriteFont, text, position, color, rotation, origin, scale, effects, layerDepth);
+
 
         /// <summary>
         /// Draws text using a given <see cref="SpriteFont"/>.
@@ -369,9 +710,8 @@ namespace engenious.Graphics
         /// <param name="effects">The sprite effects to be applied to the sprite.</param>
         /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
         public void DrawString(SpriteFont spriteFont, string text, int startIndex, int length, Vector2 position, Color color, float rotation = 0.0f, Vector2 origin = new Vector2(), float scale = 1.0f, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
-        {
-            DrawString(spriteFont, text, startIndex, length, position, color, rotation, origin, new Vector2(scale, scale), effects, layerDepth);
-        }
+            => DrawString(GetFontTechnique(spriteFont.FontType), spriteFont, text, startIndex, length, position, color, rotation, origin, scale, effects, layerDepth);
+
 
         /// <summary>
         /// Draws text using a given <see cref="SpriteFont"/>.
@@ -386,9 +726,8 @@ namespace engenious.Graphics
         /// <param name="effects">The sprite effects to be applied to the sprite.</param>
         /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
         public void DrawString(SpriteFont spriteFont, string text, Vector2 position, Color color, float rotation = 0.0f, Vector2 origin = new Vector2(), float scale = 1.0f, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
-        {
-            DrawString(spriteFont, text, position, color, rotation, origin, new Vector2(scale, scale), effects, layerDepth);
-        }
+            => DrawString(GetFontTechnique(spriteFont.FontType), spriteFont, text, position, color, rotation, origin, scale, effects, layerDepth);
+
 
         /// <summary>
         /// Draws text using a given <see cref="SpriteFont"/>.
@@ -403,9 +742,8 @@ namespace engenious.Graphics
         /// <param name="effects">The sprite effects to be applied to the sprite.</param>
         /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
         public void DrawString(SpriteFont spriteFont, string text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
-        {
-            DrawString(spriteFont, text, 0, text.Length, position, color, rotation, origin, scale, effects, layerDepth);
-        }
+            => DrawString(GetFontTechnique(spriteFont.FontType), spriteFont, text, position, color, rotation, origin, scale, effects, layerDepth);
+
 
         /// <summary>
         /// Draws text using a given <see cref="SpriteFont"/>.
@@ -422,38 +760,11 @@ namespace engenious.Graphics
         /// <param name="effects">The sprite effects to be applied to the sprite.</param>
         /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
         public void DrawString(SpriteFont spriteFont, string text, int startIndex, int length, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
-        {
-            var offset = new Vector2(0.0f, 0.0f);
-            for (var i = startIndex; i < startIndex + length; i++)
-            {
+            => DrawString(GetFontTechnique(spriteFont.FontType), spriteFont, text, startIndex, length, position, color, rotation, origin, scale, effects , layerDepth);
 
-                var c = text[i];
-                if (!spriteFont.CharacterMap.TryGetValue(c, out var fontChar))
-                {
-                    if (c == '\n')
-                    {
-                        offset.X = 0;
-                        offset.Y += spriteFont.LineSpacing;
-                        continue;
-                    }
-                    if (!spriteFont.DefaultCharacter.HasValue || !spriteFont.CharacterMap.TryGetValue(spriteFont.DefaultCharacter.Value, out fontChar))
-                    {
-                        continue;
-                    }
-                }
-                if (fontChar == null)
-                    continue;
-                
-                Draw(spriteFont.Texture, position + offset + fontChar.Offset, fontChar.TextureRegion, color, rotation, origin - offset, 1.0f, SpriteEffects.None, layerDepth);
-                offset.X += fontChar.Advance;
-                if (i < text.Length - 1)
-                {
-                    if (spriteFont.Kernings.TryGetValue(SpriteFont.GetKerningKey(c, text[i + 1]), out var kerning))
-                        offset.X += kerning;
-                }
-            }
-        }
-
+        #endregion
+        
+        
         /// <summary>
         /// Ends the drawing process and batches all draws together to finally draw them.
         /// </summary>
@@ -467,16 +778,14 @@ namespace engenious.Graphics
             if (_useScreenSpace)
             {
                 var projection = Matrix.CreateOrthographicOffCenter(0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height, 0, 0, -1);
-                _effect.Projection = projection;
-                _effect.World = _matrix;
+               
+                _batcher.End(_matrix, projection);
             }
             else
             {
-                _effect.Projection = Matrix.Identity;
-                _effect.World = _matrix;
+                _batcher.End(_matrix, Matrix.Identity);
             }
             
-            _batcher.End(_effect);
 
 
         }

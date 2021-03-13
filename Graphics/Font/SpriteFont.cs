@@ -11,15 +11,16 @@ namespace engenious.Graphics
     /// </summary>
     public sealed class SpriteFont : IDisposable
     {
-        internal Dictionary<int,int> Kernings;
+        internal Dictionary<int, float> Kernings;
         internal Dictionary<char, FontCharacter> CharacterMap;
         internal Texture2D Texture;
+        internal SpriteFontType FontType;
         private ReadOnlyCollection<char>? _characters;
 
         internal SpriteFont(Texture2D texture)
         {
             Texture = texture;
-            Kernings = new Dictionary<int, int>();
+            Kernings = new Dictionary<int, float>();
             CharacterMap = new Dictionary<char, FontCharacter>();
         }
 
@@ -42,12 +43,12 @@ namespace engenious.Graphics
         /// <summary>
         /// Gets or sets the vertical spacing between lines.
         /// </summary>
-        public int LineSpacing { get; set; }
+        public float LineSpacing { get; set; }
 
         /// <summary>
         /// Gets the base line position.
         /// </summary>
-        public int BaseLine{ get; internal set; }
+        public float BaseLine{ get; internal set; }
 
         /// <summary>
         /// Gets or sets the horizontal spacing between characters.

@@ -15,15 +15,21 @@ namespace engenious.Content
         /// </summary>
         public const uint Magic = 0x45474f43;
 
-        internal ContentFile(string type)
+        internal ContentFile(string type, uint contentVersion)
         {
             FileType = type;
+            ContentVersion = contentVersion;
         }
 
         /// <summary>
         /// Gets the type of the file.
         /// </summary>
         public string FileType{ get; private set; }
+
+        /// <summary>
+        /// Gets or sets a version number for the content.
+        /// </summary>
+        public uint ContentVersion { get; private set; }
 
         /// <summary>
         /// Tries to load the content file as a specified type from a stream.
@@ -38,7 +44,13 @@ namespace engenious.Content
             var readName = reader.ReadString();
             var tp = managerBase.GetReaderByOutput(type.FullName) ?? managerBase.GetReader(readName);
 
-            return tp?.Read(managerBase, reader, type);
+            if (tp == null)
+                return null;
+            if (tp.ContentVersion != ContentVersion)
+                throw new NotSupportedException(
+                    $"EGO content version mismatch: File - {ContentVersion} != Reader - {tp.ContentVersion}");
+            
+            return tp.Read(managerBase, reader, type);
         }
     }
 }

@@ -3,7 +3,7 @@
     /// <summary>
     /// Interface describing an effect which renders a texture.
     /// </summary>
-    public interface ITextureEffect
+    public interface ITextured
     {
         /// <summary>
         /// Sets the texture to render.

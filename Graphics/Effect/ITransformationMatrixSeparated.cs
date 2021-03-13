@@ -3,7 +3,7 @@
     /// <summary>
     /// Interface describing basic transformation matrices used for effects.
     /// </summary>
-    public interface IEffectMatrices
+    public interface ITransformationMatrixSeparated
     {
         /// <summary>
         /// Gets or sets the projection matrix.

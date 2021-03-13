@@ -54,6 +54,11 @@ namespace engenious.Content.Serialization
             }
             return text;
         }
+
+        /// <inheritdoc />
+        public Texture2DTypeReader() : base(0)
+        {
+        }
     }
 }
 
