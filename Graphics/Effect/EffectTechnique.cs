@@ -3,7 +3,7 @@
 	/// <summary>
 	/// Describes a effect technique consisting of multiple render passes.
 	/// </summary>
-	public class EffectTechnique
+	public class EffectTechnique : IEffectTechnique
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="EffectTechnique"/> class.
@@ -18,12 +18,10 @@
 		/// <summary>
 		/// Gets the name of the technique.
 		/// </summary>
-		public string Name { get; private set;}
+		public string Name { get; }
 
-		/// <summary>
-		/// Gets a collection of render passes for this technique.
-		/// </summary>
-		public EffectPassCollection Passes{ get; private set; }
+		/// <inheritdoc />
+		public EffectPassCollection Passes{ get; }
 
 		/// <summary>
 		/// Initializes this technique.

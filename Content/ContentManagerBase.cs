@@ -199,7 +199,7 @@ namespace engenious.Content
         /// <param name="throwsOnError">Whether the method should throw an exception on failure.</param>
         /// <returns></returns>
         /// <exception cref="Exception">Thrown when the file could not be loaded.</exception>
-        protected ContentFile? ReadContentFileHead(Stream stream, bool throwsOnError = true)
+        internal ContentFile? ReadContentFileHead(Stream stream, bool throwsOnError = true)
         {
             ContentFile? res;
             var magic = ReadMagic(stream);
@@ -221,7 +221,7 @@ namespace engenious.Content
                 return null;
             throw new Exception("Could not load legacy content file");
         }
-        private ContentFile? ReadContentFileV1(Stream stream, bool throwsOnError = true)
+        private ContentFile? ReadContentFileV2(Stream stream, bool throwsOnError = true)
         {
             var contentTypeLen = ReadUIntLE(stream);
             var buffer = new byte[contentTypeLen];
@@ -232,13 +232,13 @@ namespace engenious.Content
                 throw new Exception("Could not load content file: Out of data");
             }
             string contentType = System.Text.Encoding.UTF8.GetString(buffer);
-            return new ContentFile(contentType);
+            return new ContentFile(contentType, ReadUIntLE(stream));
         }
 
         /// <summary>
         /// The currently implemented content file reader version.
         /// </summary>
-        public const byte ReaderVersion = 1;
+        public const byte ReaderVersion = 2;
         private ContentFile? ReadNewContentFile(Stream stream, bool throwsOnError = true)
         {
             var version = stream.ReadByte();
@@ -246,7 +246,7 @@ namespace engenious.Content
             switch(version)
             {
                 case ReaderVersion:
-                    return ReadContentFileV1(stream, throwsOnError);
+                    return ReadContentFileV2(stream, throwsOnError);
                 default:
                     if (throwsOnError)
                         throw new Exception($"Content file version {version} not supported");

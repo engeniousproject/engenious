@@ -179,6 +179,12 @@ namespace engenious.Content.Serialization
             effect.Initialize();
             return effect;
         }
+
+        /// <inheritdoc />
+        public EffectTypeReader()
+            : base(0)
+        {
+        }
     }
 }
 

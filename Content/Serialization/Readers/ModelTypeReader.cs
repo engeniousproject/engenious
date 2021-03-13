@@ -140,6 +140,11 @@ namespace engenious.Content.Serialization
             model.UpdateAnimation(null, model.RootNode);
             return model;
         }
+
+        /// <inheritdoc />
+        public ModelTypeReader() : base(0)
+        {
+        }
     }
 }
 

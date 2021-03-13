@@ -3,7 +3,7 @@
     /// <summary>
     /// Interface describing an effect for models.
     /// </summary>
-    public interface IModelEffect : IEffect,IEffectMatrices,ITextureEffect
+    public interface IModelEffect : IEffect,ITransformationMatrixSeparated,ITextured
     {
     }
 }

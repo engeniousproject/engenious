@@ -123,6 +123,11 @@ namespace engenious.Content.Serialization
             //model.UpdateAnimation(null, model.RootNode);
             return model;
         }
+
+        /// <inheritdoc />
+        public ModelContentTypeReader() : base(0)
+        {
+        }
     }
 }
 
