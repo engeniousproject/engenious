@@ -16,10 +16,11 @@ namespace engenious.Graphics
         static BatchVertex()
         {
             VertexElement[] elements = {
-                new VertexElement(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
-                new VertexElement(12, VertexElementFormat.Vector4, VertexElementUsage.Color, 0),
-                new VertexElement(28, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
-                new VertexElement(36, VertexElementFormat.Vector2, VertexElementUsage.Normal, 0)
+                new(0, VertexElementFormat.Vector3, VertexElementUsage.Position, 0),
+                new(12, VertexElementFormat.Vector4, VertexElementUsage.Color, 0),
+                new(28, VertexElementFormat.Vector2, VertexElementUsage.TextureCoordinate, 0),
+                new(36, VertexElementFormat.Single, VertexElementUsage.Custom, 0),
+                new(40, VertexElementFormat.Vector2, VertexElementUsage.Normal, 0)
             };
             var declaration = new VertexDeclaration(elements);
             VertexDeclaration = declaration;
@@ -33,9 +34,12 @@ namespace engenious.Graphics
         /// <param name="position">The position of this vertex.</param>
         /// <param name="color">The color of this vertex.</param>
         /// <param name="textureCoord">The texture coordinate of this vertex.</param>
-        public BatchVertex(Vector3 position, Color color, Vector2 textureCoord, Vector2 texSize)
+        /// <param name="textureIndex">The index of the texture in a texture array.</param>
+        /// <param name="texSize">The size of the texture.</param>
+        public BatchVertex(Vector3 position, Color color, Vector2 textureCoord, Vector2 texSize, uint textureIndex)
         {
             TextureCoordinate = textureCoord;
+            TextureIndex = textureIndex;
             Position = position;
             Color = color;
 
@@ -50,6 +54,7 @@ namespace engenious.Graphics
 
         /// <inheritdoc />
         public Vector2 TextureCoordinate { get; set; }
+        public uint TextureIndex { get; set; }
         
         public Vector2 TexSize { get; set; }
     }

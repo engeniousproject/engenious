@@ -54,8 +54,12 @@ namespace engenious.Graphics
 
         internal void BindAttribute(VertexElementUsage usage, string name)
         {
+            BindAttribute(usage, 0, name);
+        }
+        internal void BindAttribute(VertexElementUsage usage, int usageIndex, string name)
+        {
             GraphicsDevice.ValidateUiGraphicsThread();
-            GL.BindAttribLocation(Program, (int) usage, name);
+            GL.BindAttribLocation(Program, (int) usage + usageIndex, name);
         }
 
         /// <summary>
