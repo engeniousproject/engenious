@@ -17,7 +17,7 @@ in vec2 textureCoordinate;
 in uint textureIndex;
 out vec4 psColor;
 out vec2 psTexCoord;
-out flat uint psTextureIndex;
+flat out uint psTextureIndex;
 
 uniform mat4 World;
 uniform mat4 View;
