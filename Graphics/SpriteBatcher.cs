@@ -65,7 +65,6 @@ namespace engenious.Graphics
 
             private void InitBatchItem(Vector2 position, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode, Vector4 tempText)
             {
-                TextureIndex = 0;
                 if ((effects & SpriteBatch.SpriteEffects.FlipVertically) != 0)
                 {
                     TexTopLeft.X = tempText.X + tempText.Z;
