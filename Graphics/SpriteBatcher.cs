@@ -24,16 +24,22 @@ namespace engenious.Graphics
             {
                 _batchItems.Push(batch);
             }
-            public BatchItem AquireBatch(IModelTechnique effectTechnique, Texture2D texture, Vector2 position, RectangleF? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode)
+            public BatchItem AquireBatch(IModelTechnique effectTechnique, Texture texture, uint textureIndex, Vector2 position, RectangleF? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode)
             {
                 var item = _batchItems.Count == 0 ? new BatchItem() : _batchItems.Pop();
-                item.InitBatchItem(effectTechnique, texture,position,sourceRectangle,color,rotation,origin,size,effects,layerDepth,sortMode);
+                item.InitBatchItem(effectTechnique, texture, textureIndex, position,sourceRectangle,color,rotation,origin,size,effects,layerDepth,sortMode);
                 return item;
             }
             public BatchItem AquireBatch(IModelTechnique effectTechnique, Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode)
             {
                 var item = _batchItems.Count == 0 ? new BatchItem() : _batchItems.Pop();
-                item.InitBatchItem(effectTechnique, texture,position,sourceRectangle,color,rotation,origin,size,effects,layerDepth,sortMode);
+                item.InitBatchItem(effectTechnique, texture, 0, texture.Bounds.Size, position,sourceRectangle,color,rotation,origin,size,effects,layerDepth,sortMode);
+                return item;
+            }
+            public BatchItem AquireBatch(IModelTechnique effectTechnique, Texture2DArray texture, uint textureIndex, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode)
+            {
+                var item = _batchItems.Count == 0 ? new BatchItem() : _batchItems.Pop();
+                item.InitBatchItem(effectTechnique, texture,textureIndex, new Size(texture.Width, texture.Height), position,sourceRectangle,color,rotation,origin,size,effects,layerDepth,sortMode);
                 return item;
             }
         }
@@ -43,8 +49,10 @@ namespace engenious.Graphics
             internal Vector2 TexTopLeft;
             internal Vector2 TexBottomRight;
             internal Vector3[] Positions;
+            internal Size TextureSize;
             internal Color Color;
-            internal Texture2D Texture;
+            internal Texture Texture;
+            internal uint TextureIndex;
             internal float SortingKey;
             internal IModelTechnique EffectTechnique;
 
@@ -57,7 +65,7 @@ namespace engenious.Graphics
 
             private void InitBatchItem(Vector2 position, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode, Vector4 tempText)
             {
-
+                TextureIndex = 0;
                 if ((effects & SpriteBatch.SpriteEffects.FlipVertically) != 0)
                 {
                     TexTopLeft.X = tempText.X + tempText.Z;
@@ -113,8 +121,9 @@ namespace engenious.Graphics
                 }
             }
 
-            public void InitBatchItem(IModelTechnique effectTechnique, Texture2D texture, Vector2 position, RectangleF? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode)
+            public void InitBatchItem(IModelTechnique effectTechnique, Texture texture, uint textureIndex, Vector2 position, RectangleF? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode)
             {
+                TextureIndex = textureIndex;
                 EffectTechnique = effectTechnique;
                 Texture = texture;
                 Vector4 tempText;
@@ -126,13 +135,15 @@ namespace engenious.Graphics
                 InitBatchItem(position, color, rotation, origin, new Vector2(size.X * tempText.Z, size.Y * tempText.W), effects, layerDepth, sortMode, tempText);
             }
 
-            public void InitBatchItem(IModelTechnique effectTechnique, Texture2D texture, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode)
+            public void InitBatchItem(IModelTechnique effectTechnique, Texture texture, uint textureIndex, Size textureSize, Vector2 position, Rectangle? sourceRectangle, Color color, float rotation, Vector2 origin, Vector2 size, SpriteBatch.SpriteEffects effects, float layerDepth, SpriteBatch.SpriteSortMode sortMode)
             {
+                TextureSize = textureSize;
+                TextureIndex = textureIndex;
                 EffectTechnique = effectTechnique;
                 Texture = texture;
                 Vector4 tempText;
                 if (sourceRectangle.HasValue)
-                    tempText = new Vector4((float)sourceRectangle.Value.X / texture.Width, (float)sourceRectangle.Value.Y / texture.Height, (float)sourceRectangle.Value.Width / texture.Width, (float)sourceRectangle.Value.Height / texture.Height);
+                    tempText = new Vector4((float)sourceRectangle.Value.X / textureSize.Width, (float)sourceRectangle.Value.Y / textureSize.Height, (float)sourceRectangle.Value.Width / textureSize.Width, (float)sourceRectangle.Value.Height / textureSize.Height);
                 else
                     tempText = new Vector4(0, 0, 1, 1);
                 InitBatchItem(position, color, rotation, origin, new Vector2(size.X, size.Y), effects, layerDepth, sortMode, tempText);
@@ -252,14 +263,14 @@ namespace engenious.Graphics
                 _indexData[indicesIndex++] = (ushort)(bufferIndex + 2);
 
                 var texSize = (item.TexBottomRight - item.TexTopLeft) *
-                              new Vector2(item.Texture.Width, item.Texture.Height);
+                              new Vector2(item.TextureSize.Width, item.TextureSize.Height);
 
                 texSize = new Vector2(MathF.Ceiling(texSize.X), MathF.Ceiling(texSize.Y));
 
-                _vertexData[bufferIndex++] = new BatchVertex(item.Positions[0], item.Color, item.TexTopLeft, texSize);
-                _vertexData[bufferIndex++] = new BatchVertex(item.Positions[1], item.Color, new Vector2(item.TexBottomRight.X, item.TexTopLeft.Y), texSize);
-                _vertexData[bufferIndex++] = new BatchVertex(item.Positions[2], item.Color, new Vector2(item.TexTopLeft.X, item.TexBottomRight.Y), texSize);
-                _vertexData[bufferIndex++] = new BatchVertex(item.Positions[3], item.Color, item.TexBottomRight, texSize);
+                _vertexData[bufferIndex++] = new BatchVertex(item.Positions[0], item.Color, item.TexTopLeft, texSize, item.TextureIndex);
+                _vertexData[bufferIndex++] = new BatchVertex(item.Positions[1], item.Color, new Vector2(item.TexBottomRight.X, item.TexTopLeft.Y), texSize, item.TextureIndex);
+                _vertexData[bufferIndex++] = new BatchVertex(item.Positions[2], item.Color, new Vector2(item.TexTopLeft.X, item.TexBottomRight.Y), texSize, item.TextureIndex);
+                _vertexData[bufferIndex++] = new BatchVertex(item.Positions[3], item.Color, item.TexBottomRight, texSize, item.TextureIndex);
                 batchCount++;
             }
 

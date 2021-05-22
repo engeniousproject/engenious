@@ -20,7 +20,11 @@
 		/// <summary>
 		/// As colors.
 		/// </summary>
-		Color=3
+		Color=3,
+		/// <summary>
+		/// As custom data.
+		/// </summary>
+		Custom=4
 	}
 }
 

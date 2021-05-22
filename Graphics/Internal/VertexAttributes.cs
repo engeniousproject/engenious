@@ -40,8 +40,9 @@ namespace engenious.Graphics
                     GL.VertexAttribPointer((int)el.VertexElementUsage, el.ByteCount / el.GetGlVertexDataTypeSize(), el.GetGlVertexDataType(), el.IsNormalized, stride, new IntPtr(el.Offset));
                     break;
                 default:
-                    GL.VertexAttribPointer((int)el.VertexElementUsage, el.ByteCount / el.GetGlVertexDataTypeSize(), el.GetGlVertexDataType(), el.IsNormalized, stride, new IntPtr(el.Offset));
-                    GL.EnableVertexAttribArray(el.UsageIndex);//TODO:Is this the Intended usage?
+                    int index = (int) el.VertexElementUsage + el.UsageIndex;
+                    GL.VertexAttribPointer(index, el.ByteCount / el.GetGlVertexDataTypeSize(), el.GetGlVertexDataType(), el.IsNormalized, stride, new IntPtr(el.Offset));
+                    GL.EnableVertexAttribArray(index);
                        
                     break;
             }

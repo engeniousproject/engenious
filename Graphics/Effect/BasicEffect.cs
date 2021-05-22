@@ -7,15 +7,17 @@ namespace engenious.Graphics
     /// </summary>
     public class BasicEffect : Effect,IModelEffect
     {
-        private const string VertexShader =
+        private const string VertexShaderBase =
             @"
 #if __VERSION__ >= 300
 
 in vec3 position;
 in vec4 color;
 in vec2 textureCoordinate;
+in uint textureIndex;
 out vec4 psColor;
 out vec2 psTexCoord;
+out flat uint psTextureIndex;
 
 uniform mat4 World;
 uniform mat4 View;
@@ -26,13 +28,16 @@ void main(void)
    gl_Position = Proj*(View*(World*vec4(position, 1.0)));
    psColor = color;
    psTexCoord = textureCoordinate;
+   psTextureIndex = textureIndex;
 }
 #else
 attribute vec3 position;
 attribute vec4 color;
 attribute vec2 textureCoordinate;
+attribute uint textureIndex;
 varying vec4 psColor;
 varying vec2 psTexCoord;
+flat varying uint psTextureIndex;
 
 uniform mat4 World;
 uniform mat4 View;
@@ -42,42 +47,53 @@ void main(void)
    gl_Position = Proj*(View*(World*vec4(position, 1.0)));
    psColor = color;
    psTexCoord = textureCoordinate;
+   psTextureIndex = textureIndex;
 }
 #endif
 ";
-        private const string PixelShader =
+
+        private const string PixelShader2DBase =
             @"
 #if __VERSION__ >= 300
 in vec4 psColor;
 in vec2 psTexCoord;
+flat in uint psTextureIndex;
 out vec4 outColor;
-uniform sampler2D text;
+uniform sampler2D{0} text;
 uniform int textEnabled,colorEnabled;
 void main(void)
-{
+{{
    outColor = vec4(1.0,1.0,1.0,1.0);
    if (textEnabled == 1)
-     outColor = outColor * texture2D(text,psTexCoord);
+     outColor = outColor * texture(text,{1});//psTexCoord
    if (colorEnabled == 1)
      outColor = outColor * psColor;
    
-}
+}}
 #else
 varying vec4 psColor;
 varying vec2 psTexCoord;
-uniform sampler2D text;
+varying uint psTextureIndex;
+uniform sampler2D{0} text;
 uniform int textEnabled,colorEnabled;
 void main(void)
-{
+{{
    gl_FragColor = vec4(1.0,1.0,1.0,1.0);
    if (textEnabled == 1)
-     gl_FragColor = gl_FragColor * texture2D(text,psTexCoord);
+     gl_FragColor = gl_FragColor * texture(text,{1});
    if (colorEnabled == 1)
      gl_FragColor = gl_FragColor * psColor;
-   
-}
+}}
 #endif
 ";
+        
+
+        private readonly string VertexShader2D = VertexShaderBase;
+        private readonly string VertexShader2DArray = VertexShaderBase;
+        
+
+        private readonly string PixelShader2D = string.Format(PixelShader2DBase, "", "psTexCoord");
+        private readonly string PixelShader2DArray = string.Format(PixelShader2DBase, "Array", "vec3(psTexCoord, psTextureIndex)");
 
         public class BasicTechnique : EffectTechnique, IModelTechnique
         {
@@ -156,25 +172,8 @@ void main(void)
         public BasicEffect(GraphicsDevice graphicsDevice)
             : base(graphicsDevice)
         {
-            MainTechnique = new BasicTechnique(graphicsDevice, "Basic");
-
-            GraphicsDevice.ValidateUiGraphicsThread();
-            Shader[] shaders = {
-                new Shader(graphicsDevice,ShaderType.VertexShader, VertexShader),
-                new Shader(graphicsDevice,ShaderType.FragmentShader, PixelShader)
-            };
-
-            foreach (var shader in shaders)
-                shader.Compile();
-            var pass = new EffectPass(graphicsDevice, "Basic");
-            pass.AttachShaders(shaders);
-            pass.BindAttribute(VertexElementUsage.Color, "color");
-            pass.BindAttribute(VertexElementUsage.TextureCoordinate, "textureCoordinate");
-            pass.BindAttribute(VertexElementUsage.Position, "position");
-            pass.Link();
-
-            MainTechnique.Passes.Add(pass);
-            Techniques.Add(MainTechnique);
+            MainTechnique = CreateMainTechnique(graphicsDevice, "Basic2D", VertexShader2D, PixelShader2D);
+            MainTechniqueArray = CreateMainTechnique(graphicsDevice, "Basic2DArray", VertexShader2DArray, PixelShader2DArray);
 
             CurrentTechnique = MainTechnique;
             
@@ -185,9 +184,41 @@ void main(void)
 
         }
 
+        private BasicTechnique CreateMainTechnique(GraphicsDevice graphicsDevice, string name, string vertexShader, string pixelShader)
+        {
+            var res = new BasicTechnique(graphicsDevice, name);
+
+            GraphicsDevice.ValidateUiGraphicsThread();
+            CreateBaseEffect(res, graphicsDevice, name, vertexShader, pixelShader);
+            Techniques.Add(res);
+            return res;
+        }
+
+        private void CreateBaseEffect(BasicTechnique technique, GraphicsDevice graphicsDevice, string name, string vertexShader, string pixelShader)
+        {
+            Shader[] shaders =
+            {
+                new Shader(graphicsDevice, ShaderType.VertexShader, vertexShader),
+                new Shader(graphicsDevice, ShaderType.FragmentShader, pixelShader)
+            };
+
+            foreach (var shader in shaders)
+                shader.Compile();
+            var pass = new EffectPass(graphicsDevice, name);
+            pass.AttachShaders(shaders);
+            pass.BindAttribute(VertexElementUsage.Color, "color");
+            pass.BindAttribute(VertexElementUsage.TextureCoordinate, "textureCoordinate");
+            pass.BindAttribute(VertexElementUsage.Position, "position");
+            pass.BindAttribute(VertexElementUsage.Custom, 0, "textureIndex");
+            pass.Link();
+
+            technique.Passes.Add(pass);
+        }
+
         #region IEffectMatrices implementation
         
         public BasicTechnique MainTechnique { get; }
+        public BasicTechnique MainTechniqueArray { get; }
 
         /// <inheritdoc />
         public Matrix Projection
