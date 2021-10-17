@@ -59,6 +59,9 @@ void main(void)
 }
 ";
 
+        /// <summary>
+        /// Effect technique used for rendering msdf data.
+        /// </summary>
         public class MsdfTechnique : EffectTechnique, IModelTechnique
         {
             private readonly GraphicsDevice _graphicsDevice;
@@ -168,6 +171,9 @@ void main(void)
 
         #region IEffectMatrices implementation
         
+        /// <summary>
+        ///     Gets the technique for rendering msdf data.
+        /// </summary>
         public MsdfTechnique MultiSignedTechnique { get; }
 
         /// <inheritdoc />

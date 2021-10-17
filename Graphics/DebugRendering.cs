@@ -125,7 +125,7 @@ namespace engenious.Graphics
             _effect.Projection = projection;
             _effect.VertexColorEnabled = true;
             _effect.TextureEnabled = false;
-            foreach (EffectPass pass in _effect.CurrentTechnique.Passes)
+            foreach (EffectPass pass in _effect.CurrentTechnique!.Passes)
             {
                 pass.Apply();
                 GL.VertexAttrib4(3, color.R, color.G, color.B, color.A);
@@ -140,7 +140,6 @@ namespace engenious.Graphics
         /// <param name="world">The world matrix.</param>
         /// <param name="view">The view matrix.</param>
         /// <param name="projection">The projection matrix.</param>
-        /// <param name="color">The color of the <see cref="BoundingBox"/>.</param>
         public void RenderBoundingFrustum(BoundingFrustum frustum, Matrix world, Matrix view, Matrix projection) =>
             RenderBoundingFrustum(frustum, world, view, projection, Color.White);
 
