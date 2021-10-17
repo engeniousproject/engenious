@@ -9,6 +9,9 @@ namespace engenious.Graphics
     /// </summary>
     public class EffectPassParameter
     {
+        /// <summary>
+        ///     Gets a value indicating the gpu driver location of the parameter.
+        /// </summary>
         public int Location { get; }
         internal EffectPass Pass;
         internal EffectParameterType Type;
@@ -343,13 +346,14 @@ namespace engenious.Graphics
         /// <param name="pass">The <see cref="EffectPass"/> to set the uniform of.</param>
         /// <param name="location">The uniform location to set the value of.</param>
         /// <param name="value">The value to set the parameter to.</param>
-        public static void SetValue(EffectPass pass, int location, Texture? value, ref TextureCollection.TextureSlotReference? currentTextureSlotReferene)
+        /// <param name="currentTextureSlotReference">The currently used slot reference.</param>
+        public static void SetValue(EffectPass pass, int location, Texture? value, ref TextureCollection.TextureSlotReference? currentTextureSlotReference)
         {
             var dev = pass.GraphicsDevice;
-            currentTextureSlotReferene?.Release();
+            currentTextureSlotReference?.Release();
             if (value == null)
             {
-                currentTextureSlotReferene = null;
+                currentTextureSlotReference = null;
                 using (pass.Apply())
                     GL.Uniform1(location, 0);
                 return;
@@ -359,7 +363,7 @@ namespace engenious.Graphics
                 throw new Exception("Out of textures");
             
             val.Acquire();
-            currentTextureSlotReferene = val;
+            currentTextureSlotReference = val;
             using (pass.Apply())
                 GL.Uniform1(location, val.Slot);
         }

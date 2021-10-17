@@ -95,6 +95,9 @@ void main(void)
         private readonly string PixelShader2D = string.Format(PixelShader2DBase, "", "psTexCoord");
         private readonly string PixelShader2DArray = string.Format(PixelShader2DBase, "Array", "vec3(psTexCoord, psTextureIndex)");
 
+        /// <summary>
+        /// A universal basic effect technique implementation.
+        /// </summary>
         public class BasicTechnique : EffectTechnique, IModelTechnique
         {
             private readonly GraphicsDevice _graphicsDevice;
@@ -217,7 +220,14 @@ void main(void)
 
         #region IEffectMatrices implementation
         
+        /// <summary>
+        ///     Gets the main technique to use for universal rendering.
+        /// </summary>
         public BasicTechnique MainTechnique { get; }
+                
+        /// <summary>
+        ///     Gets the main technique to use for universal rendering using <see cref="Texture2DArray"/>.
+        /// </summary>
         public BasicTechnique MainTechniqueArray { get; }
 
         /// <inheritdoc />
