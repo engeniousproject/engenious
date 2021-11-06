@@ -227,6 +227,8 @@ namespace engenious.Graphics
             //Array.Sort (_batches, 0, _batches.Count);
             Texture currentTexture = _batches.First().Texture;
             var effectTechnique = _batches.First().EffectTechnique;
+            effectTechnique.World = world;
+            effectTechnique.Projection = projection;
             int batchStart = 0, batchCount = 0;
 
             ushort bufferIndex = 0;
@@ -240,7 +242,7 @@ namespace engenious.Graphics
                     effectTechnique.Projection = projection;
                     flushNewBatch = true;
                 }
-                else if( item.Texture != currentTexture || batchCount == MaxBatch)
+                else if(item.Texture != currentTexture || batchCount == MaxBatch)
                 {
                     flushNewBatch = true;
                 }
