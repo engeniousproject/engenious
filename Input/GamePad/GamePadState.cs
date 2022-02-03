@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Buffers;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace engenious.Input
 {
     /// <summary>
     /// Defines a gamepad state.
     /// </summary>
-    public struct GamePadState : IEquatable<GamePadState>
+    public struct GamePadState : IEnumerable<Buttons>, IEquatable<GamePadState>
     {
         private Buttons _buttons;
         private float _leftStickX;
@@ -163,6 +165,25 @@ namespace engenious.Input
         public static bool operator !=(GamePadState left, GamePadState right)
         {
             return !(left == right);
+        }
+
+        /// <inheritdoc />
+        public IEnumerator<Buttons> GetEnumerator()
+        {
+            long btns = (long)_buttons;
+            for (var i = 0; btns > 0; i++)
+            {
+                if ((btns & 1) != 0)
+                    yield return (Buttons)(long)(1 << i);
+
+                btns >>= 1;
+            }
+        }
+
+        /// <inheritdoc />
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
         }
     }
 }

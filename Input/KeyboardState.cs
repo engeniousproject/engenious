@@ -26,6 +26,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -39,7 +40,7 @@ namespace engenious.Input
     /// <summary>
     /// Encapsulates the state of a Keyboard device.
     /// </summary>
-    public struct KeyboardState : IEquatable<KeyboardState>
+    public struct KeyboardState : IEnumerable<Keys>, IEquatable<KeyboardState>
     {
         // Allocate enough ints to store all keyboard keys
         private const int IntSize = 32;
@@ -311,6 +312,24 @@ namespace engenious.Input
             var bitOffset = offset % IntSize;
 
             return (intOffset, bitOffset);
+        }
+
+        /// <inheritdoc />
+        public IEnumerator<Keys> GetEnumerator()
+        {
+            for (var key = (Keys)1; key <= Keys.LastKey; ++key)
+            {
+                if (IsKeyDown(key))
+                {
+                    yield return key;
+                }
+            }
+        }
+
+        /// <inheritdoc />
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
