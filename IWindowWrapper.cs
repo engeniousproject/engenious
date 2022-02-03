@@ -98,6 +98,11 @@ namespace engenious
         WindowState WindowState { get; set; }
 
         /// <summary>
+        /// Processes pending window events.
+        /// </summary>
+        void ProcessEvents();
+
+        /// <summary>
         /// Runs the wrapped windows messaging loop.
         /// </summary>
         void Run();
@@ -154,5 +159,7 @@ namespace engenious
         /// Occurs when mouse wheel was scrolled on the wrapped window.
         /// </summary>
         event Action<MouseWheelEventArgs>? MouseWheel;
+        /// <inheritdoc cref="OpenTK.Windowing.Desktop.NativeWindow.JoystickConnected"/>
+        event Action<JoystickEventArgs>? JoystickConnected;
     }
 }

@@ -36,7 +36,6 @@ namespace engenious
             // _window.TextInput += TextInput;
             // _window.MouseWheel += MouseWheel;
             // _window.Load += Load;
-
             _window.MouseWheel += args =>
             {
                 _scroll = new MouseScroll(_scroll.X + args.OffsetX, _scroll.Y + args.OffsetY);
@@ -301,6 +300,10 @@ namespace engenious
             set => _window.WindowState = value;
         }
 
+        public void ProcessEvents()
+        {
+            _window.ProcessEvents();
+        }
 
         public void Run()
         {
@@ -367,6 +370,12 @@ namespace engenious
         {
             add => _window.MouseWheel += value;
             remove => _window.MouseWheel -= value;
+        }
+
+        public event Action<JoystickEventArgs> JoystickConnected
+        {
+            add => _window.JoystickConnected += value;
+            remove=> _window.JoystickConnected -= value;
         }
 
         public void Dispose()

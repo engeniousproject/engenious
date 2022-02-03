@@ -67,7 +67,12 @@ namespace engenious.Input
         
         internal GamePadDPad(Buttons state)
         {
-            _buttons = (DPadButtons)(state & (Buttons.DPadUp | Buttons.DPadDown | Buttons.DPadLeft | Buttons.DPadRight));
+            // TODO: julian kann das besser
+            _buttons = (state.HasFlag(Buttons.DPadUp) ? DPadButtons.Up : 0)
+            | (state.HasFlag(Buttons.DPadDown) ? DPadButtons.Down : 0)
+            | (state.HasFlag(Buttons.DPadLeft) ? DPadButtons.Left : 0)
+            | (state.HasFlag(Buttons.DPadRight) ? DPadButtons.Right : 0);
+            //_buttons = (DPadButtons)(state & (Buttons.DPadUp | Buttons.DPadDown | Buttons.DPadLeft | Buttons.DPadRight));
         }
 
         /// <inheritdoc />

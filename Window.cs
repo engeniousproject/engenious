@@ -1,11 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Drawing;
+using engenious.Input;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Common.Input;
-using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace engenious
 {
@@ -23,6 +21,13 @@ namespace engenious
         public Window(IWindowWrapper baseWindow)
         {
             BaseWindow = baseWindow;
+            GamePad.UpdateWindow(this);
+        }
+
+        /// <inheritdoc />
+        public void ProcessEvents()
+        {
+            BaseWindow.ProcessEvents();
         }
 
         /// <inheritdoc />
@@ -249,6 +254,13 @@ namespace engenious
         {
             add => BaseWindow.MouseWheel += value;
             remove => BaseWindow.MouseWheel -= value;
+        }
+
+        /// <inheritdoc cref="IWindowWrapper.JoystickConnected"/>
+        public event Action<JoystickEventArgs>? JoystickConnected
+        {
+            add => BaseWindow.JoystickConnected += value;
+            remove => BaseWindow.JoystickConnected -= value;
         }
     }
 }

@@ -26,14 +26,16 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace engenious.Input
 {
     // wrapping state from opentk
     // https://github.com/opentk/opentk/blob/master/src/OpenTK.Windowing.Common/Input/KeyboardState.cs
-    
+
     /// <summary>
     /// Encapsulates the state of a Keyboard device.
     /// </summary>
@@ -56,6 +58,42 @@ namespace engenious.Input
         {
             get => IsKeyDown(key);
             set => SetKeyState(key, value);
+        }
+
+        public bool IsShiftDown()
+        {
+            return IsKeyDown(Keys.LeftShift) || IsKeyDown(Keys.RightShift);
+        }
+
+        public bool IsAltDown()
+        {
+            return IsKeyDown(Keys.LeftAlt) || IsKeyDown(Keys.RightAlt);
+        }
+
+        public bool IsCtrlDown()
+        {
+            return IsKeyDown(Keys.LeftControl) || IsKeyDown(Keys.RightControl);
+        }
+
+        private static readonly int[] distinctKeys =
+            Enum.GetValues<Keys>()
+            .Where(x => x != Keys.Unknown)
+            .Cast<int>()
+            .Distinct()
+            .ToArray();
+
+        public Keys[] KeysDown()
+        {
+            var pressedKeys = new List<Keys>();
+            foreach (var distinctKey in distinctKeys)
+            {
+                var key = (Keys)distinctKey;
+                if (IsKeyDown(key))
+                    pressedKeys.Add(key);
+
+            }
+
+            return pressedKeys.ToArray();
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 
 namespace engenious.Input
 {
@@ -7,27 +8,27 @@ namespace engenious.Input
     /// </summary>
     public struct GamePadState : IEquatable<GamePadState>
     {
-        private const float RangeMultiplier = 1.0f / (short.MaxValue + 1);
-
         private Buttons _buttons;
-        private int _packetNumber;
-        private short _leftStickX;
-        private short _leftStickY;
-        private short _rightStickX;
-        private short _rightStickY;
-        private byte _leftTrigger;
-        private byte _rightTrigger;
+        private float _leftStickX;
+        private float _leftStickY;
+        private float _rightStickX;
+        private float _rightStickY;
+        private float _leftTrigger;
+        private float _rightTrigger;
         private bool _isConnected;
+        private string _name;
+        private ArraySegment<GamePadHat> _hats;
+        private bool _isGamePad;
 
         /// <summary>
         /// Gets the gamepad buttons.
         /// </summary>
-        public GamePadButtons Buttons => new GamePadButtons(_buttons);
+        public GamePadButtons Buttons => new(_buttons);
 
         /// <summary>
         /// Gets the gamepad D-Pad buttons.
         /// </summary>
-        public GamePadDPad DPad => new GamePadDPad(_buttons);
+        public GamePadDPad DPad => new(_buttons);
 
         /// <summary>
         /// Gets a value indicating whether the gamepad is connected.
@@ -35,73 +36,57 @@ namespace engenious.Input
         public bool IsConnected => _isConnected;
 
         /// <summary>
-        /// Gets the gamepad packet number.
+        /// Gets the name of the gamepad.
         /// </summary>
-        public int PacketNumber => _packetNumber;
+        public string Name => _name;
+
+        /// <summary>
+        /// Gets a value indicating whether the connected joystick has a gamepad mapping.
+        /// </summary>
+        public bool IsGamePad => _isGamePad;
 
         /// <summary>
         /// Gets the gamepad thumbsticks.
         /// </summary>
-        public GamePadThumbSticks ThumbSticks => new GamePadThumbSticks(_leftStickX, _leftStickY, _rightStickX, _rightStickY);
+        public GamePadThumbSticks ThumbSticks => new(_leftStickX, _leftStickY, _rightStickX, _rightStickY);
 
         /// <summary>
         /// Gets the gamepad triggers.
         /// </summary>
-        public GamePadTriggers Triggers => new GamePadTriggers(_leftTrigger, _rightTrigger);
+        public GamePadTriggers Triggers => new(_leftTrigger, _rightTrigger);
 
-        /// <inheritdoc />
-        public bool Equals(GamePadState other)
-        {
-            return ThumbSticks == other.ThumbSticks && Buttons == other.Buttons && DPad == other.DPad && IsConnected == other.IsConnected;
-        }
+        /// <summary>
+        /// Gets a gamepad hat at a specified index.
+        /// </summary>
+        /// <param name="index">The index of the hat.</param>
+        /// <returns>The hat at the given index.</returns>
+        public GamePadHat Hat(int index) => _hats[index];
 
-        /// <inheritdoc />
-        public override bool Equals(object? obj)
+        internal void SetAxis(GamePadAxes axis, float value)
         {
-            return obj is GamePadState state && Equals(state);
-        }
-
-        /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            return ThumbSticks.GetHashCode() ^ Buttons.GetHashCode() ^ DPad.GetHashCode() ^ IsConnected.GetHashCode();
-        }
-
-        private bool IsAxisValid(GamePadAxes axis)
-        {
-            return axis >= 0 && axis < (GamePadAxes.LeftY | GamePadAxes.RightX);
-        }
-
-        private bool IsDPadValid(int index)
-        {
-            return index >= 0 && index < 2;
-        }
-
-        internal void SetAxis(GamePadAxes axis, short value)
-        {
-            if ((byte)(axis & GamePadAxes.LeftX) != 0)
+            if ((axis & GamePadAxes.LeftX) != GamePadAxes.None)
             {
                 _leftStickX = value;
             }
-            if ((byte)(axis & GamePadAxes.LeftY) != 0)
+            if ((axis & GamePadAxes.LeftY) != GamePadAxes.None)
             {
                 _leftStickY = value;
             }
-            if ((byte)(axis & GamePadAxes.RightX) != 0)
+            if ((axis & GamePadAxes.RightX) != GamePadAxes.None)
             {
                 _rightStickX = value;
             }
-            if ((byte)(axis & GamePadAxes.RightY) != 0)
+            if ((axis & GamePadAxes.RightY) != GamePadAxes.None)
             {
                 _rightStickY = value;
             }
-            if ((byte)(axis & GamePadAxes.LeftTrigger) != 0)
+            if ((axis & GamePadAxes.LeftTrigger) != GamePadAxes.None)
             {
-                _leftTrigger = (byte)(value - -32768 >> 8);
+                _leftTrigger = value;
             }
-            if ((byte)(axis & GamePadAxes.RightTrigger) != 0)
+            if ((axis & GamePadAxes.RightTrigger) != GamePadAxes.None)
             {
-                _rightTrigger = (byte)(value - -32768 >> 8);
+                _rightTrigger = value;
             }
         }
 
@@ -120,22 +105,64 @@ namespace engenious.Input
             _isConnected = connected;
         }
 
-        internal void SetPacketNumber(int number)
+        internal void SetName(string name)
         {
-            _packetNumber = number;
+            _name = name;
         }
 
-        internal void SetTriggers(byte left, byte right)
+        internal void SetIsGamePad(bool isGamePad)
         {
-            _leftTrigger = left;
-            _rightTrigger = right;
+            _isGamePad = isGamePad;
+        }
+
+        internal void SetHats(ArraySegment<GamePadHat> hats)
+        {
+            if (_hats.Array != null)
+            {
+                ArrayPool<GamePadHat>.Shared.Return(_hats.Array);
+            }
+            _hats = hats;
         }
 
         /// <inheritdoc />
         public override string ToString()
         {
-            return $"{{Sticks: {ThumbSticks}; Buttons: {Buttons}; DPad: {DPad}; IsConnected: {IsConnected}}}";
+            return $"{{Name: {Name}; IsConnected: {IsConnected}; Sticks: {ThumbSticks}; Buttons: {Buttons}; DPad: {DPad}; Trigger: {Triggers}}}";
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
+        {
+            return obj is GamePadState state && Equals(state);
+        }
+
+        /// <inheritdoc />
+        public bool Equals(GamePadState other)
+        {
+            return Buttons.Equals(other.Buttons) &&
+                   IsConnected == other.IsConnected &&
+                   Name == other.Name &&
+                   IsGamePad == other.IsGamePad &&
+                   ThumbSticks.Equals(other.ThumbSticks) &&
+                   Triggers.Equals(other.Triggers);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Buttons, IsConnected, Name, IsGamePad, ThumbSticks, Triggers);
+        }
+
+        /// <inheritdoc />
+        public static bool operator ==(GamePadState left, GamePadState right)
+        {
+            return left.Equals(right);
+        }
+
+        /// <inheritdoc />
+        public static bool operator !=(GamePadState left, GamePadState right)
+        {
+            return !(left == right);
         }
     }
 }
-

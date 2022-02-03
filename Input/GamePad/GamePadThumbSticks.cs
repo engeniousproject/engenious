@@ -7,9 +7,8 @@ namespace engenious.Input
     /// </summary>
     public struct GamePadThumbSticks : IEquatable<GamePadThumbSticks>
     {
-        private const float ConversionFactor = 1.0f / short.MaxValue;
-        private readonly short _leftX, _leftY;
-        private readonly short _rightX, _rightY;
+        private readonly float _leftX, _leftY;
+        private readonly float _rightX, _rightY;
 
         private const short LeftThumbDeadZone = 7864;//0.24f * short.MaxValue;//MonoGame
         private const short RightThumbDeadZone = 8683;
@@ -17,29 +16,31 @@ namespace engenious.Input
         /// <summary>
         /// Gets the position of the left thumbstick.
         /// </summary>
-        public Vector2 Left => new Vector2(_leftX * ConversionFactor, _leftY * ConversionFactor);
+        public Vector2 Left => new Vector2(_leftX, _leftY);
 
         /// <summary>
         /// Gets the position of the right thumbstick.
         /// </summary>
-        public Vector2 Right => new Vector2(_rightX * ConversionFactor, _rightY * ConversionFactor);
-        
-        internal GamePadThumbSticks(short leftX, short leftY, short rightX, short rightY)
+        public Vector2 Right => new Vector2(_rightX, _rightY);
+
+        internal GamePadThumbSticks(float leftX, float leftY, float rightX, float rightY)
         {
             _leftX = ExcludeAxisDeadZone(leftX, LeftThumbDeadZone);//TODO: circular dead zone?
             _leftY = ExcludeAxisDeadZone(leftY, LeftThumbDeadZone);
             _rightX = ExcludeAxisDeadZone(rightX, RightThumbDeadZone);
             _rightY = ExcludeAxisDeadZone(rightY, RightThumbDeadZone);
         }
-        private static short ExcludeAxisDeadZone(short value, short deadZone)
+        private static float ExcludeAxisDeadZone(float value, short deadZone)
         {
-            if (value < -deadZone)
-                value += deadZone;
-            else if (value > deadZone)
-                value -= deadZone;
-            else
-                return 0;
-            return (short)(value / (short.MaxValue - deadZone));
+            return value;
+            // TODO:
+            //if (value < -deadZone)
+            //    value += deadZone;
+            //else if (value > deadZone)
+            //    value -= deadZone;
+            //else
+            //    return 0;
+            //return (short)(value / (short.MaxValue - deadZone));
         }
 
         /// <inheritdoc />
@@ -57,7 +58,7 @@ namespace engenious.Input
         /// <inheritdoc />
         public override int GetHashCode()
         {
-            return _leftX.GetHashCode() ^ _leftY.GetHashCode() ^ _rightX.GetHashCode() ^ _rightY.GetHashCode();
+            return HashCode.Combine(_leftX, _leftY, _rightX, _rightY);
         }
 
         /// <inheritdoc />

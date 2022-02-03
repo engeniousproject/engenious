@@ -8,21 +8,26 @@ namespace engenious.Input
     public struct GamePadTriggers : IEquatable<GamePadTriggers>
     {
         private const float ConversionFactor = 1.0f / byte.MaxValue;
-        private readonly byte _left;
-
-        private readonly byte _right;
+        private readonly float _left;
+        private readonly float _right;
 
         /// <summary>
         /// Gets the left trigger value.
         /// </summary>
-        public float Left => _left * ConversionFactor;
+        public float Left => _left;
 
         /// <summary>
         /// Gets the right trigger value.
         /// </summary>
-        public float Right => _right * ConversionFactor;
+        public float Right => _right;
 
         internal GamePadTriggers(byte left, byte right)
+        {
+            _left = left * ConversionFactor;
+            _right = right * ConversionFactor;
+        }
+
+        internal GamePadTriggers(float left, float right)
         {
             _left = left;
             _right = right;
@@ -43,7 +48,7 @@ namespace engenious.Input
         /// <inheritdoc />
         public override int GetHashCode()
         {
-            return _left.GetHashCode() ^ _right.GetHashCode();
+            return HashCode.Combine(_left, _right);
         }
 
         /// <inheritdoc />
