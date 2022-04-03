@@ -84,7 +84,7 @@ namespace engenious.Graphics
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, _fbo);
         }
 
-        private void ErrorHandling()
+        internal static void ErrorHandling()
         {
             switch (GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer))
             {

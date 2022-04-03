@@ -144,6 +144,7 @@ namespace engenious.Graphics
         internal void SwitchUiThread()
         {
             _graphicsThread = Thread.CurrentThread;
+            UiThread = new GraphicsThread(this);
             Context.MakeCurrent();
         }
 
@@ -340,7 +341,7 @@ namespace engenious.Graphics
         /// <summary>
         /// Gets the uis' <see cref="GraphicsThread"/> used for synchronization.
         /// </summary>
-        public GraphicsThread UiThread { get; }
+        public GraphicsThread UiThread { get; private set; }
 
         /// <summary>
         /// Gets or sets the current <see cref="Viewport"/>.
@@ -558,7 +559,29 @@ namespace engenious.Graphics
         /// Sets the current render target.
         /// </summary>
         /// <param name="target">The render target to render to or <c>null</c> to use the default render target.</param>
-        public void SetRenderTarget(RenderTarget2D target)
+        public void SetRenderTarget(RenderTarget2D? target)
+        {
+            ValidateUiGraphicsThread();
+            if (target == null)
+            {
+                GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+                Viewport = new Viewport(new Rectangle(new Point(), Game.RenderingSurface.ClientSize));
+            }
+            else
+            {
+                target.BindFbo();
+                Viewport = new Viewport(target.Bounds);
+                ScissorRectangle = target.Bounds;
+            }
+
+            CheckError();
+        }
+
+        /// <summary>
+        /// Sets the current render target.
+        /// </summary>
+        /// <param name="target">The render target to render to or <c>null</c> to use the default render target.</param>
+        public void SetRenderTarget(RenderTargetBinding? target)
         {
             ValidateUiGraphicsThread();
             if (target == null)

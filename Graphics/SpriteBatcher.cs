@@ -193,7 +193,7 @@ namespace engenious.Graphics
 
             _graphicsDevice.VertexBuffer = _vertexBuffer;
             _graphicsDevice.IndexBuffer = _indexBuffer;
-            _graphicsDevice.Textures[0] = texture;
+            effectTechnique.Texture = texture;
             //graphicsDevice.SamplerStates[0] = samplerState;
             if (effectTechnique == null)
                 throw new Exception("No valid effect technique set");

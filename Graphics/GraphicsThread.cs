@@ -18,7 +18,7 @@ namespace engenious.Graphics
 
         private readonly bool _isIndependentThread;
 
-        private readonly Thread _thread;
+        private Thread _thread;
         private CancellationTokenSource CancellationTokenSource { get; }
         private readonly CancellationToken _cancellationToken;
 
@@ -44,21 +44,31 @@ namespace engenious.Graphics
             _cancellationToken = CancellationTokenSource.Token;
             _windowInfo = windowInfo;
             _context = context;
-            
-            _sync = new GlSynchronizationContext();
+            if (SynchronizationContext.Current is GlSynchronizationContext glSync)
+            {
+                _sync = glSync;
+            }
+            else
+            {
+                _sync = new GlSynchronizationContext();
+            }
             _thread = workingThread;
         }
 
         internal GraphicsThread(GraphicsDevice graphicsDevice)
             : this(graphicsDevice.Game.RenderingSurface.WindowInfo!, graphicsDevice.Context, Thread.CurrentThread)
         {
+
             _cancellationToken.Register(() =>
             {
                 _sync.CancelWait();
             });
 
             if (SynchronizationContext.Current == null)
+            {
                 SynchronizationContext.SetSynchronizationContext(_sync);
+            }
+            _sync.RunOnCurrentThread();
         }
 
         /// <summary>
@@ -110,6 +120,11 @@ namespace engenious.Graphics
         {
             return _thread == Thread.CurrentThread;
         }
+
+        /// <summary>
+        /// Gets the synchronization context of this graphics thread.
+        /// </summary>
+        public SynchronizationContext SynchronizationContext => _sync;
 
         /// <summary>
         /// Call a callback on the graphics thread.

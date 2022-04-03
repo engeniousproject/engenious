@@ -160,9 +160,8 @@ void main(void)
             {
                 set
                 {
-                    _graphicsDevice.Textures[0] = value;
                     foreach(var p in Passes)
-                        p. Parameters["text"].SetValue(0);
+                        p.Parameters["text"].SetValue(value);
                 }
             }
 
