@@ -38,13 +38,13 @@ namespace engenious.Graphics
         {
         }
 
-        private GraphicsThread(IWindowWrapper windowInfo, IGraphicsContext context, Thread workingThread)
+        private GraphicsThread(IWindowWrapper windowInfo, IGraphicsContext context, Thread? workingThread)
         {
             CancellationTokenSource = new CancellationTokenSource();
             _cancellationToken = CancellationTokenSource.Token;
             _windowInfo = windowInfo;
             _context = context;
-            if (SynchronizationContext.Current is GlSynchronizationContext glSync)
+            if (workingThread is not null && SynchronizationContext.Current is GlSynchronizationContext glSync)
             {
                 _sync = glSync;
             }
@@ -52,7 +52,7 @@ namespace engenious.Graphics
             {
                 _sync = new GlSynchronizationContext();
             }
-            _thread = workingThread;
+            _thread = workingThread!;
         }
 
         internal GraphicsThread(GraphicsDevice graphicsDevice)
