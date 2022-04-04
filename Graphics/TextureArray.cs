@@ -14,8 +14,6 @@ namespace engenious.Graphics
     /// </summary>
     protected static int MaxTextureArrays;
 
-    private readonly PixelInternalFormat _internalFormat;
-
     static TextureArray()
     {
         MaxTextureArrays = GL.GetInteger(GetPName.MaxArrayTextureLayers);
@@ -34,7 +32,6 @@ namespace engenious.Graphics
         PixelInternalFormat format = PixelInternalFormat.Rgba8)
         : base(graphicsDevice, levelCount, format)
     {
-        _internalFormat = format;
         LayerCount = layerCount;
         Texture = GL.GenTexture();
         GL.BindTexture(Target, Texture);
@@ -66,7 +63,7 @@ namespace engenious.Graphics
     public override void BindComputation(int unit = 0)
     {
         GL.BindImageTexture(unit, Texture, 0, false, 0, TextureAccess.WriteOnly,
-            (SizedInternalFormat) _internalFormat);
+            (SizedInternalFormat)Format);
     }
 
     /// <inheritdoc />

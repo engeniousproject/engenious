@@ -11,7 +11,6 @@ namespace engenious.Graphics
     public class Texture2DArray : TextureArray
     {
         private readonly int _texture;
-        private readonly PixelInternalFormat _internalFormat;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Texture2DArray"/> class.
@@ -21,16 +20,16 @@ namespace engenious.Graphics
         /// <param name="width">The width of the contained textures.</param>
         /// <param name="height">The height of the contained textures.</param>
         /// <param name="layers">The number of layers for this texture array.</param>
-        public Texture2DArray(GraphicsDevice graphicsDevice, int levels, int width, int height, int layers)
-            : base(graphicsDevice)
+        /// <param name="format">The pixel format to use on GPU side.</param>
+        public Texture2DArray(GraphicsDevice graphicsDevice, int levels, int width, int height, int layers, PixelInternalFormat format = PixelInternalFormat.Rgba8)
+            : base(graphicsDevice, format: format)
         {
             GraphicsDevice.ValidateUiGraphicsThread();
 
             _texture = GL.GenTexture();
             
             GL.BindTexture(Target, _texture);
-            _internalFormat = PixelInternalFormat.Rgba8;//TODO dynamic format
-            GL.TexStorage3D(TextureTarget3d.Texture2DArray, levels, SizedInternalFormat.Rgba8, width, height, Math.Max(layers,1));
+            GL.TexStorage3D(TextureTarget3d.Texture2DArray, levels, (SizedInternalFormat)Format, width, height, Math.Max(layers,1));
 
             Width = width;
             Height = height;
@@ -97,7 +96,7 @@ namespace engenious.Graphics
         public override void BindComputation(int unit = 0)
         {
             GL.BindImageTexture(unit, _texture, 0, false, 0, TextureAccess.WriteOnly,
-                (SizedInternalFormat) _internalFormat);
+                (SizedInternalFormat)Format);
         }
 
                 
