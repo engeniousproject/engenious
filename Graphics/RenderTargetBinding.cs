@@ -189,6 +189,16 @@ namespace engenious.Graphics
         /// Initializes a new instance of the <see cref="RenderTargetBinding"/> class.
         /// </summary>
         /// <param name="slices">The texture slices to render to.</param>
+        /// <param name="depthTexture">The depth texture array to render to or <c>null</c> to render without depth texture.</param>
+        public RenderTargetBinding(RenderTargetSlice[] slices, Texture2DArray depthTexture)
+            : this((uint)(depthTexture?.Texture ?? 0), false, depthTexture?.Width ?? 0, depthTexture?.Height ?? 0, slices)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RenderTargetBinding"/> class.
+        /// </summary>
+        /// <param name="slices">The texture slices to render to.</param>
         /// <param name="generateDepthBuffer">
         /// Whether to generate a depth buffer for this render target. Default: <c>true</c>.
         /// </param>
