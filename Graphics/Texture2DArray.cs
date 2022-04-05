@@ -10,8 +10,6 @@ namespace engenious.Graphics
     /// </summary>
     public class Texture2DArray : TextureArray
     {
-        private readonly int _texture;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Texture2DArray"/> class.
         /// </summary>
@@ -24,11 +22,6 @@ namespace engenious.Graphics
         public Texture2DArray(GraphicsDevice graphicsDevice, int levels, int width, int height, int layers, PixelInternalFormat format = PixelInternalFormat.Rgba8)
             : base(graphicsDevice, format: format)
         {
-            GraphicsDevice.ValidateUiGraphicsThread();
-
-            _texture = GL.GenTexture();
-            
-            GL.BindTexture(Target, _texture);
             GL.TexStorage3D(TextureTarget3d.Texture2DArray, levels, (SizedInternalFormat)Format, width, height, Math.Max(layers,1));
 
             Width = width;
@@ -57,7 +50,7 @@ namespace engenious.Graphics
                     createMipMaps = true;
                 int mipWidth =text.Width,mipHeight=text.Height;
                 for (var i=0;i<1 && createMipMaps || !createMipMaps && i < levels;i++){
-                    GL.CopyImageSubData(text.Texture,ImageTarget.Texture2D,i,0,0,0,_texture,ImageTarget.Texture2DArray,i,0,0,layer,mipWidth,mipHeight,1);
+                    GL.CopyImageSubData(text.Texture,ImageTarget.Texture2D,i,0,0,0,Texture,ImageTarget.Texture2DArray,i,0,0,layer,mipWidth,mipHeight,1);
                     mipWidth/=2;
                     mipHeight /=2;
                 }
@@ -79,23 +72,19 @@ namespace engenious.Graphics
         /// <summary>
         /// Gets the width of the contained textures.
         /// </summary>
-        public int Width { get; private set; }
+        public int Width { get; }
 
         /// <summary>
         /// Gets the height of the contained textures.
         /// </summary>
-        public int Height { get; private set; }
+        public int Height { get; }
 
-        internal override void Bind()
-        {
-            GL.BindTexture(Target, _texture);
-        }
         internal override TextureTarget Target => TextureTarget.Texture2DArray;
 
         /// <inheritdoc />
         public override void BindComputation(int unit = 0)
         {
-            GL.BindImageTexture(unit, _texture, 0, false, 0, TextureAccess.WriteOnly,
+            GL.BindImageTexture(unit, Texture, 0, false, 0, TextureAccess.WriteOnly,
                 (SizedInternalFormat)Format);
         }
 

@@ -32,6 +32,8 @@ namespace engenious.Graphics
         PixelInternalFormat format = PixelInternalFormat.Rgba8)
         : base(graphicsDevice, levelCount, format)
     {
+        GraphicsDevice.ValidateUiGraphicsThread();
+        
         LayerCount = layerCount;
         Texture = GL.GenTexture();
         GL.BindTexture(Target, Texture);
