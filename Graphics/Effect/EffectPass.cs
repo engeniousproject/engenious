@@ -83,11 +83,28 @@ namespace engenious.Graphics
                 fixed (int* lengthsPtr = lengths)
                     GL.GetActiveUniforms(Program, total, uniformIndicesPtr, ActiveUniformParameter.UniformNameLength,  lengthsPtr);
             }
+
+            void AddParam(string s, ActiveUniformType activeUniformType)
+            {
+                var location = GetUniformLocation(s);
+                Parameters.Add(new EffectPassParameter(this, s, location, (EffectParameterType)activeUniformType));
+            }
+
             for (var i = 0; i < total; ++i)
             {
-                GL.GetActiveUniform(Program, i, lengths[i],out _, out _,  out var type, out var name);
-                var location = GetUniformLocation(name);
-                Parameters.Add(new EffectPassParameter(this, name, location, (EffectParameterType)type));
+                GL.GetActiveUniform(Program, i, lengths[i],out _, out var size,  out var type, out var name);
+                if (size > 1 && name.EndsWith("[0]"))
+                {
+                    name = name[..^3];
+                    for (int aI = 0; aI < size; aI++)
+                    {
+                        AddParam($"{name}[{aI}]", type);
+                    }
+                }
+                else
+                {
+                    AddParam(name, type);
+                }
             }
             GL.GetProgram(Program, GetProgramParameterName.ActiveUniformBlocks, out total);
             for (var i = 0; i < total; ++i)
