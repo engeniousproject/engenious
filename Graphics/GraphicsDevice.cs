@@ -52,26 +52,24 @@ namespace engenious.Graphics
         /// </summary>
         public bool IsOnGraphicsThread
         {
-#if !DEBUG
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#endif
             get
             {
-#if DEBUG
                 return Thread.CurrentThread == _graphicsThread;
-#else
-                return true;
-#endif
+
             }
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void ValidateUiGraphicsThread()
         {
+            
+#if DEBUG
             if (!IsOnGraphicsThread)
             {
                 ThrowHelper.ThrowNotOnGraphicsThreadException();
             }
+#endif
         }
 
         internal readonly IGame Game;
@@ -620,6 +618,17 @@ namespace engenious.Graphics
                     _blendState = blendState;
                 }
             }
+        }
+
+        /// <summary>
+        /// Sets the current blend state state used for blending in the specified frame buffer index.
+        /// </summary>
+        /// <param name="buffer">The draw buffer index to set the blend state for.</param>
+        /// <param name="value">The value to set the blend state to.</param>
+        public void SetBlendState(int buffer, BlendState? value)
+        {
+            var blendState = value ?? BlendState.AlphaBlend;
+            blendState.Bind(this, buffer);
         }
 
         /// <summary>
