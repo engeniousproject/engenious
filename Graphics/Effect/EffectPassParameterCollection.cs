@@ -27,14 +27,15 @@ namespace engenious.Graphics
 			_parameters.Add (parameter.Name, parameter);
 		}
 
-		private EffectPassParameter CacheParameter (string name)
+		private EffectPassParameter CacheParameter(string name)
 		{
-            EffectPassParameter param;
             _pass.GraphicsDevice.ValidateUiGraphicsThread();
 
 	        var location = _pass.GetUniformLocation(name);
-	        param = new EffectPassParameter(_pass, name, location);
-		    return param;
+
+            var (size, uniformType) = _pass.GetUniformSize(name);
+            
+	        return new EffectPassParameter(_pass, name, size, location, (EffectParameterType)uniformType);
 		}
 
 		/// <summary>

@@ -16,22 +16,28 @@ namespace engenious.Graphics
         internal EffectPass Pass;
         internal EffectParameterType Type;
 
-        private TextureCollection.TextureSlotReference? _currentTextureSlotReferene;
+        private TextureCollection.TextureSlotReference? _currentTextureSlotReference;
 
-        internal EffectPassParameter(EffectPass pass, string name, int location,
+        internal EffectPassParameter(EffectPass pass, string name, int location, int size,
             EffectParameterType type = (EffectParameterType) 0x7FFFFFFF)
         {
             Pass = pass;
             Location = location;
             Name = name;
             Type = type;
-            _currentTextureSlotReferene = null;
+            Size = size;
+            _currentTextureSlotReference = null;
         }
 
         /// <summary>
         /// Gets the name of the parameter.
         /// </summary>
         public string Name { get; private set; }
+        
+        /// <summary>
+        /// Gets the size of the parameter buffer/array.
+        /// </summary>
+        public int Size { get; }
 
         #region SetValues
         /// <summary>
@@ -104,7 +110,7 @@ namespace engenious.Graphics
         /// Sets the value of this parameter.
         /// </summary>
         /// <param name="value">The value to set the parameter to.</param>
-        public void SetValue(Texture? value) => EffectPassParameter.SetValue(Pass, Location, value, ref _currentTextureSlotReferene);
+        public void SetValue(Texture? value) => EffectPassParameter.SetValue(Pass, Location, value, ref _currentTextureSlotReference);
 
         /// <summary>
         /// Sets the value of this parameter.

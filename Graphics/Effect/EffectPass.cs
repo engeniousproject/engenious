@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Text;
 using engenious.Helper;
@@ -84,10 +85,10 @@ namespace engenious.Graphics
                     GL.GetActiveUniforms(Program, total, uniformIndicesPtr, ActiveUniformParameter.UniformNameLength,  lengthsPtr);
             }
 
-            void AddParam(string s, ActiveUniformType activeUniformType)
+            void AddParam(string s, int size, ActiveUniformType activeUniformType)
             {
                 var location = GetUniformLocation(s);
-                Parameters.Add(new EffectPassParameter(this, s, location, (EffectParameterType)activeUniformType));
+                Parameters.Add(new EffectPassParameter(this, s, location, size, (EffectParameterType)activeUniformType));
             }
 
             for (var i = 0; i < total; ++i)
@@ -98,32 +99,44 @@ namespace engenious.Graphics
                     name = name[..^3];
                     for (int aI = 0; aI < size; aI++)
                     {
-                        AddParam($"{name}[{aI}]", type);
+                        AddParam($"{name}[{aI}]", size - aI, type);
                     }
                 }
                 else
                 {
-                    AddParam(name, type);
+                    AddParam(name, size, type);
                 }
             }
             GL.GetProgram(Program, GetProgramParameterName.ActiveUniformBlocks, out total);
             for (var i = 0; i < total; ++i)
             {
-                int size;
-                var sb = new StringBuilder(512);
-                string name;
-                GL.GetActiveUniformBlockName(Program, i, 512, out size, out name);
-                //var name = sb.ToString();
+                GL.GetActiveUniformBlockName(Program, i, 512, out var size, out var name);
                 var location = GL.GetUniformBlockIndex(Program, name);
-                Parameters.Add(new EffectPassParameter(this, name, location));//TODO: 
+                Parameters.Add(new EffectPassParameter(this, name, size, location));//TODO: 
             }
             //TODO: ssbos?
 
         }
 
-        internal int GetUniformLocation(string name)
+        public int GetUniformLocation(string name)
         {
             return GL.GetUniformLocation(Program, name);
+        }
+
+        internal int GetUniformIndex(string name)
+        {
+            var names = ArrayPool<string>.Shared.Rent(1);
+            names[0] = name;
+            GL.GetUniformIndices(Program, 1, names, out int uniformIndex);
+            ArrayPool<string>.Shared.Return(names);
+            return uniformIndex;
+        }
+
+        internal (int, ActiveUniformType) GetUniformSize(string name)
+        {
+            int index = GetUniformIndex(name);
+            GL.GetActiveUniform(Program, index, out var size, out var type);
+            return (size, type);
         }
 
         internal List<Shader> Attached = new List<Shader>();
