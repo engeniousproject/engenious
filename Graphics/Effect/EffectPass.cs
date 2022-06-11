@@ -118,6 +118,14 @@ namespace engenious.Graphics
 
         }
 
+        /// <summary>
+        /// Gets the internal uniform location of a uniform by its given name.
+        /// </summary>
+        /// <param name="name">The name of the uniform.</param>
+        /// <returns>The resolved internal location of that uniform.</returns>
+        /// <remarks>
+        /// This method is used by shaders internally, and should not be necessary to be called by the end user.
+        /// </remarks>
         public int GetUniformLocation(string name)
         {
             return GL.GetUniformLocation(Program, name);
