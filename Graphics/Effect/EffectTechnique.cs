@@ -1,9 +1,11 @@
-﻿namespace engenious.Graphics
+﻿using System;
+
+namespace engenious.Graphics
 {
 	/// <summary>
 	/// Describes a effect technique consisting of multiple render passes.
 	/// </summary>
-	public class EffectTechnique : IEffectTechnique
+	public class EffectTechnique : IEffectTechnique, IDisposable
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="EffectTechnique"/> class.
@@ -36,6 +38,15 @@
 		{
 			return Name;
 		}
-	}
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            foreach (var p in Passes)
+            {
+                p.Dispose();
+            }
+        }
+    }
 }
 

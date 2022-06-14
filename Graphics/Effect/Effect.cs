@@ -67,6 +67,18 @@
 				pass.Apply ();
 			}
 		}
+        
+
+        /// <inheritdoc />
+        public override void Dispose()
+        {
+            foreach (var t in Techniques)
+            {
+                t.Dispose();
+            }
+
+            base.Dispose();
+        }
 	}
 }
 
