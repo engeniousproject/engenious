@@ -288,6 +288,8 @@ namespace engenious.Graphics
             {
                 GL.DeleteBuffer(_depthBuffer);
             }
+            
+            GL.DeleteFramebuffer(_fbo);
         }
     }
 }
