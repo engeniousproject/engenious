@@ -87,8 +87,83 @@ namespace engenious.Graphics
             GL.BindImageTexture(unit, Texture, 0, false, 0, TextureAccess.WriteOnly,
                 (SizedInternalFormat)Format);
         }
+        
+        /// <summary>
+        /// Copy this texture to the given texture.
+        /// </summary>
+        /// <param name="dest">The destination texture to copy to.</param>
+        /// <param name="srcRect">The rectangle region to copy from.</param>
+        /// <param name="srcZ">The z starting position to copy from.</param>
+        /// <param name="destPos">The destination position to copy to.</param>
+        /// <param name="sourceLevel">The source level to copy from.</param>
+        /// <param name="destinationLevel">The destination level to copy to.</param>
+        public void CopyTo(Texture2D dest, Rectangle srcRect, int srcZ, Point destPos,
+            int sourceLevel = 0, int destinationLevel = 0)
+        {
+            CopyTo(dest, srcRect.X, srcRect.Y, srcZ, srcRect.Width, srcRect.Height, destPos.X, destPos.Y, sourceLevel, destinationLevel);
+        }
 
-                
+        /// <summary>
+        /// Copy this texture to the given texture.
+        /// </summary>
+        /// <param name="dest">The destination texture to copy to.</param>
+        /// <param name="srcX">The x starting position to copy from.</param>
+        /// <param name="srcY">The y starting position to copy from.</param>
+        /// <param name="srcZ">The z starting position to copy from.</param>
+        /// <param name="srcWidth">The width of the region to copy from.</param>
+        /// <param name="srcHeight">The height of the region to copy from.</param>
+        /// <param name="destX">The destination x-position to copy to.</param>
+        /// <param name="destY">The destination y-position to copy to.</param>
+        /// <param name="sourceLevel">The source level to copy from.</param>
+        /// <param name="destinationLevel">The destination level to copy to.</param>
+        public void CopyTo(Texture2D dest, int srcX, int srcY, int srcZ, int srcWidth, int srcHeight, int destX, int destY, int sourceLevel = 0, int destinationLevel = 0)
+        {
+            GraphicsDevice.ValidateUiGraphicsThread();
+            
+            GL.CopyImageSubData(Texture, (ImageTarget)Target, sourceLevel, srcX, srcY, srcZ, dest.Texture,
+                (ImageTarget)dest.Target, destinationLevel, destX, destY, 0, srcWidth, srcHeight, 1);
+        }
+
+        /// <summary>
+        /// Copy this texture to the given texture.
+        /// </summary>
+        /// <param name="dest">The destination texture to copy to.</param>
+        /// <param name="srcRect">The rectangle region to copy from.</param>
+        /// <param name="srcZ">The z starting position to copy from.</param>
+        /// <param name="srcDepth">The depth of the region to copy from.</param>
+        /// <param name="destPos">The destination position to copy to.</param>
+        /// <param name="destZ">The destination z-position to copy to.</param>
+        /// <param name="sourceLevel">The source level to copy from.</param>
+        /// <param name="destinationLevel">The destination level to copy to.</param>
+        public void CopyTo(Texture2DArray dest, Rectangle srcRect, int srcZ, int srcDepth, Point destPos, int destZ,
+            int sourceLevel = 0, int destinationLevel = 0)
+        {
+            CopyTo(dest, srcRect.X, srcRect.Y, srcZ, srcRect.Width, srcRect.Height, srcDepth, destPos.X, destPos.Y, destZ, sourceLevel, destinationLevel);
+        }
+
+        /// <summary>
+        /// Copy this texture to the given texture.
+        /// </summary>
+        /// <param name="dest">The destination texture to copy to.</param>
+        /// <param name="srcX">The x starting position to copy from.</param>
+        /// <param name="srcY">The y starting position to copy from.</param>
+        /// <param name="srcZ">The z starting position to copy from.</param>
+        /// <param name="srcWidth">The width of the region to copy from.</param>
+        /// <param name="srcHeight">The height of the region to copy from.</param>
+        /// <param name="srcDepth">The depth of the region to copy from.</param>
+        /// <param name="destX">The destination x-position to copy to.</param>
+        /// <param name="destY">The destination y-position to copy to.</param>
+        /// <param name="destZ">The destination z-position to copy to.</param>
+        /// <param name="sourceLevel">The source level to copy from.</param>
+        /// <param name="destinationLevel">The destination level to copy to.</param>
+        public void CopyTo(Texture2DArray dest, int srcX, int srcY, int srcZ, int srcWidth, int srcHeight, int srcDepth, int destX, int destY, int destZ, int sourceLevel = 0, int destinationLevel = 0)
+        {
+            GraphicsDevice.ValidateUiGraphicsThread();
+            
+            GL.CopyImageSubData(Texture, (ImageTarget)Target, sourceLevel, srcX, srcY, srcZ, dest.Texture,
+                (ImageTarget)dest.Target, destinationLevel, destX, destY, destZ, srcWidth, srcHeight, srcDepth);
+        }
+
         /// <summary>
         /// Sets the textures pixel data.
         /// </summary>

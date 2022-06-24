@@ -119,6 +119,115 @@ namespace engenious.Graphics
         public Rectangle Bounds { get; private set; }
 
         /// <summary>
+        /// Loads a <see cref="Texture2D"/> from a stream.
+        /// </summary>
+        /// <param name="stream">The stream to load the texture from.</param>
+        public void LoadFrom(Stream stream)
+        {
+            using var bmp = new Bitmap(stream);
+            LoadFrom(bmp);
+        }
+
+        /// <summary>
+        /// Loads a <see cref="Texture2D"/> from a file.
+        /// </summary>
+        /// <param name="filename">Path to a file to load the texture from.</param>
+        public void LoadFrom(string filename)
+        {
+            using var bmp = new Bitmap(filename);
+            LoadFrom(bmp);
+        }
+
+        /// <summary>
+        /// Loads a <see cref="Texture2D"/> from a bitmap.
+        /// </summary>
+        /// <param name="bmp">Bitmap to load the texture from.</param>
+        public void LoadFrom(Bitmap bmp)
+        {
+            if (Width != bmp.Width || Height != bmp.Height)
+                throw new ArgumentOutOfRangeException(nameof(bmp));
+            
+            var bmpData = bmp.LockBits(new System.Drawing.Rectangle(0, 0, Width, Height),
+                ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            GraphicsDevice.ValidateUiGraphicsThread();
+
+            Bind();
+            GL.TexSubImage2D(Target, 0, 0, 0, Width, Height,
+                OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bmpData.Scan0);
+            bmp.UnlockBits(bmpData);
+        }
+
+        /// <summary>
+        /// Copy this texture to the given texture.
+        /// </summary>
+        /// <param name="dest">The destination texture to copy to.</param>
+        /// <param name="srcRect">The rectangle region to copy from.</param>
+        /// <param name="destPos">The destination position to copy to.</param>
+        /// <param name="sourceLevel">The source level to copy from.</param>
+        /// <param name="destinationLevel">The destination level to copy to.</param>
+        public void CopyTo(Texture2D dest, Rectangle srcRect, Point destPos,
+            int sourceLevel = 0, int destinationLevel = 0)
+        {
+            CopyTo(dest, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, destPos.X, destPos.Y, sourceLevel, destinationLevel);
+        }
+
+        /// <summary>
+        /// Copy this texture to the given texture.
+        /// </summary>
+        /// <param name="dest">The destination texture to copy to.</param>
+        /// <param name="srcX">The x starting position to copy from.</param>
+        /// <param name="srcY">The y starting position to copy from.</param>
+        /// <param name="srcWidth">The width of the region to copy from.</param>
+        /// <param name="srcHeight">The height of the region to copy from.</param>
+        /// <param name="destX">The destination x-position to copy to.</param>
+        /// <param name="destY">The destination y-position to copy to.</param>
+        /// <param name="sourceLevel">The source level to copy from.</param>
+        /// <param name="destinationLevel">The destination level to copy to.</param>
+        public void CopyTo(Texture2D dest, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int sourceLevel = 0, int destinationLevel = 0)
+        {
+            GraphicsDevice.ValidateUiGraphicsThread();
+            
+            GL.CopyImageSubData(Texture, (ImageTarget)Target, sourceLevel, srcX, srcY, 0, dest.Texture,
+                (ImageTarget)dest.Target, destinationLevel, destX, destY, 0, srcWidth, srcHeight, 1);
+        }
+
+        /// <summary>
+        /// Copy this texture to the given texture.
+        /// </summary>
+        /// <param name="dest">The destination texture to copy to.</param>
+        /// <param name="srcRect">The rectangle region to copy from.</param>
+        /// <param name="destPos">The destination position to copy to.</param>
+        /// <param name="destZ">The destination z-position to copy to.</param>
+        /// <param name="sourceLevel">The source level to copy from.</param>
+        /// <param name="destinationLevel">The destination level to copy to.</param>
+        public void CopyTo(Texture2DArray dest, Rectangle srcRect, Point destPos, int destZ,
+            int sourceLevel = 0, int destinationLevel = 0)
+        {
+            CopyTo(dest, srcRect.X, srcRect.Y, srcRect.Width, srcRect.Height, destPos.X, destPos.Y, destZ, sourceLevel, destinationLevel);
+        }
+
+        /// <summary>
+        /// Copy this texture to the given texture.
+        /// </summary>
+        /// <param name="dest">The destination texture to copy to.</param>
+        /// <param name="srcX">The x starting position to copy from.</param>
+        /// <param name="srcY">The y starting position to copy from.</param>
+        /// <param name="srcWidth">The width of the region to copy from.</param>
+        /// <param name="srcHeight">The height of the region to copy from.</param>
+        /// <param name="destX">The destination x-position to copy to.</param>
+        /// <param name="destY">The destination y-position to copy to.</param>
+        /// <param name="destZ">The destination z-position to copy to.</param>
+        /// <param name="sourceLevel">The source level to copy from.</param>
+        /// <param name="destinationLevel">The destination level to copy to.</param>
+        public void CopyTo(Texture2DArray dest, int srcX, int srcY, int srcWidth, int srcHeight, int destX, int destY, int destZ, int sourceLevel = 0, int destinationLevel = 0)
+        {
+            GraphicsDevice.ValidateUiGraphicsThread();
+            
+            GL.CopyImageSubData(Texture, (ImageTarget)Target, sourceLevel, srcX, srcY, 0, dest.Texture,
+                (ImageTarget)dest.Target, destinationLevel, destX, destY, destZ, srcWidth, srcHeight, 1);
+        }
+
+        /// <summary>
         /// Sets the textures pixel data.
         /// </summary>
         /// <param name="data">The array containing the pixel data to write.</param>
@@ -148,17 +257,9 @@ namespace engenious.Graphics
             SetData<T>(data.AsSpan(), level, format);
         }
 
-
-        internal unsafe void SetData<T>(ReadOnlySpan<T> data, int level,OpenTK.Graphics.OpenGL.PixelFormat format)
+        internal unsafe void SetData<T>(ReadOnlySpan<T> data, int level, OpenTK.Graphics.OpenGL.PixelFormat format)
             where T : unmanaged
         {
-            var hwCompressed =
-                format == (OpenTK.Graphics.OpenGL.PixelFormat) TextureContentFormat.DXT1 ||
-                format == (OpenTK.Graphics.OpenGL.PixelFormat) TextureContentFormat.DXT3 || format ==
-                (OpenTK.Graphics.OpenGL.PixelFormat) TextureContentFormat.DXT5;
-            if (!hwCompressed && sizeof(T) * data.Length < Width * Height)
-                throw new ArgumentException("Not enough pixel data");
-
             int width = Width, height = Height;
             for (var i = 0; i < level; i++)
             {
@@ -167,6 +268,20 @@ namespace engenious.Graphics
                 if (width == 0 || height == 0)
                     return;
             }
+
+            SetData<T>(data, level, format, 0, 0, width, height);
+        }
+
+        internal unsafe void SetData<T>(ReadOnlySpan<T> data, int level, OpenTK.Graphics.OpenGL.PixelFormat format, int x, int y, int width, int height)
+            where T : unmanaged
+        {
+            var hwCompressed =
+                format == (OpenTK.Graphics.OpenGL.PixelFormat) TextureContentFormat.DXT1 ||
+                format == (OpenTK.Graphics.OpenGL.PixelFormat) TextureContentFormat.DXT3 || format ==
+                (OpenTK.Graphics.OpenGL.PixelFormat) TextureContentFormat.DXT5;
+            if (!hwCompressed && sizeof(T) * data.Length < width * height)
+                throw new ArgumentException("Not enough pixel data");
+            
             GraphicsDevice.ValidateUiGraphicsThread();
 
             Bind();
@@ -182,12 +297,12 @@ namespace engenious.Graphics
                     : 16;
                 var mipSize = ((width + 3) / 4) * ((height + 3) / 4) * blockSize;
                 fixed(T* buffer = &data.GetPinnableReference())
-                    GL.CompressedTexSubImage2D(Target, level, 0, 0, width, height,
+                    GL.CompressedTexSubImage2D(Target, level, x, y, width, height,
                         format, mipSize, (IntPtr)buffer);
             }
             else
                 fixed(T* buffer = &data.GetPinnableReference())
-                    GL.TexSubImage2D(Target, level, 0, 0, width, height, format, pxType,
+                    GL.TexSubImage2D(Target, level, x, y, width, height, format, pxType,
                         (IntPtr)buffer);
 
             //GL.TexSubImage2D<T> (Target, 0, 0, 0, Width, Height, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, getPixelType (typeof(T)), data);
@@ -217,11 +332,16 @@ namespace engenious.Graphics
         public void SetData<T>(int level, Rectangle? rect, T[] data, int startIndex, int elementCount)
             where T : unmanaged
         {
-            throw new NotImplementedException("Need to implement offset"); //TODO:
-            /*if (rect.HasValue)
-				GL.TexSubImage2D<T> (Target, level, rect.Value.X, rect.Value.Y, rect.Value.Width, rect.Value.Height, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, data);
-			else
-				GL.TexSubImage2D<T> (Target, level, 0, 0, Width, Height, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, data);*/
+
+            if (rect.HasValue)
+            {
+                var recVal = rect.Value;
+                SetData<T>(data.AsSpan(startIndex, elementCount), level, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, recVal.X, recVal.Y, recVal.Width, recVal.Height);
+            }
+            else
+            {
+                SetData<T>(data.AsSpan(startIndex, elementCount), level, OpenTK.Graphics.OpenGL.PixelFormat.Bgra);
+            }
         }
 
         
@@ -334,18 +454,8 @@ namespace engenious.Graphics
         /// <returns>The loaded texture.</returns>
         public static Texture2D FromBitmap(GraphicsDevice graphicsDevice, Bitmap bmp, int mipMaps = 1)
         {
-            Texture2D text;
-            text = new Texture2D(graphicsDevice, bmp.Width, bmp.Height, mipMaps);
-            var bmpData = bmp.LockBits(new System.Drawing.Rectangle(0, 0, text.Width, text.Height),
-                ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            graphicsDevice.ValidateUiGraphicsThread();
-
-            text.Bind();
-            GL.TexSubImage2D(text.Target, 0, 0, 0, text.Width, text.Height,
-                OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bmpData.Scan0);
-            bmp.UnlockBits(bmpData);
-
-
+            var text = new Texture2D(graphicsDevice, bmp.Width, bmp.Height, mipMaps);
+            text.LoadFrom(bmp);
             return text;
         }
 
