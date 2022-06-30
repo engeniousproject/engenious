@@ -1,4 +1,6 @@
-﻿namespace engenious.Graphics
+﻿using System.Text;
+
+namespace engenious.Graphics
 {
 	/// <summary>
 	/// Describes a font glyph for the <see cref="SpriteFont"/> class.
@@ -14,7 +16,7 @@
 		/// <param name="offset">The glyph offset.</param>
 		/// <param name="size">The glyph size.</param>
 		/// <param name="advance">The glyph advance</param>
-		public FontCharacter (char character, Rectangle textureSize, Rectangle textureRegionPx, Vector2 offset, Vector2 size, float advance)
+		public FontCharacter (Rune character, Rectangle textureSize, Rectangle textureRegionPx, Vector2 offset, Vector2 size, float advance)
 		{
 			Character = character;
 			TextureRegion = new RectangleF ((float)(textureRegionPx.X) / textureSize.Width, (float)(textureRegionPx.Y) / textureSize.Height, (float)(textureRegionPx.Width) / textureSize.Width, (float)(textureRegionPx.Height) / textureSize.Height);
@@ -31,7 +33,7 @@
 		/// <param name="offset">The glyph offset.</param>
 		/// <param name="size">The glyph size.</param>
 		/// <param name="advance">The glyph advance</param>
-		public FontCharacter (char character, RectangleF textureRegion, Vector2 offset, Vector2 size, float advance)
+		public FontCharacter (Rune character, RectangleF textureRegion, Vector2 offset, Vector2 size, float advance)
 		{
 			Character = character;
 			TextureRegion = textureRegion;
@@ -43,7 +45,7 @@
 		/// <summary>
 		/// Gets the character.
 		/// </summary>
-		public char Character{ get; }
+		public Rune Character{ get; }
 
 		/// <summary>
 		/// Gets the texture region the glyph is found at.

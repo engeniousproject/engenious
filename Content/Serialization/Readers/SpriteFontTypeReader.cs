@@ -22,10 +22,9 @@ namespace engenious.Content.Serialization
                 BaseLine = reader.ReadSingle(),
                 FontType = (SpriteFontType)reader.ReadByte()
             };
-
             var hasDefaultChar = reader.ReadBoolean();
             if (hasDefaultChar)
-                font.DefaultCharacter = reader.ReadChar();
+                font.DefaultCharacter = reader.ReadRune();
             else
                 font.DefaultCharacter = null;
 
@@ -33,14 +32,14 @@ namespace engenious.Content.Serialization
 
             for (var i = 0; i < kerningCount; i++)
             {
-                var key = reader.ReadInt32();
+                var key = new RunePair(reader.ReadRune(), reader.ReadRune());
                 var kerning = reader.ReadSingle();
                 font.Kernings.Add(key, kerning);
             }
             var characterMapCount = reader.ReadInt32();
             for (var i = 0; i < characterMapCount; i++)
             {
-                var key = reader.ReadChar();
+                var key = reader.ReadRune();
                 var offset = reader.ReadVector2();
                 var size = reader.ReadVector2();
                 var fntChar = new FontCharacter(key, new RectangleF(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle()), offset, size, reader.ReadSingle());
@@ -51,7 +50,7 @@ namespace engenious.Content.Serialization
         }
 
         /// <inheritdoc />
-        public SpriteFontTypeReader() : base(1)
+        public SpriteFontTypeReader() : base(2)
         {
         }
     }

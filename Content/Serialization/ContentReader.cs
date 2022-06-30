@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using engenious.Graphics;
 
 namespace engenious.Content.Serialization
@@ -132,6 +133,15 @@ namespace engenious.Content.Serialization
         public Color ReadColor()
         {
             return new Color(ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle());
+        }
+
+        /// <summary>
+        /// Reads a <see cref="Rune"/>.
+        /// </summary>
+        /// <returns>The read <see cref="Rune"/>.</returns>
+        public Rune ReadRune()
+        {
+            return new Rune(ReadInt32());
         }
     }
 }

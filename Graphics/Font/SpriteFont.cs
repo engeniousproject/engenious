@@ -11,34 +11,28 @@ namespace engenious.Graphics
     /// </summary>
     public sealed class SpriteFont : IDisposable
     {
-        internal Dictionary<int, float> Kernings;
-        internal Dictionary<char, FontCharacter> CharacterMap;
+        internal Dictionary<RunePair, float> Kernings;
+        internal Dictionary<Rune, FontCharacter> CharacterMap;
         internal Texture2D Texture;
         internal SpriteFontType FontType;
-        private ReadOnlyCollection<char>? _characters;
+        private ReadOnlyCollection<Rune>? _characters;
 
         internal SpriteFont(Texture2D texture)
         {
             Texture = texture;
-            Kernings = new Dictionary<int, float>();
-            CharacterMap = new Dictionary<char, FontCharacter>();
+            Kernings = new Dictionary<RunePair, float>();
+            CharacterMap = new Dictionary<Rune, FontCharacter>();
         }
-
-        internal static int GetKerningKey(char first, char second)
-        {
-            return (first << 16) | second;
-        }
-
 
         /// <summary>
         /// Gets a list of supported characters.
         /// </summary>
-        public ReadOnlyCollection<char> Characters => _characters ??= new ReadOnlyCollection<char>(CharacterMap.Keys.ToList());
+        public ReadOnlyCollection<Rune> Characters => _characters ??= new ReadOnlyCollection<Rune>(CharacterMap.Keys.ToList());
 
         /// <summary>
         /// Gets or sets the default character to render if a specific character cannot be depicted by this <see cref="SpriteFont"/>.
         /// </summary>
-        public char? DefaultCharacter { get; set; }
+        public Rune? DefaultCharacter { get; set; }
 
         /// <summary>
         /// Gets or sets the vertical spacing between lines.
@@ -64,27 +58,28 @@ namespace engenious.Graphics
         public Vector2 MeasureString(StringBuilder text)
         {
             var width = 0.0f;
-            for (var i = 0; i < text.Length; i++)
+            foreach (var (rune, nextRune) in new StringBuilderRuneEnumerable(text))
             {
-                var c = text[i];
-                if (!CharacterMap.TryGetValue(c, out var fontChar))
-                {
-                    if (!DefaultCharacter.HasValue || !CharacterMap.TryGetValue(DefaultCharacter.Value, out fontChar))
-                    {
-                        continue;
-                    }
-                }
-
-                if (fontChar == null)
-                    continue;
-                width += fontChar.Advance;
-                if (i < text.Length - 1)
-                {
-                    if (Kernings.TryGetValue(GetKerningKey(c, text[i + 1]), out var kerning))
-                        width += kerning;
-                }
+                width = CalculateCharacterWidth(rune, nextRune, width);
             }
             return new Vector2(width, LineSpacing);//TODO height?
+        }
+
+        private float CalculateCharacterWidth(Rune c, Rune? nextChar, float width)
+        {
+            if (!CharacterMap.TryGetValue(c, out var fontChar))
+            {
+                if (!DefaultCharacter.HasValue || !CharacterMap.TryGetValue(DefaultCharacter.Value, out fontChar))
+                {
+                    return width;
+                }
+            }
+
+            width += fontChar.Advance;
+            if (nextChar is not null && Kernings.TryGetValue(new RunePair(c, nextChar.Value), out var kerning))
+                width += kerning;
+
+            return width;
         }
 
         /// <summary>
@@ -95,7 +90,7 @@ namespace engenious.Graphics
         /// <returns>The dimensions of the string when rendered with this <see cref="SpriteFont"/>.</returns>
         public Vector2 MeasureString(string text)
         {
-            return MeasureString(text, 0, text.Length);
+            return MeasureString(text.AsSpan());
         }
 
         /// <summary>
@@ -107,7 +102,7 @@ namespace engenious.Graphics
         /// <returns>The dimensions of the string when rendered with this <see cref="SpriteFont"/>.</returns>
         public Vector2 MeasureString(string text, int startIndex)
         {
-            return MeasureString(text, startIndex, text.Length - startIndex);
+            return MeasureString(text.AsSpan(startIndex));
         }
         /// <summary>
         /// Measures the dimensions needed to render a string with this <see cref="SpriteFont"/>.
@@ -119,28 +114,7 @@ namespace engenious.Graphics
         /// <returns>The dimensions of the string when rendered with this <see cref="SpriteFont"/>.</returns>
         public Vector2 MeasureString(string text, int startIndex, int length)
         {
-            var width = 0.0f;
-            for (var i = startIndex; i < startIndex + length; i++)
-            {
-                var c = text[i];
-                if (!CharacterMap.TryGetValue(c, out var fontChar))
-                {
-                    if (!DefaultCharacter.HasValue || !CharacterMap.TryGetValue(DefaultCharacter.Value, out fontChar))
-                    {
-                        continue;
-                    }
-                }
-
-                if (fontChar == null)
-                    continue;
-                width += fontChar.Advance;
-                if (i < text.Length - 1)
-                {
-                    if (Kernings.TryGetValue(GetKerningKey(c, text[i + 1]), out var kerning))
-                        width += kerning;
-                }
-            }
-            return new Vector2(width, LineSpacing);//TODO height?
+            return MeasureString(text.AsSpan(startIndex, length));
         }
 
         /// <summary>
@@ -152,23 +126,9 @@ namespace engenious.Graphics
         public Vector2 MeasureString(ReadOnlySpan<char> text)
         {
             var width = 0.0f;
-            for (var i = 0; i < text.Length; i++)
+            foreach (var (rune, nextRune) in new CharSpanRuneEnumerable(text))
             {
-                var c = text[i];
-                if (!CharacterMap.TryGetValue(c, out var fontChar))
-                {
-                    if (!DefaultCharacter.HasValue || !CharacterMap.TryGetValue(DefaultCharacter.Value, out fontChar))
-                    {
-                        continue;
-                    }
-                }
-
-                width += fontChar.Advance;
-                if (i < text.Length - 1)
-                {
-                    if (Kernings.TryGetValue(GetKerningKey(c, text[i + 1]), out var kerning))
-                        width += kerning;
-                }
+                width = CalculateCharacterWidth(rune, nextRune, width);
             }
             return new Vector2(width, LineSpacing);//TODO height?
         }
