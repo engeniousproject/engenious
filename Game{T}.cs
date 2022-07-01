@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using engenious.Audio;
 using engenious.Content;
 using engenious.Graphics;
@@ -14,7 +15,7 @@ namespace engenious
     /// </summary>
     /// <param name="sender">The object the key press occured on.</param>
     /// <param name="key">The key that was pressed.</param>
-    public delegate void KeyPressDelegate(object sender, char key);
+    public delegate void KeyPressDelegate(object sender, Rune key);
 
     /// <summary>
     /// Provides basic logic for <see cref="GraphicsDevice"/> initialization, game content management and rendering.
@@ -149,7 +150,7 @@ namespace engenious
             };
             Control.KeyPress += delegate(TextInputEventArgs e)
             {
-                KeyPress?.Invoke(this, (char)e.Unicode);
+                KeyPress?.Invoke(this, new Rune(e.Unicode));
             };
         }
         

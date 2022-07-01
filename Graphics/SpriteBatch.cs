@@ -642,11 +642,6 @@ namespace engenious.Graphics
             {
                 DrawCharacter(effectTechnique, spriteFont, rune, nextRune, position, color, rotation, origin, scale, effects, layerDepth, ref offset);
             }
-            // for (var i = startIndex; i < startIndex + length; i++)
-            // {
-            //     var c = text[i];
-            //     DrawCharacter(effectTechnique, spriteFont, c, i < text.Length - 1 ? text[i + 1] : null, position, color, rotation, origin, scale, effects, layerDepth, offset);
-            // }
         }
 
         private void DrawCharacter(IModelTechnique effectTechnique, SpriteFont spriteFont, Rune character,
