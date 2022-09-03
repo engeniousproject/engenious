@@ -17,7 +17,7 @@
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="LiCo" Version="0.1.11.13-alpha" PrivateAssets="all" />
+<!--        <PackageReference Include="LiCo" Version="0.1.11.13-alpha" PrivateAssets="all" />-->
         <PackageReference Include="LitGit" Version="0.2.0.55-alpha" PrivateAssets="all" />
         <PackageReference Include="NVorbis" Version="0.10.1" Exclude="compile" PrivateAssets="compile" />
         <PackageReference Include="OpenTK" Version="4.5.0" />

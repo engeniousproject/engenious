@@ -17,11 +17,16 @@ namespace engenious.Graphics
         internal SpriteFontType FontType;
         private ReadOnlyCollection<Rune>? _characters;
 
-        internal SpriteFont(Texture2D texture)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SpriteFont"/> class.
+        /// </summary>
+        /// <param name="texture">The texture containing the font glyphs.</param>
+        public SpriteFont(Texture2D texture)
         {
             Texture = texture;
             Kernings = new Dictionary<RunePair, float>();
             CharacterMap = new Dictionary<Rune, FontCharacter>();
+            Palettes = new();
         }
 
         /// <summary>
@@ -48,6 +53,11 @@ namespace engenious.Graphics
         /// Gets or sets the horizontal spacing between characters.
         /// </summary>
         public float Spacing { get; set; }
+        
+        /// <summary>
+        /// Gets the font palettes available for this font.
+        /// </summary>
+        public List<FontPalette> Palettes { get; }
 
         /// <summary>
         /// Measures the dimensions needed to render a string with this <see cref="SpriteFont"/>.

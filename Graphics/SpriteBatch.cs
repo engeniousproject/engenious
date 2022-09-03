@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 
@@ -555,12 +556,13 @@ namespace engenious.Graphics
         /// <param name="scale">The scale to draw the text with.</param>
         /// <param name="effects">The sprite effects to be applied to the sprite.</param>
         /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
-        public void DrawString(IModelTechnique effectTechnique,SpriteFont spriteFont, StringBuilder text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
+        /// <param name="overwritePalette">The palette to use for multicolor glyph rendering instead of the default palette.</param>
+        public void DrawString(IModelTechnique effectTechnique,SpriteFont spriteFont, StringBuilder text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f, FontPalette? overwritePalette = null)
         {
             var offset = new Vector2(0.0f, 0.0f);
             foreach (var (rune, nextRune) in new StringBuilderRuneEnumerable(text))
             {
-                DrawCharacter(effectTechnique, spriteFont, rune, nextRune, position, color, rotation, origin, scale, effects, layerDepth, ref offset);
+                DrawCharacter(effectTechnique, spriteFont, rune, nextRune, position, overwritePalette, color, rotation, origin, scale, effects, layerDepth, ref offset);
             }
         }
 
@@ -570,8 +572,6 @@ namespace engenious.Graphics
         /// <param name="effectTechnique">The technique to draw the characters with.</param>
         /// <param name="spriteFont">The sprite font to use to draw the characters.</param>
         /// <param name="text">The text to draw.</param>
-        /// <param name="startIndex">The index to start drawing the text from.</param>
-        /// <param name="length">The length of characters to draw from the text.</param>
         /// <param name="position">The position to draw the text at.</param>
         /// <param name="color">The color to draw the text with.</param>
         /// <param name="rotation">The rotation of the text in radians.</param>
@@ -579,9 +579,10 @@ namespace engenious.Graphics
         /// <param name="scale">The scale to draw the text with.</param>
         /// <param name="effects">The sprite effects to be applied to the sprite.</param>
         /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
-        public void DrawString(IModelTechnique effectTechnique,SpriteFont spriteFont, ReadOnlySpan<char> text, int startIndex, int length, Vector2 position, Color color, float rotation = 0.0f, Vector2 origin = new Vector2(), float scale = 1.0f, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
+        /// <param name="overwritePalette">The palette to use for multicolor glyph rendering instead of the default palette.</param>
+        public void DrawString(IModelTechnique effectTechnique,SpriteFont spriteFont, ReadOnlySpan<char> text, Vector2 position, Color color, float rotation = 0.0f, Vector2 origin = new Vector2(), float scale = 1.0f, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f, FontPalette? overwritePalette = null)
         {
-            DrawString(effectTechnique, spriteFont, text, startIndex, length, position, color, rotation, origin, new Vector2(scale, scale), effects, layerDepth);
+            DrawString(effectTechnique, spriteFont, text, position, color, rotation, origin, new Vector2(scale, scale), effects, layerDepth, overwritePalette);
         }
 
         /// <summary>
@@ -597,55 +598,18 @@ namespace engenious.Graphics
         /// <param name="scale">The scale to draw the text with.</param>
         /// <param name="effects">The sprite effects to be applied to the sprite.</param>
         /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
-        public void DrawString(IModelTechnique effectTechnique,SpriteFont spriteFont, ReadOnlySpan<char> text, Vector2 position, Color color, float rotation = 0.0f, Vector2 origin = new Vector2(), float scale = 1.0f, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
-        {
-            DrawString(effectTechnique, spriteFont, text, position, color, rotation, origin, new Vector2(scale, scale), effects, layerDepth);
-        }
-
-        /// <summary>
-        /// Draws text using a given <see cref="SpriteFont"/>.
-        /// </summary>
-        /// <param name="effectTechnique">The technique to draw the characters with.</param>
-        /// <param name="spriteFont">The sprite font to use to draw the characters.</param>
-        /// <param name="text">The text to draw.</param>
-        /// <param name="position">The position to draw the text at.</param>
-        /// <param name="color">The color to draw the text with.</param>
-        /// <param name="rotation">The rotation of the text in radians.</param>
-        /// <param name="origin">The origin point to rotate the text at.</param>
-        /// <param name="scale">The scale to draw the text with.</param>
-        /// <param name="effects">The sprite effects to be applied to the sprite.</param>
-        /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
-        public void DrawString(IModelTechnique effectTechnique,SpriteFont spriteFont, ReadOnlySpan<char> text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
-        {
-            DrawString(effectTechnique, spriteFont, text, 0, text.Length, position, color, rotation, origin, scale, effects, layerDepth);
-        }
-
-        /// <summary>
-        /// Draws text using a given <see cref="SpriteFont"/>.
-        /// </summary>
-        /// <param name="effectTechnique">The technique to draw the characters with.</param>
-        /// <param name="spriteFont">The sprite font to use to draw the characters.</param>
-        /// <param name="text">The text to draw.</param>
-        /// <param name="startIndex">The index to start drawing the text from.</param>
-        /// <param name="length">The length of characters to draw from the text.</param>
-        /// <param name="position">The position to draw the text at.</param>
-        /// <param name="color">The color to draw the text with.</param>
-        /// <param name="rotation">The rotation of the text in radians.</param>
-        /// <param name="origin">The origin point to rotate the text at.</param>
-        /// <param name="scale">The scale to draw the text with.</param>
-        /// <param name="effects">The sprite effects to be applied to the sprite.</param>
-        /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
-        public void DrawString(IModelTechnique effectTechnique, SpriteFont spriteFont, ReadOnlySpan<char> text, int startIndex, int length, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
+        /// <param name="overwritePalette">The palette to use for multicolor glyph rendering instead of the default palette.</param>
+        public void DrawString(IModelTechnique effectTechnique, SpriteFont spriteFont, ReadOnlySpan<char> text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f, FontPalette? overwritePalette = null)
         {
             var offset = new Vector2(0.0f, 0.0f);
             foreach(var (rune, nextRune) in new CharSpanRuneEnumerable(text))
             {
-                DrawCharacter(effectTechnique, spriteFont, rune, nextRune, position, color, rotation, origin, scale, effects, layerDepth, ref offset);
+                DrawCharacter(effectTechnique, spriteFont, rune, nextRune, position, overwritePalette, color, rotation, origin, scale, effects, layerDepth, ref offset);
             }
         }
 
         private void DrawCharacter(IModelTechnique effectTechnique, SpriteFont spriteFont, Rune character,
-            Rune? nextCharacter, Vector2 position,
+            Rune? nextCharacter, Vector2 position, FontPalette? overwritePalette,
             Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects, float layerDepth,
             ref Vector2 offset)
         {
@@ -665,16 +629,47 @@ namespace engenious.Graphics
                 }
             }
 
-            if (fontChar == null)
-                return;
-            var destSize = scale * new Vector2(fontChar.Size.X / fontChar.TextureRegion.Width,
-                fontChar.Size.Y / fontChar.TextureRegion.Height);
-            Draw(effectTechnique, spriteFont.Texture, position + offset + fontChar.Offset * scale, fontChar.TextureRegion,
-                color, rotation, origin - offset, destSize, effects, layerDepth);
+            var palette = spriteFont.Palettes.FirstOrDefault();
+            
+            if (fontChar.GlyphLayers.Length == 0 || palette is null)
+                DrawGlyph(effectTechnique, spriteFont, palette, overwritePalette, position, color, rotation, origin, scale, effects, layerDepth, offset, fontChar.Glyph);
+            else
+            {
+                foreach (var glyphLayer in fontChar.GlyphLayers)
+                {
+                    DrawGlyph(effectTechnique, spriteFont, palette, overwritePalette, position, color, rotation, origin, scale, effects, layerDepth, offset, glyphLayer);
+                }
+            }
             offset.X += fontChar.Advance * scale.X;
             
             if (nextCharacter != null && spriteFont.Kernings.TryGetValue(new RunePair(character, nextCharacter.Value), out var kerning))
                 offset.X += kerning * scale.X;
+        }
+
+        private void DrawGlyph(IModelTechnique effectTechnique, SpriteFont spriteFont, FontPalette? palette, FontPalette? overwritePalette, Vector2 position, Color color,
+            float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects, float layerDepth, Vector2 offset, FontGlyph glyph)
+        {
+            var destSize = scale * new Vector2(glyph.Size.X / glyph.TextureRegion.Width,
+                glyph.Size.Y / glyph.TextureRegion.Height);
+
+
+            static bool TryGetColor(FontPalette? palette, int index, out Color color)
+            {
+                if (palette is null || (index < 0 || index >= palette.Colors.Length))
+                {
+                    color = default;
+                    return false;
+                }
+
+                color = palette.Colors[index];
+                return true;
+            }
+
+            if ((!TryGetColor(overwritePalette, glyph.ColorIndex, out var glyphColor) && !TryGetColor(palette, glyph.ColorIndex, out glyphColor)))
+                glyphColor = color;
+
+            Draw(effectTechnique, spriteFont.Texture, position + offset + glyph.Offset * scale, glyph.TextureRegion,
+                glyphColor, rotation, origin - offset, destSize, effects, layerDepth);
         }
 
 
@@ -893,24 +888,6 @@ namespace engenious.Graphics
         /// </summary>
         /// <param name="spriteFont">The sprite font to use to draw the characters.</param>
         /// <param name="text">The text to draw.</param>
-        /// <param name="startIndex">The index to start drawing the text from.</param>
-        /// <param name="length">The length of characters to draw from the text.</param>
-        /// <param name="position">The position to draw the text at.</param>
-        /// <param name="color">The color to draw the text with.</param>
-        /// <param name="rotation">The rotation of the text in radians.</param>
-        /// <param name="origin">The origin point to rotate the text at.</param>
-        /// <param name="scale">The scale to draw the text with.</param>
-        /// <param name="effects">The sprite effects to be applied to the sprite.</param>
-        /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
-        public void DrawString(SpriteFont spriteFont, ReadOnlySpan<char> text, int startIndex, int length, Vector2 position, Color color, float rotation = 0.0f, Vector2 origin = new Vector2(), float scale = 1.0f, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
-            => DrawString(GetFontTechnique(spriteFont.FontType), spriteFont, text, startIndex, length, position, color, rotation, origin, scale, effects, layerDepth);
-
-
-        /// <summary>
-        /// Draws text using a given <see cref="SpriteFont"/>.
-        /// </summary>
-        /// <param name="spriteFont">The sprite font to use to draw the characters.</param>
-        /// <param name="text">The text to draw.</param>
         /// <param name="position">The position to draw the text at.</param>
         /// <param name="color">The color to draw the text with.</param>
         /// <param name="rotation">The rotation of the text in radians.</param>
@@ -934,26 +911,9 @@ namespace engenious.Graphics
         /// <param name="scale">The scale to draw the text with.</param>
         /// <param name="effects">The sprite effects to be applied to the sprite.</param>
         /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
-        public void DrawString(SpriteFont spriteFont, ReadOnlySpan<char> text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
-            => DrawString(GetFontTechnique(spriteFont.FontType), spriteFont, text, position, color, rotation, origin, scale, effects, layerDepth);
-
-
-        /// <summary>
-        /// Draws text using a given <see cref="SpriteFont"/>.
-        /// </summary>
-        /// <param name="spriteFont">The sprite font to use to draw the characters.</param>
-        /// <param name="text">The text to draw.</param>
-        /// <param name="startIndex">The index to start drawing the text from.</param>
-        /// <param name="length">The length of characters to draw from the text.</param>
-        /// <param name="position">The position to draw the text at.</param>
-        /// <param name="color">The color to draw the text with.</param>
-        /// <param name="rotation">The rotation of the text in radians.</param>
-        /// <param name="origin">The origin point to rotate the text at.</param>
-        /// <param name="scale">The scale to draw the text with.</param>
-        /// <param name="effects">The sprite effects to be applied to the sprite.</param>
-        /// <param name="layerDepth">The layer depth of this sprite used for depth sorting.</param>
-        public void DrawString(SpriteFont spriteFont, ReadOnlySpan<char> text, int startIndex, int length, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f)
-            => DrawString(GetFontTechnique(spriteFont.FontType), spriteFont, text, startIndex, length, position, color, rotation, origin, scale, effects , layerDepth);
+        /// <param name="overwritePalette">The palette to use for multicolor glyph rendering instead of the default palette.</param>
+        public void DrawString(SpriteFont spriteFont, ReadOnlySpan<char> text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, SpriteEffects effects = SpriteEffects.None, float layerDepth = 0.0f, FontPalette? overwritePalette = null)
+            => DrawString(GetFontTechnique(spriteFont.FontType), spriteFont, text, position, color, rotation, origin, scale, effects, layerDepth, overwritePalette);
 
         #endregion
         

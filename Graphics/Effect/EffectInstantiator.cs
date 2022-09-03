@@ -89,18 +89,17 @@ namespace engenious.Graphics
         /// <returns>The created instance of the <see cref="Effect"/>.</returns>
         public Effect CreateInstance(string additional, Type? customType)
         {
-            bool canUseCustomType = false;
+            bool useCustomType = false;
             var effectType = typeof(Effect);
-            var useCustomType = CustomTypeName is not null;
+            var canUseCustomType = CustomTypeName is not null;
             if (CustomTypeName is not null)
             {
-                canUseCustomType = true;
                 canUseCustomType = EffectInstantiatorTypeReader.EffectTypes.TryGetValue(CustomTypeName, out effectType);
                 effectType ??= typeof(Effect);
             }
             
             Effect? effect = null;
-            if (customType != null && effectType.IsAssignableFrom(customType))
+            if (canUseCustomType && customType != null && effectType != typeof(Effect) && effectType.IsAssignableFrom(customType))
             {
                 try
                 {
