@@ -5,7 +5,9 @@
 	/// </summary>
 	public class Effect : GraphicsResource, IEffect
 	{
-		/// <inheritdoc cref="GraphicsResource.GraphicsDevice"/>
+        private EffectTechnique? _currentTechnique;
+
+        /// <inheritdoc cref="GraphicsResource.GraphicsDevice"/>
 		public new GraphicsDevice GraphicsDevice => base.GraphicsDevice!;
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Effect"/> class.
@@ -20,7 +22,7 @@
 		}
 
 		/// <summary>
-		/// Initializes the <see cref="Effect"/>.
+		/// Initializes a new instance of the <see cref="Effect"/> class..
 		/// </summary>
 		protected internal virtual void Initialize ()
 		{
@@ -35,35 +37,28 @@
 		/// <summary>
 		/// Gets the effects parameters.
 		/// </summary>
-		public EffectParameterCollection Parameters {
-			get;
-			private set;
-		}
+        public EffectParameterCollection Parameters { get; }
 
 		/// <summary>
 		/// Gets the effects techniques.
 		/// </summary>
-		public EffectTechniqueCollection Techniques {
-			get;
-			private set;
-		}
+        public EffectTechniqueCollection Techniques { get; }
 
-		/// <summary>
-		/// Gets the current set technique.
-		/// </summary>
-		public EffectTechnique? CurrentTechnique {
-			get;
-			set;
-		}
+        /// <summary>
+        /// Gets or sets the current set technique.
+        /// </summary>
+        public EffectTechnique CurrentTechnique
+        {
+            get => _currentTechnique!;
+            set => _currentTechnique = value;
+        }
 
-		/// <summary>
-		/// Applies all passes of this <see cref="Effect"/>.
-		/// </summary>
-		protected internal virtual void OnApply ()
+        /// <summary>
+        /// Applies all passes of this <see cref="Effect"/>.
+        /// </summary>
+        protected internal virtual void OnApply ()
 		{
-			if (CurrentTechnique == null)
-				return;
-			foreach (var pass in CurrentTechnique.Passes) {
+            foreach (var pass in CurrentTechnique.Passes) {
 				pass.Apply ();
 			}
 		}
