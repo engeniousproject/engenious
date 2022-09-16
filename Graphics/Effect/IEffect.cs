@@ -22,7 +22,7 @@
         /// <summary>
         /// Gets or sets the current technique of the effect.
         /// </summary>
-        EffectTechnique? CurrentTechnique {
+        EffectTechnique CurrentTechnique {
             get;
             set;
         }

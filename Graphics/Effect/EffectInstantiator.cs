@@ -192,7 +192,12 @@ namespace engenious.Graphics
                 effect.Techniques.Add(technique);
             }
 
-            effect.CurrentTechnique = effect.Techniques.FirstOrDefault();
+            var currentTechn = effect.Techniques.FirstOrDefault();
+            if (currentTechn is null)
+                throw new InvalidOperationException("Effect does not contain any technique!");
+            
+
+            effect.CurrentTechnique = currentTechn;
             effect.Initialize();
             return effect;
         }

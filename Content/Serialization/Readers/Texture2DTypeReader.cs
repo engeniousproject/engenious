@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.IO;
 using engenious.Graphics;
+using SixLabors.ImageSharp;
 
 namespace engenious.Content.Serialization
 {
@@ -34,7 +35,7 @@ namespace engenious.Content.Serialization
             {
                 //text = new Texture2D(manager.GraphicsDevice,width,height,mipCount);
                 using var stream = new MemoryStream(buffer);
-                using var bmp = new Bitmap(stream);
+                using var bmp = Image.Load(ImageSharpHelper.Config, stream);
                 text = Texture2D.FromBitmap(managerBase.GraphicsDevice, bmp, mipCount);
             }
 

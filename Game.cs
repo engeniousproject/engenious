@@ -5,6 +5,8 @@ using OpenTK.Graphics.ES20;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
+using SixLabors.ImageSharp.Advanced;
+using SixLabors.ImageSharp.PixelFormats;
 using Image = OpenTK.Windowing.Common.Input.Image;
 
 namespace engenious
@@ -13,7 +15,7 @@ namespace engenious
     public abstract class Game : Game<Window>
     {
         private readonly GameSettings _settings;
-        private Icon[]? _icons;
+        private SixLabors.ImageSharp.Image[]? _icons;
         private void CreateWindow()
         {
             var nativeWindowSettings = new NativeWindowSettings
@@ -58,7 +60,7 @@ namespace engenious
         /// Gets or sets an <see cref="Icons"/> associated with the rendering view.
         /// <remarks>This sets or gets the window icon, if the rendering view is a <see cref="Window"/>.</remarks>
         /// </summary>
-        public Icon[]? Icons
+        public SixLabors.ImageSharp.Image[]? Icons
         {
             get => _icons;
             set
@@ -85,25 +87,10 @@ namespace engenious
                 var img = new Image[_icons.Length];
                 for (int i = 0; i < _icons.Length; i++)
                 {
-                    using var bmp = _icons[i].ToBitmap();
-                    var bmpData =
-                        bmp.LockBits(new System.Drawing.Rectangle(new System.Drawing.Point(), bmp.Size),
-                            ImageLockMode.ReadOnly, bmp.PixelFormat);
-                    var data = new byte[bmpData.Height * bmpData.Stride];
-                    if (bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
-                        throw new NotSupportedException("Currently only 32bppArgb is supported");
-                    unsafe
-                    {
-                        var srcPtr = (byte*) bmpData.Scan0;
-                        for (int p = 0; p < data.Length; p += 4)
-                        {
-                            data[p + 0] = srcPtr[p + 2];
-                            data[p + 1] = srcPtr[p + 1];
-                            data[p + 2] = srcPtr[p + 0];
-                            data[p + 3] = srcPtr[p + 3];
-                        }
-                    }
-                    bmp.UnlockBits(bmpData);
+                    var icon = _icons[i];
+                    var normal = icon.CloneAs<Rgba32>();
+                    var data = new byte[icon.Width * icon.Height * sizeof(int)];
+                    normal.CopyPixelDataTo(data);
                     img[i] = new Image(_icons[i].Width, _icons[i].Height, data);
                 }
                 Window.BaseWindow.Icon = new WindowIcon(img);

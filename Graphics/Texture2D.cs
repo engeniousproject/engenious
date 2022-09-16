@@ -7,6 +7,10 @@ using engenious.Content;
 using engenious.Content.Serialization;
 using engenious.Helper;
 using OpenTK.Graphics.OpenGL;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Advanced;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 
 namespace engenious.Graphics
 {
@@ -124,7 +128,7 @@ namespace engenious.Graphics
         /// <param name="stream">The stream to load the texture from.</param>
         public void LoadFrom(Stream stream)
         {
-            using var bmp = new Bitmap(stream);
+            using var bmp = Image.Load<Rgba32>(ImageSharpHelper.Config, stream);
             LoadFrom(bmp);
         }
 
@@ -134,27 +138,36 @@ namespace engenious.Graphics
         /// <param name="filename">Path to a file to load the texture from.</param>
         public void LoadFrom(string filename)
         {
-            using var bmp = new Bitmap(filename);
+            using var bmp = Image.Load<Rgba32>(ImageSharpHelper.Config, filename);
             LoadFrom(bmp);
         }
 
         /// <summary>
-        /// Loads a <see cref="Texture2D"/> from a bitmap.
+        /// Loads a <see cref="Texture2D"/> from a image.
         /// </summary>
-        /// <param name="bmp">Bitmap to load the texture from.</param>
-        public void LoadFrom(Bitmap bmp)
+        /// <param name="image">Image to load the texture from.</param>
+        public void LoadFrom(Image image)
         {
-            if (Width != bmp.Width || Height != bmp.Height)
-                throw new ArgumentOutOfRangeException(nameof(bmp));
-            
-            var bmpData = bmp.LockBits(new System.Drawing.Rectangle(0, 0, Width, Height),
-                ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            GraphicsDevice.ValidateUiGraphicsThread();
+            if (Width != image.Width || Height != image.Height)
+                throw new ArgumentOutOfRangeException(nameof(image));
 
-            Bind();
-            GL.TexSubImage2D(Target, 0, 0, 0, Width, Height,
-                OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bmpData.Scan0);
-            bmp.UnlockBits(bmpData);
+            LoadFrom(image.ToContinuousImage<Rgba32>());
+        }
+
+        /// <summary>
+        /// Loads a <see cref="Texture2D"/> from a bitmap in RGBA32 format.
+        /// </summary>
+        /// <param name="image">Image to load the texture from.</param>
+        public void LoadFrom(Image<Rgba32> image)
+        {
+            if (image.DangerousTryGetSinglePixelMemory(out var data))
+            {
+                var span = data.Span;
+                GraphicsDevice.ValidateUiGraphicsThread();
+                Bind();
+                GL.TexSubImage2D(Target, 0, 0, 0, Width, Height,
+                    OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, ref span.GetPinnableReference());
+            }
         }
 
         /// <summary>
@@ -428,7 +441,7 @@ namespace engenious.Graphics
         /// <returns>The loaded texture.</returns>
         public static Texture2D FromStream(GraphicsDevice graphicsDevice, Stream stream, int mipMaps = 1)
         {
-            using var bmp = new Bitmap(stream);
+            using var bmp = Image.Load<Rgba32>(ImageSharpHelper.Config, stream);
             return FromBitmap(graphicsDevice, bmp, mipMaps);
         }
 
@@ -441,44 +454,44 @@ namespace engenious.Graphics
         /// <returns>The loaded texture.</returns>
         public static Texture2D FromFile(GraphicsDevice graphicsDevice, string filename, int mipMaps = 1)
         {
-            using var bmp = new Bitmap(filename);
+            using var bmp = Image.Load<Rgba32>(ImageSharpHelper.Config, filename);
             return FromBitmap(graphicsDevice, bmp, mipMaps);
         }
 
         /// <summary>
-        /// Loads a <see cref="Texture2D"/> from a existing <see cref="System.Drawing.Bitmap"/>.
+        /// Loads a <see cref="Texture2D"/> from a existing <see cref="Image"/>.
         /// </summary>
         /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/>.</param>
-        /// <param name="bmp">Path to a file to load the texture from.</param>
+        /// <param name="image">Image to create the texture from.</param>
         /// <param name="mipMaps">The number of mip-map levels.</param>
         /// <returns>The loaded texture.</returns>
-        public static Texture2D FromBitmap(GraphicsDevice graphicsDevice, Bitmap bmp, int mipMaps = 1)
+        public static Texture2D FromBitmap(GraphicsDevice graphicsDevice, Image image, int mipMaps = 1)
         {
-            var text = new Texture2D(graphicsDevice, bmp.Width, bmp.Height, mipMaps);
-            text.LoadFrom(bmp);
+            var text = new Texture2D(graphicsDevice, image.Width, image.Height, mipMaps);
+            text.LoadFrom(image);
             return text;
         }
 
         /// <summary>
-        /// Converts a <see cref="Texture2D"/> to a <see cref="System.Drawing.Bitmap"/>.
+        /// Converts a <see cref="Texture2D"/> to a <see cref="Image{RGBA32}"/>.
         /// </summary>
         /// <param name="text">The texture to convert.</param>
-        /// <returns>The converted texture as a <see cref="System.Drawing.Bitmap"/>.</returns>
-        public static Bitmap ToBitmap(Texture2D text)
+        /// <returns>The converted texture as a <see cref="Image{RGBA32}"/>.</returns>
+        public static Image<Rgba32> ToBitmap(Texture2D text)
         {
-            var bmp = new Bitmap(text.Width, text.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            var bmpData = bmp.LockBits(new System.Drawing.Rectangle(0, 0, text.Width, text.Height),
-                ImageLockMode.WriteOnly, bmp.PixelFormat);
-            text.GraphicsDevice.ValidateUiGraphicsThread();
+            var bmp = new Image<Rgba32>(ImageSharpHelper.Config, text.Width, text.Height);
+            if (bmp.DangerousTryGetSinglePixelMemory(out var data))
+            {
+                text.GraphicsDevice.ValidateUiGraphicsThread();
 
-            text.Bind();
-            GL.GetTexImage(text.Target, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
-                PixelType.UnsignedByte, bmpData.Scan0);
+                text.Bind();
+                GL.GetTexImage(text.Target, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+                    PixelType.UnsignedByte, ref data);
+            }
+
             //System.Runtime.InteropServices.Marshal.Copy (bmpData.Scan0, data, 0, data.Length);//TODO: performance
             //TODO: convert pixel formats
-
-
-            bmp.UnlockBits(bmpData);
+            
 
             return bmp;
         }
@@ -497,13 +510,11 @@ namespace engenious.Graphics
             bool zoom = false, int mipMaps = 1)
         {
             //TODO:implement correct
-            using (var bmp = new Bitmap(stream))
+            using (var bmp = Image.Load(stream))
             {
-                using (var scaled = new Bitmap(bmp, width, height))
-                {
-                    //TODO: zoom?
-                    return FromBitmap(graphicsDevice, scaled, mipMaps);
-                }
+                bmp.Mutate((p) => p.Resize(width, height));
+                //TODO: zoom?
+                return FromBitmap(graphicsDevice, bmp, mipMaps);
             }
         }
 
