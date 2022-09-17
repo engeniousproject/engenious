@@ -4,8 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using engenious.Content.Serialization;
 using engenious.Graphics;
 using engenious.Helper;
@@ -20,7 +18,6 @@ namespace engenious.Content
         private readonly Dictionary<string ,IContentTypeReader> _typeReaders;
         private readonly Dictionary<string ,IContentTypeReader> _typeReadersOutput;
         private readonly Dictionary<string,object> _assets;
-        private readonly IFormatter _formatter;
         internal GraphicsDevice GraphicsDevice;
 
         /// <summary>
@@ -33,7 +30,6 @@ namespace engenious.Content
             _typeReaders = new Dictionary<string, IContentTypeReader>();
             _typeReadersOutput = new Dictionary<string, IContentTypeReader>();
             _assets = new Dictionary<string, object>();
-            _formatter = new BinaryFormatter();
             AddAssembly(Assembly.GetExecutingAssembly());
         }
 
@@ -213,13 +209,9 @@ namespace engenious.Content
                 throw new Exception("Could not load content file");
             }
             // Legacy loading
-            stream.Position -= 4;
-            res = ReadDeprecatedContentFile(stream, throwsOnError);
-            if (res != null)
-                return res;
             if (!throwsOnError)
                 return null;
-            throw new Exception("Could not load legacy content file");
+            throw new NotSupportedException("Legacy content file no longer supported!");
         }
         private ContentFile? ReadContentFileV2(Stream stream, bool throwsOnError = true)
         {
@@ -269,23 +261,6 @@ namespace engenious.Content
         {
             var val = ReadUInt(str);
             return BitHelper.BitConverterToBigEndian(val);
-        }
-        private ContentFile? ReadDeprecatedContentFile(Stream stream, bool throwsOnError = true)
-        {
-            try
-            {
-#pragma warning disable 618
-#pragma warning disable SYSLIB0011
-                return _formatter.Deserialize(stream) as ContentFile;
-#pragma warning restore SYSLIB0011
-#pragma warning restore 618
-            }
-            catch
-            {
-                if (throwsOnError)
-                    throw;
-                return null;
-            }
         }
     }
 }
