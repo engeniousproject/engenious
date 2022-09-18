@@ -172,8 +172,7 @@ namespace engenious.Graphics
         /// <param name="data">The array containing the pixel data to write.</param>
         /// <param name="layer">The layer to write to.</param>
         /// <param name="level">The mip-map level to write to.</param>
-        /// <typeparam name="T">The type to write pixel data as.</typeparam>
-        public unsafe void SetData<T>(Image<Rgba32> data, int layer, int level = 0) where T : unmanaged
+        public unsafe void SetData(Image<Rgba32> data, int layer, int level = 0)
         {
             if (data.ToContinuousImage().DangerousTryGetSinglePixelMemory(out var pixelData))
             {
