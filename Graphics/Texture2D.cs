@@ -167,7 +167,7 @@ namespace engenious.Graphics
                 GraphicsDevice.ValidateUiGraphicsThread();
                 Bind();
                 GL.TexSubImage2D(Target, 0, 0, 0, Width, Height,
-                    OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, ref span.GetPinnableReference());
+                    OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, ref span.GetPinnableReference());
             }
         }
 
@@ -264,7 +264,7 @@ namespace engenious.Graphics
         public void SetData<T>(ReadOnlySpan<T> data, int level = 0)
             where T : unmanaged
         {
-            SetData(data,level,OpenTK.Graphics.OpenGL.PixelFormat.Bgra);
+            SetData(data,level,OpenTK.Graphics.OpenGL.PixelFormat.Rgba);
         }
         
         /// <summary>
@@ -276,7 +276,7 @@ namespace engenious.Graphics
         public void SetData<T>(T[] data, int level = 0)
             where T : unmanaged
         {
-            SetData(data,level,OpenTK.Graphics.OpenGL.PixelFormat.Bgra);
+            SetData(data,level,OpenTK.Graphics.OpenGL.PixelFormat.Rgba);
         }
 
         internal unsafe void SetData<T>(T[] data, int level,OpenTK.Graphics.OpenGL.PixelFormat format)
@@ -333,7 +333,7 @@ namespace engenious.Graphics
                     GL.TexSubImage2D(Target, level, x, y, width, height, format, pxType,
                         (IntPtr)buffer);
 
-            //GL.TexSubImage2D<T> (Target, 0, 0, 0, Width, Height, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, getPixelType (typeof(T)), data);
+            //GL.TexSubImage2D<T> (Target, 0, 0, 0, Width, Height, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, getPixelType (typeof(T)), data);
         }
 
         /// <summary>
@@ -345,7 +345,7 @@ namespace engenious.Graphics
         /// <typeparam name="T">The type to write pixel data as.</typeparam>
         public void SetData<T>(T[] data, int startIndex, int elementCount) where T : unmanaged
         {
-            SetData<T>(data.AsSpan().Slice(startIndex, elementCount), 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra);
+            SetData<T>(data.AsSpan().Slice(startIndex, elementCount), 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba);
         }
 
         /// <summary>
@@ -364,11 +364,11 @@ namespace engenious.Graphics
             if (rect.HasValue)
             {
                 var recVal = rect.Value;
-                SetData<T>(data.AsSpan(startIndex, elementCount), level, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, recVal.X, recVal.Y, recVal.Width, recVal.Height);
+                SetData<T>(data.AsSpan(startIndex, elementCount), level, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, recVal.X, recVal.Y, recVal.Width, recVal.Height);
             }
             else
             {
-                SetData<T>(data.AsSpan(startIndex, elementCount), level, OpenTK.Graphics.OpenGL.PixelFormat.Bgra);
+                SetData<T>(data.AsSpan(startIndex, elementCount), level, OpenTK.Graphics.OpenGL.PixelFormat.Rgba);
             }
         }
 
@@ -385,7 +385,7 @@ namespace engenious.Graphics
 
             Bind();
 
-            GL.GetTexImage(Target, level, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+            GL.GetTexImage(Target, level, OpenTK.Graphics.OpenGL.PixelFormat.Rgba,
                 PixelType.UnsignedByte, data);
         }
                 
@@ -401,7 +401,7 @@ namespace engenious.Graphics
 
             Bind();
             fixed(T* buffer = &data.GetPinnableReference())
-                GL.GetTexImage(Target, level, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+                GL.GetTexImage(Target, level, OpenTK.Graphics.OpenGL.PixelFormat.Rgba,
                     PixelType.UnsignedByte, (IntPtr)buffer);
         }
 
@@ -424,7 +424,7 @@ namespace engenious.Graphics
             {
                 //TODO: use ? GL.CopyImageSubData(
                 var temp = new T[Width * Height];
-                GL.GetTexImage(Target, level, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+                GL.GetTexImage(Target, level, OpenTK.Graphics.OpenGL.PixelFormat.Rgba,
                     PixelType.UnsignedByte, temp);
                 int z = 0, w = 0, index = 0;
 
@@ -442,7 +442,7 @@ namespace engenious.Graphics
             }
             else
             {
-                GL.GetTexImage(Target, level, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+                GL.GetTexImage(Target, level, OpenTK.Graphics.OpenGL.PixelFormat.Rgba,
                     PixelType.UnsignedByte, data);
             }
         }
@@ -500,7 +500,7 @@ namespace engenious.Graphics
                 text.GraphicsDevice.ValidateUiGraphicsThread();
 
                 text.Bind();
-                GL.GetTexImage(text.Target, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+                GL.GetTexImage(text.Target, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba,
                     PixelType.UnsignedByte, ref data);
             }
 

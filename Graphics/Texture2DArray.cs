@@ -198,7 +198,7 @@ namespace engenious.Graphics
                 pxType = PixelType.Float;
 
             fixed(T* buffer = &data.GetPinnableReference())
-                GL.TexSubImage3D(Target, level, 0, 0,layer, Width, Height,1, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, pxType, (IntPtr)buffer);
+                GL.TexSubImage3D(Target, level, 0, 0,layer, Width, Height,1, OpenTK.Graphics.OpenGL.PixelFormat.Rgba, pxType, (IntPtr)buffer);
         }
         
         /// <summary>
