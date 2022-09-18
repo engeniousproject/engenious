@@ -40,5 +40,24 @@ namespace engenious
             return image.CloneAs<TPixel>(ImageSharpHelper.Config);
         }
 
+        /// <summary>
+        /// Converts a given <see cref="Image"/> to a in memory continuous <see cref="Image{TPixel}"/> .
+        /// </summary>
+        /// <param name="image">The <see cref="Image"/> to convert.</param>
+        /// <typeparam name="TPixel">The destination pixel format.</typeparam>
+        /// <returns>
+        /// Converted <see cref="Image{TPixel}"/> if input was not continous and in <typeparamref name="TPixel"/> format;
+        /// otherwise casted <paramref name="image"/>.
+        /// </returns>
+        public static Image<TPixel> ToContinuousImage<TPixel>(this Image<TPixel> image)
+            where TPixel : unmanaged, IPixel<TPixel>
+        {
+            if (image.GetConfiguration().PreferContiguousImageBuffers)
+            {
+                return image;
+            }
+
+            return image.CloneAs<TPixel>(ImageSharpHelper.Config);
+        }
     }
 }

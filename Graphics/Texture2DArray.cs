@@ -2,6 +2,8 @@
 using System.Runtime.InteropServices;
 using engenious.Helper;
 using OpenTK.Graphics.OpenGL;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace engenious.Graphics
 {
@@ -162,6 +164,22 @@ namespace engenious.Graphics
             
             GL.CopyImageSubData(Texture, (ImageTarget)Target, sourceLevel, srcX, srcY, srcZ, dest.Texture,
                 (ImageTarget)dest.Target, destinationLevel, destX, destY, destZ, srcWidth, srcHeight, srcDepth);
+        }
+
+        /// <summary>
+        /// Sets the textures pixel data.
+        /// </summary>
+        /// <param name="data">The array containing the pixel data to write.</param>
+        /// <param name="layer">The layer to write to.</param>
+        /// <param name="level">The mip-map level to write to.</param>
+        /// <typeparam name="T">The type to write pixel data as.</typeparam>
+        public unsafe void SetData<T>(Image<Rgba32> data, int layer, int level = 0) where T : unmanaged
+        {
+            if (data.ToContinuousImage().DangerousTryGetSinglePixelMemory(out var pixelData))
+            {
+                var span = pixelData.Span;
+                SetData<Rgba32>(span, layer, level);
+            }
         }
 
         /// <summary>

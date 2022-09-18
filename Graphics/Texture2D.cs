@@ -9,6 +9,7 @@ using engenious.Helper;
 using OpenTK.Graphics.OpenGL;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Advanced;
+using SixLabors.ImageSharp.ColorSpaces;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
@@ -160,7 +161,7 @@ namespace engenious.Graphics
         /// <param name="image">Image to load the texture from.</param>
         public void LoadFrom(Image<Rgba32> image)
         {
-            if (image.DangerousTryGetSinglePixelMemory(out var data))
+            if (image.ToContinuousImage().DangerousTryGetSinglePixelMemory(out var data))
             {
                 var span = data.Span;
                 GraphicsDevice.ValidateUiGraphicsThread();
@@ -238,6 +239,20 @@ namespace engenious.Graphics
             
             GL.CopyImageSubData(Texture, (ImageTarget)Target, sourceLevel, srcX, srcY, 0, dest.Texture,
                 (ImageTarget)dest.Target, destinationLevel, destX, destY, destZ, srcWidth, srcHeight, 1);
+        }
+
+        /// <summary>
+        /// Sets the textures pixel data.
+        /// </summary>
+        /// <param name="data">The array containing the pixel data to write.</param>
+        /// <param name="level">The mip map level to set the pixel data of.</param>
+        public void SetData(Image<Rgba32> data, int level = 0)
+        {
+            if (data.ToContinuousImage().DangerousTryGetSinglePixelMemory(out var pixelData))
+            {
+                var span = pixelData.Span;
+                SetData<Rgba32>(span, level);
+            }
         }
 
         /// <summary>
