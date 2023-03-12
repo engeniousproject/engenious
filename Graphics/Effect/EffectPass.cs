@@ -24,6 +24,14 @@ namespace engenious.Graphics
             /// Restores the active <see cref="GraphicsDevice.EffectPass"/> to the given value on dispose.
             /// </summary>
             /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> to restore on.</param>
+            public PassRestorer(GraphicsDevice graphicsDevice) : this(graphicsDevice, graphicsDevice.EffectPass)
+            {
+            }
+
+            /// <summary>
+            /// Restores the active <see cref="GraphicsDevice.EffectPass"/> to the given value on dispose.
+            /// </summary>
+            /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> to restore on.</param>
             /// <param name="oldValue">The <see cref="EffectPass"/> to restore to.</param>
             public PassRestorer(GraphicsDevice graphicsDevice, EffectPass? oldValue)
             {
@@ -215,7 +223,7 @@ namespace engenious.Graphics
         public PassRestorer Apply()
         {
             GraphicsDevice.ValidateUiGraphicsThread();
-            var passRestorer = new PassRestorer(GraphicsDevice, GraphicsDevice.EffectPass);
+            var passRestorer = new PassRestorer(GraphicsDevice);
             GraphicsDevice.EffectPass = this;
 
             return passRestorer;

@@ -10,6 +10,41 @@ namespace engenious.Graphics
     /// </summary>
     public class IndexBuffer : GraphicsResource
     {
+        /// <summary>
+        /// Class that restores the active <see cref="GraphicsDevice.IndexBuffer"/> on dispose.
+        /// </summary>
+        public readonly struct IndexBufferRestorer : IDisposable
+        {
+            private readonly GraphicsDevice _graphicsDevice;
+            private readonly IndexBuffer? _oldValue;
+
+            /// <summary>
+            /// Restores the active <see cref="GraphicsDevice.IndexBuffer"/> to the given value on dispose.
+            /// </summary>
+            /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> to restore on.</param>
+            public IndexBufferRestorer(GraphicsDevice graphicsDevice) : this(graphicsDevice,
+                graphicsDevice.IndexBuffer)
+            {
+
+            }
+
+            /// <summary>
+            /// Restores the active <see cref="GraphicsDevice.IndexBuffer"/> to the given value on dispose.
+            /// </summary>
+            /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> to restore on.</param>
+            /// <param name="oldValue">The <see cref="IndexBuffer"/> to restore to.</param>
+            public IndexBufferRestorer(GraphicsDevice graphicsDevice, IndexBuffer? oldValue)
+            {
+                _graphicsDevice = graphicsDevice;
+                _oldValue = oldValue;
+            }
+
+            /// <inheritdoc />
+            public void Dispose()
+            {
+                _graphicsDevice.IndexBuffer = _oldValue;
+            }
+        }
         private int _ibo;
         //private byte[] buffer;
         private readonly int _elementSize;

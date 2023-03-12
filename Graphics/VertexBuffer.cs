@@ -12,6 +12,41 @@ namespace engenious.Graphics
     /// </summary>
     public class VertexBuffer : GraphicsResource
     {
+        /// <summary>
+        /// Class that restores the active <see cref="GraphicsDevice.VertexBuffer"/> on dispose.
+        /// </summary>
+        public readonly struct VertexBufferRestorer : IDisposable
+        {
+            private readonly GraphicsDevice _graphicsDevice;
+            private readonly VertexBuffer? _oldValue;
+
+            /// <summary>
+            /// Restores the active <see cref="GraphicsDevice.VertexBuffer"/> to the given value on dispose.
+            /// </summary>
+            /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> to restore on.</param>
+            public VertexBufferRestorer(GraphicsDevice graphicsDevice) : this(graphicsDevice,
+                graphicsDevice.VertexBuffer)
+            {
+
+            }
+
+            /// <summary>
+            /// Restores the active <see cref="GraphicsDevice.VertexBuffer"/> to the given value on dispose.
+            /// </summary>
+            /// <param name="graphicsDevice">The <see cref="GraphicsDevice"/> to restore on.</param>
+            /// <param name="oldValue">The <see cref="VertexBuffer"/> to restore to.</param>
+            public VertexBufferRestorer(GraphicsDevice graphicsDevice, VertexBuffer? oldValue)
+            {
+                _graphicsDevice = graphicsDevice;
+                _oldValue = oldValue;
+            }
+
+            /// <inheritdoc />
+            public void Dispose()
+            {
+                _graphicsDevice.VertexBuffer = _oldValue;
+            }
+        }
         internal int Vbo, NextVbo = -1;
         internal long NextVertexCount;
         internal VertexAttributes? Vao;

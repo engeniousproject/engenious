@@ -191,20 +191,22 @@ namespace engenious.Graphics
             _indexBuffer.SetData(sizeof(short) * 6 * batch, _indexData, 0, batchCount * 6);
 
 
-            _graphicsDevice.VertexBuffer = _vertexBuffer;
-            _graphicsDevice.IndexBuffer = _indexBuffer;
-            effectTechnique.Texture = texture;
-            //graphicsDevice.SamplerStates[0] = samplerState;
-            if (effectTechnique == null)
-                throw new Exception("No valid effect technique set");
-            foreach (var pass in effectTechnique.Passes)
+            using (new VertexBuffer.VertexBufferRestorer(_graphicsDevice))
+            using (new IndexBuffer.IndexBufferRestorer(_graphicsDevice))
+            using (new EffectPass.PassRestorer(_graphicsDevice))
             {
-                pass.Apply();
-                _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.Triangles, 0, 0, batchCount * 4, 0, batchCount * 2);
+                _graphicsDevice.VertexBuffer = _vertexBuffer;
+                _graphicsDevice.IndexBuffer = _indexBuffer;
+                effectTechnique.Texture = texture;
+                //graphicsDevice.SamplerStates[0] = samplerState;
+                if (effectTechnique == null)
+                    throw new Exception("No valid effect technique set");
+                foreach (var pass in effectTechnique.Passes)
+                {
+                    pass.Apply();
+                    _graphicsDevice.DrawIndexedPrimitives(PrimitiveType.Triangles, 0, 0, batchCount * 4, 0, batchCount * 2);
+                }
             }
-
-            _graphicsDevice.IndexBuffer = null;
-            _graphicsDevice.VertexBuffer = null;
         }
 
         public void End(Matrix world, Matrix projection)
