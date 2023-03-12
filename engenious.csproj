@@ -15,8 +15,12 @@
         <LiCoOutput>NOTICE</LiCoOutput>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
         <PackageReference Include="LiCo" Version="0.2.0.3-alpha" PrivateAssets="all" />
         <PackageReference Include="LitGit" Version="0.2.0.58-alpha" PrivateAssets="all" />
         <PackageReference Include="NVorbis" Version="0.10.4" Exclude="compile" PrivateAssets="compile" />
