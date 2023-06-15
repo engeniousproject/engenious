@@ -492,7 +492,7 @@ namespace engenious.Graphics
         /// </summary>
         /// <param name="text">The texture to convert.</param>
         /// <returns>The converted texture as a <see cref="Image{RGBA32}"/>.</returns>
-        public static Image<Rgba32> ToBitmap(Texture2D text)
+        public static unsafe Image<Rgba32> ToBitmap(Texture2D text)
         {
             var bmp = new Image<Rgba32>(ImageSharpHelper.Config, text.Width, text.Height);
             if (bmp.DangerousTryGetSinglePixelMemory(out var data))
@@ -500,11 +500,10 @@ namespace engenious.Graphics
                 text.GraphicsDevice.ValidateUiGraphicsThread();
 
                 text.Bind();
+                var span = data.Span;
                 GL.GetTexImage(text.Target, 0, OpenTK.Graphics.OpenGL.PixelFormat.Rgba,
-                    PixelType.UnsignedByte, ref data);
+                    PixelType.UnsignedByte, ref span.GetPinnableReference());
             }
-
-            //System.Runtime.InteropServices.Marshal.Copy (bmpData.Scan0, data, 0, data.Length);//TODO: performance
             //TODO: convert pixel formats
             
 
