@@ -16,13 +16,15 @@ namespace engenious.Graphics
         /// </summary>
         public struct RenderTargetSlice
         {
-            private RenderTargetSlice(Texture texture, int glTexture, int width, int height, int slice = 0)
+            private RenderTargetSlice(Texture texture, int glTexture, int width, int height, TextureTarget target, int slice = 0, int level = 0)
             {
                 Texture = texture;
                 Width = width;
                 Height = height;
                 Slice = slice;
+                Level = level;
                 GlTexture = glTexture;
+                Target = target;
             }
 
             /// <summary>
@@ -31,8 +33,9 @@ namespace engenious.Graphics
             /// <param name="texture">The texture this render target slice targets.</param>
             /// <param name="width">The width of this texture target.</param>
             /// <param name="height">The height of this texture target.</param>
-            public RenderTargetSlice(Texture2D texture, int width, int height)
-                : this(texture, texture.Texture, width, height, 0)
+            /// <param name="level">The level of the <see cref="Texture"/> to render to.</param>
+            public RenderTargetSlice(Texture2D texture, int width, int height, int level = 0)
+                : this(texture, texture.Texture, width, height, TextureTarget.Texture2D, 0, level)
             {
             }
 
@@ -43,12 +46,15 @@ namespace engenious.Graphics
             /// <param name="width">The width of this texture target.</param>
             /// <param name="height">The height of this texture target.</param>
             /// <param name="slice">The slice of the <see cref="Texture2DArray"/> to render to.</param>
-            public RenderTargetSlice(Texture2DArray texture, int width, int height, int slice = 0)
-                : this(texture, texture.Texture, width, height, slice)
+            /// <param name="level">The level of the <see cref="Texture"/> to render to.</param>
+            public RenderTargetSlice(Texture2DArray texture, int width, int height, int slice = 0, int level = 0)
+                : this(texture, texture.Texture, width, height, TextureTarget.Texture2DArray, slice, level)
             {
             }
 
             internal int GlTexture { get; }
+            
+            internal TextureTarget Target { get; }
 
             /// <summary>
             /// Gets the texture this render target slice targets.
@@ -69,6 +75,11 @@ namespace engenious.Graphics
             /// Gets the slice of the <see cref="Texture2DArray"/> to render to. <c>0</c> for <see cref="Texture2D"/>.
             /// </summary>
             public int Slice { get; }
+
+            /// <summary>
+            /// Gets the level of the <see cref="Texture"/> to render to. Defaults to <c>0</c>.
+            /// </summary>
+            public int Level { get; set; }
         }
         private readonly int _fbo;
         /// <summary>
@@ -265,7 +276,19 @@ namespace engenious.Graphics
                 var array = new DrawBuffersEnum[slices.Length];
                 for (int i = 0; i < slices.Length; i++)
                 {
-                    GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0 + i, TextureTarget.Texture2D, slices[i].GlTexture, 0);
+                    var slice = slices[i];
+                    switch (slice.Target)
+                    {
+                        case TextureTarget.Texture2D:
+                            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0 + i, TextureTarget.Texture2D, slice.GlTexture, slice.Level);
+                            break;
+                        case TextureTarget.Texture2DArray:
+                            GL.FramebufferTextureLayer(FramebufferTarget.Framebuffer,
+                                FramebufferAttachment.ColorAttachment0 + i, slice.GlTexture, slice.Level, slice.Slice);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                     array[i] = DrawBuffersEnum.ColorAttachment0 + i;
                 }
                 GL.DrawBuffers(array.Length, array);
