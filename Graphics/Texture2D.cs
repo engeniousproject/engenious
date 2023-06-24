@@ -127,46 +127,90 @@ namespace engenious.Graphics
         /// Loads a <see cref="Texture2D"/> from a stream.
         /// </summary>
         /// <param name="stream">The stream to load the texture from.</param>
-        public void LoadFrom(Stream stream)
+        /// <param name="xOffset">The x destination offset where the image pixel data is copied to.</param>
+        /// <param name="yOffset">The y destination offset where the image pixel data is copied to.</param>
+        /// <param name="width">
+        /// The destination width where the image pixel data is copied to.
+        /// <remarks>Defaults to <c>-1</c> which in turn uses <see cref="Width"/>.</remarks>
+        /// </param>
+        /// <param name="height">
+        /// The destination height where the image pixel data is copied to.
+        /// <remarks>Defaults to <c>-1</c> which in turn uses <see cref="Height"/>.</remarks>
+        /// </param>
+        /// <param name="level">The mip map level on the gpu to copy to.</param>
+        public void LoadFrom(Stream stream, int xOffset = 0, int yOffset = 0, int width = -1, int height = -1, int level = 0)
         {
             using var bmp = Image.Load<Rgba32>(ImageSharpHelper.Config, stream);
-            LoadFrom(bmp);
+            LoadFrom(bmp, xOffset, yOffset, width, height, level);
         }
 
         /// <summary>
         /// Loads a <see cref="Texture2D"/> from a file.
         /// </summary>
         /// <param name="filename">Path to a file to load the texture from.</param>
-        public void LoadFrom(string filename)
+        /// <param name="xOffset">The x destination offset where the image pixel data is copied to.</param>
+        /// <param name="yOffset">The y destination offset where the image pixel data is copied to.</param>
+        /// <param name="width">
+        /// The destination width where the image pixel data is copied to.
+        /// <remarks>Defaults to <c>-1</c> which in turn uses <see cref="Width"/>.</remarks>
+        /// </param>
+        /// <param name="height">
+        /// The destination height where the image pixel data is copied to.
+        /// <remarks>Defaults to <c>-1</c> which in turn uses <see cref="Height"/>.</remarks>
+        /// </param>
+        /// <param name="level">The mip map level on the gpu to copy to.</param>
+        public void LoadFrom(string filename, int xOffset = 0, int yOffset = 0, int width = -1, int height = -1, int level = 0)
         {
             using var bmp = Image.Load<Rgba32>(ImageSharpHelper.Config, filename);
-            LoadFrom(bmp);
+            LoadFrom(bmp, xOffset, yOffset, width, height, level);
         }
 
         /// <summary>
         /// Loads a <see cref="Texture2D"/> from a image.
         /// </summary>
         /// <param name="image">Image to load the texture from.</param>
-        public void LoadFrom(Image image)
+        /// <param name="xOffset">The x destination offset where the image pixel data is copied to.</param>
+        /// <param name="yOffset">The y destination offset where the image pixel data is copied to.</param>
+        /// <param name="width">
+        /// The destination width where the image pixel data is copied to.
+        /// <remarks>Defaults to <c>-1</c> which in turn uses <see cref="Width"/>.</remarks>
+        /// </param>
+        /// <param name="height">
+        /// The destination height where the image pixel data is copied to.
+        /// <remarks>Defaults to <c>-1</c> which in turn uses <see cref="Height"/>.</remarks>
+        /// </param>
+        /// <param name="level">The mip map level on the gpu to copy to.</param>
+        public void LoadFrom(Image image, int xOffset = 0, int yOffset = 0, int width = -1, int height = -1, int level = 0)
         {
             if (Width != image.Width || Height != image.Height)
                 throw new ArgumentOutOfRangeException(nameof(image));
 
-            LoadFrom(image.ToContinuousImage<Rgba32>());
+            LoadFrom(image.ToContinuousImage<Rgba32>(), xOffset, yOffset, width, height, level);
         }
 
         /// <summary>
         /// Loads a <see cref="Texture2D"/> from a bitmap in RGBA32 format.
         /// </summary>
         /// <param name="image">Image to load the texture from.</param>
-        public void LoadFrom(Image<Rgba32> image)
+        /// <param name="xOffset">The x destination offset where the image pixel data is copied to.</param>
+        /// <param name="yOffset">The y destination offset where the image pixel data is copied to.</param>
+        /// <param name="width">
+        /// The destination width where the image pixel data is copied to.
+        /// <remarks>Defaults to <c>-1</c> which in turn uses <see cref="Width"/>.</remarks>
+        /// </param>
+        /// <param name="height">
+        /// The destination height where the image pixel data is copied to.
+        /// <remarks>Defaults to <c>-1</c> which in turn uses <see cref="Height"/>.</remarks>
+        /// </param>
+        /// <param name="level">The mip map level on the gpu to copy to.</param>
+        public void LoadFrom(Image<Rgba32> image, int xOffset = 0, int yOffset = 0, int width = -1, int height = -1, int level = 0)
         {
             if (image.ToContinuousImage().DangerousTryGetSinglePixelMemory(out var data))
             {
                 var span = data.Span;
                 GraphicsDevice.ValidateUiGraphicsThread();
                 Bind();
-                GL.TexSubImage2D(Target, 0, 0, 0, Width, Height,
+                GL.TexSubImage2D(Target, level, xOffset, yOffset, width == -1 ? Width : width, height == -1 ? Height : height,
                     OpenTK.Graphics.OpenGL.PixelFormat.Rgba, PixelType.UnsignedByte, ref span.GetPinnableReference());
             }
         }
